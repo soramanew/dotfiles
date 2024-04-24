@@ -1,4 +1,4 @@
-const { GLib } = imports.gi;
+import GLib from "gi://GLib";
 const { execAsync, readFile, writeFile } = Utils;
 const { Box, Button } = Widget;
 import Wallpaper from "../../../services/wallpaper.js";
@@ -6,6 +6,7 @@ import SidebarModule from "./module.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { applyStyle } from "../../../config.js";
+import { CACHE_DIR } from "../../../constants.js";
 
 const confDir = `${GLib.get_home_dir()}/.config`;
 const perfConfPath = `${confDir}/hypr/hyprland/perf.conf`;
@@ -74,77 +75,75 @@ export default () =>
         child: Box({
             vertical: true,
             className: "spacing-v-5",
-            children: [
-                Box({
-                    hpack: "center",
-                    className: "sidebar-togglesbox spacing-h-10",
-                    children: [
-                        ToggleSetting({
-                            setting: "blur",
-                            tooltip: "blur for everything",
-                            icon: "deblur",
-                        }),
-                        ToggleSetting({
-                            setting: "opacity",
-                            tooltip: "opacity for everything",
-                            icon: "opacity",
-                            extraFn: (_, toggled) => {
-                                // Change fuzzel transparency
-                                const fuzzelConfDir = `${confDir}/fuzzel`;
-                                const fuzzelConf = `${fuzzelConfDir}/fuzzel.ini`;
-                                execAsync(`readlink '${fuzzelConf}'`)
-                                    .then(currentConf =>
-                                        execAsync([
-                                            "ln",
-                                            "-sf",
-                                            `${fuzzelConfDir}/${
-                                                currentConf.endsWith("not_opaque/chosen.ini") ? "" : "not_"
-                                            }opaque/chosen.ini`,
-                                            fuzzelConf,
-                                        ]).catch(print)
-                                    )
-                                    .catch(print);
-                                // Change ags transparency
-                                execAsync([
-                                    "sed",
-                                    "-i",
-                                    toggled ? "2s/False/True/" : "2s/True/False/",
-                                    `${App.configDir}/scss/colour/generated.scss`,
-                                ])
-                                    .then(applyStyle)
-                                    .catch(print);
-                                // Change ags colourmode to account for changed transparency
-                                execAsync([
-                                    "sed",
-                                    "-i",
-                                    toggled ? "2s/opaque/transparent/" : "2s/transparent/opaque/",
-                                    `${cacheDir}/ags/user/colormode.txt`,
-                                ]).catch(print);
-                            },
-                        }),
-                        ToggleSetting({
-                            setting: "animations",
-                            tooltip: "all animations",
-                            icon: "animation",
-                        }),
-                        ToggleSetting({
-                            setting: "borderanim",
-                            tooltip: "border gradient animation",
-                            icon: "border_color",
-                        }),
-                        ToggleButton({
-                            icon: "wallpaper_slideshow",
-                            tooltip: "wallpaper slideshow",
-                            enabled: Wallpaper.enabled,
-                            onClicked: (_, toggled) => (Wallpaper.enabled = toggled),
-                        }),
-                        ToggleSetting({
-                            setting: "xray",
-                            tooltip: "xray for blur",
-                            icon: "filter_b_and_w",
-                        }),
-                    ],
-                }),
-            ],
+            child: Box({
+                hpack: "center",
+                className: "sidebar-togglesbox spacing-h-10",
+                children: [
+                    ToggleSetting({
+                        setting: "blur",
+                        tooltip: "blur for everything",
+                        icon: "deblur",
+                    }),
+                    ToggleSetting({
+                        setting: "opacity",
+                        tooltip: "opacity for everything",
+                        icon: "opacity",
+                        extraFn: (_, toggled) => {
+                            // Change fuzzel transparency
+                            const fuzzelConfDir = `${confDir}/fuzzel`;
+                            const fuzzelConf = `${fuzzelConfDir}/fuzzel.ini`;
+                            execAsync(`readlink '${fuzzelConf}'`)
+                                .then(currentConf =>
+                                    execAsync([
+                                        "ln",
+                                        "-sf",
+                                        `${fuzzelConfDir}/${
+                                            currentConf.endsWith("not_opaque/chosen.ini") ? "" : "not_"
+                                        }opaque/chosen.ini`,
+                                        fuzzelConf,
+                                    ]).catch(print)
+                                )
+                                .catch(print);
+                            // Change ags transparency
+                            execAsync([
+                                "sed",
+                                "-i",
+                                toggled ? "2s/False/True/" : "2s/True/False/",
+                                `${App.configDir}/scss/colour/generated.scss`,
+                            ])
+                                .then(applyStyle)
+                                .catch(print);
+                            // Change ags colourmode to account for changed transparency
+                            execAsync([
+                                "sed",
+                                "-i",
+                                toggled ? "2s/opaque/transparent/" : "2s/transparent/opaque/",
+                                `${CACHE_DIR}/user/colormode.txt`,
+                            ]).catch(print);
+                        },
+                    }),
+                    ToggleSetting({
+                        setting: "animations",
+                        tooltip: "all animations",
+                        icon: "animation",
+                    }),
+                    ToggleSetting({
+                        setting: "borderanim",
+                        tooltip: "border gradient animation",
+                        icon: "border_color",
+                    }),
+                    ToggleButton({
+                        icon: "wallpaper_slideshow",
+                        tooltip: "wallpaper slideshow",
+                        enabled: Wallpaper.enabled,
+                        onClicked: (_, toggled) => (Wallpaper.enabled = toggled),
+                    }),
+                    ToggleSetting({
+                        setting: "xray",
+                        tooltip: "xray for blur",
+                        icon: "filter_b_and_w",
+                    }),
+                ],
+            }),
         }),
     });

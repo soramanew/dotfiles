@@ -7,9 +7,9 @@ import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
 import { WWO_CODE, WEATHER_SYMBOL } from "../../.commondata/weather.js";
 import { BarGroup } from "./main.js";
+import { BATTERY_LOW, CACHE_DIR } from "../../../constants.js";
 
-const BATTERY_LOW = 20;
-const WEATHER_CACHE_FOLDER = `${GLib.get_user_cache_dir()}/ags/weather`;
+const WEATHER_CACHE_FOLDER = `${CACHE_DIR}/weather`;
 exec(`mkdir -p "${WEATHER_CACHE_FOLDER}"`);
 
 const BarGroupSystem = child => BarGroup(child, "system");

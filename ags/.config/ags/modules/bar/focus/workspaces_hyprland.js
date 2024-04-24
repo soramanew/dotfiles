@@ -3,18 +3,18 @@ import Gtk from "gi://Gtk";
 const { Box, DrawingArea, EventBox } = Widget;
 const { execAsync } = Utils;
 const Hyprland = await Service.import("hyprland");
+import { WS_PER_GROUP as WS_SHOWN } from "../../../constants.js";
 
 const dummyWs = Box({ className: "bar-ws-focus" }); // Not shown. Only for getting size props
 const dummyActiveWs = Box({ className: "bar-ws-focus bar-ws-focus-active" }); // Not shown. Only for getting size props
 const dummyOccupiedWs = Box({ className: "bar-ws-focus bar-ws-focus-occupied" }); // Not shown. Only for getting size props
 
-const WS_SHOWN = 10;
 const WS_TAKEN_WIDTH_MULTIPLIER = 1.4;
 const { floor, ceil } = Math;
 
 // Font size = workspace id
-const WorkspaceContents = (count = 10) => {
-    return DrawingArea({
+const WorkspaceContents = () =>
+    DrawingArea({
         className: "menu-decel",
         attribute: {
             lastImmediateActiveWs: 0,
@@ -23,13 +23,13 @@ const WorkspaceContents = (count = 10) => {
             workspaceMask: 0,
             workspaceGroup: 0,
             updateMask: self => {
-                const offset = Math.floor((Hyprland.active.workspace.id - 1) / count) * WS_SHOWN;
+                const offset = floor((Hyprland.active.workspace.id - 1) / WS_SHOWN) * WS_SHOWN;
                 // if (self.attribute.initialized) return; // We only need this to run once
                 const workspaces = Hyprland.workspaces;
                 let workspaceMask = 0;
                 for (let i = 0; i < workspaces.length; i++) {
                     const ws = workspaces[i];
-                    if (ws.id <= offset || ws.id > offset + count) continue; // Out of range, ignore
+                    if (ws.id <= offset || ws.id > offset + WS_SHOWN) continue; // Out of range, ignore
                     if (workspaces[i].windows > 0) workspaceMask |= 1 << (ws.id - offset);
                 }
                 // console.log('Mask:', workspaceMask.toString(2));
@@ -46,12 +46,12 @@ const WorkspaceContents = (count = 10) => {
         setup: area =>
             area
                 .hook(Hyprland.active.workspace, self => {
-                    const newActiveWs = ((Hyprland.active.workspace.id - 1) % count) + 1;
+                    const newActiveWs = ((Hyprland.active.workspace.id - 1) % WS_SHOWN) + 1;
                     self.setCss(`font-size: ${newActiveWs}px;`);
                     self.attribute.lastImmediateActiveWs = self.attribute.immediateActiveWs;
                     self.attribute.immediateActiveWs = newActiveWs;
                     const previousGroup = self.attribute.workspaceGroup;
-                    const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / count);
+                    const currentGroup = floor((Hyprland.active.workspace.id - 1) / WS_SHOWN);
                     if (currentGroup !== previousGroup) {
                         self.attribute.updateMask(self);
                         self.attribute.workspaceGroup = currentGroup;
@@ -90,10 +90,10 @@ const WorkspaceContents = (count = 10) => {
 
                     // Draw
                     area.set_size_request(
-                        workspaceDiameter * WS_TAKEN_WIDTH_MULTIPLIER * (count - 1) + activeWorkspaceWidth,
+                        workspaceDiameter * WS_TAKEN_WIDTH_MULTIPLIER * (WS_SHOWN - 1) + activeWorkspaceWidth,
                         -1
                     );
-                    for (let i = 1; i <= count; i++) {
+                    for (let i = 1; i <= WS_SHOWN; i++) {
                         if (i == immediateActiveWs) continue;
                         let colors = {};
                         if (area.attribute.workspaceMask & (1 << i)) colors = occupiedbg;
@@ -116,9 +116,9 @@ const WorkspaceContents = (count = 10) => {
                             i <= activeWs
                                 ? -workspaceRadius + workspaceDiameter * WS_TAKEN_WIDTH_MULTIPLIER * i
                                 : -workspaceRadius +
-                                  workspaceDiameter * WS_TAKEN_WIDTH_MULTIPLIER * (count - 1) +
+                                  workspaceDiameter * WS_TAKEN_WIDTH_MULTIPLIER * (WS_SHOWN - 1) +
                                   activeWorkspaceWidth -
-                                  (count - i) * workspaceDiameter * WS_TAKEN_WIDTH_MULTIPLIER;
+                                  (WS_SHOWN - i) * workspaceDiameter * WS_TAKEN_WIDTH_MULTIPLIER;
                         cr.arc(centerX, height / 2, workspaceRadius, 0, 2 * Math.PI);
                         cr.fill();
                         // What if shrinking
@@ -152,9 +152,9 @@ const WorkspaceContents = (count = 10) => {
                         widthPercentage = immediateActiveWs - activeWs;
                         rightX =
                             -workspaceRadius +
-                            workspaceDiameter * WS_TAKEN_WIDTH_MULTIPLIER * (count - 1) +
+                            workspaceDiameter * WS_TAKEN_WIDTH_MULTIPLIER * (WS_SHOWN - 1) +
                             activeWorkspaceWidth -
-                            (count - immediateActiveWs) * workspaceDiameter * WS_TAKEN_WIDTH_MULTIPLIER;
+                            (WS_SHOWN - immediateActiveWs) * workspaceDiameter * WS_TAKEN_WIDTH_MULTIPLIER;
                         activeWsWidth = (activeWorkspaceWidth - workspaceDiameter * 1.5) * (1 - widthPercentage);
                         leftX = rightX - activeWsWidth;
 
@@ -180,7 +180,6 @@ const WorkspaceContents = (count = 10) => {
                     }
                 }),
     });
-};
 
 export default () =>
     EventBox({
@@ -192,13 +191,11 @@ export default () =>
         child: Box({
             homogeneous: true,
             // className: 'bar-group-margin',
-            children: [
-                Box({
-                    // className: 'bar-group bar-group-standalone bar-group-pad',
-                    css: "min-width: 2px;",
-                    children: [WorkspaceContents(WS_SHOWN)],
-                }),
-            ],
+            child: Box({
+                // className: 'bar-group bar-group-standalone bar-group-pad',
+                css: "min-width: 2px;",
+                child: WorkspaceContents(),
+            }),
         }),
         setup: self => {
             self.add_events(Gdk.EventMask.POINTER_MOTION_MASK);
@@ -206,7 +203,7 @@ export default () =>
                 if (!self.attribute.clicked) return;
                 const cursorX = event.get_coords()[1];
                 const widgetWidth = self.get_allocated_width();
-                const wsId = Math.ceil((cursorX * WS_SHOWN) / widgetWidth);
+                const wsId = ceil((cursorX * WS_SHOWN) / widgetWidth);
                 execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, "workspace", `${wsId}`]).catch(
                     print
                 );
@@ -216,7 +213,7 @@ export default () =>
                 self.attribute.clicked = true;
                 const cursorX = event.get_coords()[1];
                 const widgetWidth = self.get_allocated_width();
-                const wsId = Math.ceil((cursorX * WS_SHOWN) / widgetWidth);
+                const wsId = ceil((cursorX * WS_SHOWN) / widgetWidth);
                 execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, "workspace", `${wsId}`]).catch(
                     print
                 );

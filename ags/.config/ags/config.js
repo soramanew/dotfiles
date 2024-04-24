@@ -1,9 +1,9 @@
 "use strict";
 // Import
-const { GLib } = imports.gi;
 const { exec, notify } = Utils;
 const Battery = await Service.import("battery");
 import { forMonitors } from "./modules/.miscutils/system.js";
+import { COMPILED_STYLE_DIR } from "./constants.js";
 // Widgets
 import Bar, { BarCornerTopleft, BarCornerTopright } from "./modules/bar/main.js";
 import Cheatsheet from "./modules/cheatsheet/main.js";
@@ -18,8 +18,6 @@ import Click2Close from "./modules/click2close/main.js";
 import TodoScreen from "./modules/todoscreen/main.js";
 import AppLauncher from "./modules/applauncher/main.js";
 import GCheatsheet from "./modules/gcheatsheet/main.js";
-
-const COMPILED_STYLE_DIR = `${GLib.get_user_cache_dir()}/ags/user/generated`;
 
 // SCSS compilation
 exec(`bash -c 'echo "" > ${App.configDir}/scss/_musicwal.scss'`); // reset music styles

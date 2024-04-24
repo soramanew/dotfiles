@@ -7,8 +7,9 @@ const { exec, execAsync, writeFile, timeout } = Utils;
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import md2pango from "../../.miscutils/md2pango.js";
 import { darkMode } from "../../.miscutils/system.js";
+import { CACHE_DIR } from "../../../constants.js";
 
-const LATEX_DIR = `${GLib.get_user_cache_dir()}/ags/media/latex`;
+const LATEX_DIR = `${CACHE_DIR}/media/latex`;
 const CUSTOM_SOURCEVIEW_SCHEME_PATH = `${App.configDir}/assets/themes/sourceviewtheme${
     darkMode.value ? "" : "-light"
 }.xml`;
@@ -21,7 +22,7 @@ const AI_MESSAGE_CURSOR = "  ...";
 function loadCustomColorScheme(filePath) {
     // Read the XML file content
     const file = Gio.File.new_for_path(filePath);
-    const [success, contents] = file.load_contents(null);
+    const success = file.load_contents(null)[0];
 
     if (!success) {
         logError("Failed to load the XML file.");
@@ -143,9 +144,7 @@ sed -i 's/stroke="rgb(0%, 0%, 0%)"/stroke="${darkMode.value ? "#ffffff" : "#0000
 };
 
 const CodeBlock = (content = "", lang = "txt") => {
-    if (lang == "tex" || lang == "latex") {
-        return Latex(content);
-    }
+    if (lang == "tex" || lang == "latex") return Latex(content);
     const topBar = Box({
         className: "sidebar-chat-codeblock-topbar",
         children: [

@@ -1,5 +1,6 @@
 import Gdk from "gi://Gdk";
 import GLib from "gi://GLib";
+import { CACHE_DIR } from "../../constants.js";
 const { exec, readFile } = Utils;
 
 export const distroID = exec(`bash -c 'cat /etc/os-release | grep "^ID=" | cut -d "=" -f 2 | sed "s/\\"//g"'`).trim();
@@ -14,7 +15,7 @@ export const isDebianDistro =
 export const isArchDistro = distroID === "arch" || distroID === "endeavouros" || distroID === "cachyos";
 export const hasFlatpak = !!exec(`bash -c 'command -v flatpak'`);
 
-const LIGHTDARK_FILE_LOCATION = `${GLib.get_user_cache_dir()}/ags/user/colormode.txt`;
+const LIGHTDARK_FILE_LOCATION = `${CACHE_DIR}/user/colormode.txt`;
 export let darkMode = Variable(readFile(LIGHTDARK_FILE_LOCATION).split("\n")[0].trim() !== "light");
 export const hasPlasmaIntegration = !!exec('bash -c "command -v plasma-browser-integration-host"');
 

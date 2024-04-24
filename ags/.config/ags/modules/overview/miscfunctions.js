@@ -5,6 +5,7 @@ const Hyprland = await Service.import("hyprland");
 const Applications = await Service.import("applications");
 import Todo from "../../services/todo.js";
 import { darkMode } from "../.miscutils/system.js";
+import { CACHE_DIR } from "../../constants.js";
 
 // Use a regular expression to match a trailing odd number of backslashes
 export const hasUnterminatedBackslash = inputString => /\\+$/.test(inputString);
@@ -44,7 +45,7 @@ export const actions = {
             execAsync([
                 `bash`,
                 `-c`,
-                `mkdir -p ${GLib.get_user_cache_dir()}/ags/user && sed -i "1s/.*/light/"  ${GLib.get_user_cache_dir()}/ags/user/colormode.txt`,
+                `mkdir -p ${CACHE_DIR}/user && sed -i "1s/.*/light/"  ${CACHE_DIR}/user/colormode.txt`,
             ])
                 .then(execAsync(`${App.configDir}/scripts/color_generation/switchcolor.sh`).catch(print))
                 .catch(print);
@@ -57,7 +58,7 @@ export const actions = {
             execAsync([
                 `bash`,
                 `-c`,
-                `mkdir -p ${GLib.get_user_cache_dir()}/ags/user && sed -i "1s/.*/dark/"  ${GLib.get_user_cache_dir()}/ags/user/colormode.txt`,
+                `mkdir -p ${CACHE_DIR}/user && sed -i "1s/.*/dark/"  ${CACHE_DIR}/user/colormode.txt`,
             ])
                 .then(execAsync(`${App.configDir}/scripts/color_generation/switchcolor.sh`).catch(print))
                 .catch(print);

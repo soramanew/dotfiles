@@ -1,4 +1,4 @@
-const { GLib } = imports.gi;
+import GLib from "gi://GLib";
 const { exec, readFile, writeFile } = Utils;
 
 class TodoService extends Service {
@@ -11,10 +11,6 @@ class TodoService extends Service {
 
     refresh(value) {
         this.emit("updated", value);
-    }
-
-    connectWidget(widget, callback) {
-        this.connect(widget, callback, "updated");
     }
 
     get todo_json() {

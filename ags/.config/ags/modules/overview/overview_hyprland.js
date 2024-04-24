@@ -1,4 +1,5 @@
-const { Gdk, Gtk } = imports.gi;
+import Gdk from "gi://Gdk";
+import Gtk from "gi://Gtk";
 const { Box, Label, Button, Icon, Menu, MenuItem, Revealer, EventBox, Overlay, CenterBox } = Widget;
 const Hyprland = await Service.import("hyprland");
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../variables.js";
@@ -7,12 +8,10 @@ import { dumpToWorkspace, swapWorkspace } from "./actions.js";
 import { substitute } from "../.miscutils/icons.js";
 import { DoubleRevealer } from "../.widgethacks/advancedrevealers.js";
 import { range } from "../.miscutils/system.js";
+import { WS_PER_GROUP, OVERVIEW_ROWS as WS_ROWS, OVERVIEW_COLS as WS_COLS } from "../../constants.js";
 
 const OVERVIEW_SCALE = 0.18;
-const NUM_OF_WORKSPACE_ROWS = 2;
-const NUM_OF_WORKSPACE_COLS = 5;
 const OVERVIEW_WS_NUM_SCALE = 0.09;
-const NUM_OF_WORKSPACES_SHOWN = NUM_OF_WORKSPACE_COLS * NUM_OF_WORKSPACE_ROWS;
 const OVERVIEW_WS_NUM_MARGIN_SCALE = 0.07;
 const TARGET = [Gtk.TargetEntry.new("text/plain", Gtk.TargetFlags.SAME_APP, 0)];
 
@@ -23,8 +22,7 @@ const dispatchAndClose = dispatcher => {
     App.closeWindow("overview");
     return dispatch(dispatcher);
 };
-const getOffset = () =>
-    Math.floor((Hyprland.active.workspace.id - 1) / NUM_OF_WORKSPACES_SHOWN) * NUM_OF_WORKSPACES_SHOWN;
+const getOffset = () => Math.floor((Hyprland.active.workspace.id - 1) / WS_PER_GROUP) * WS_PER_GROUP;
 const calcCss = (x, y, w, h) => `
     margin-left: ${Math.round(x * OVERVIEW_SCALE)}px;
     margin-top: ${Math.round(y * OVERVIEW_SCALE)}px;
@@ -41,7 +39,7 @@ export default () => {
                 const submenu = Menu({ className: "menu" });
 
                 const startWorkspace = getOffset() + 1;
-                const endWorkspace = startWorkspace + NUM_OF_WORKSPACES_SHOWN - 1;
+                const endWorkspace = startWorkspace + WS_PER_GROUP - 1;
                 for (let i = startWorkspace; i <= endWorkspace; i++) {
                     if (i === thisWorkspace) continue;
                     const button = MenuItem({ label: `Workspace ${i}` });
@@ -203,8 +201,8 @@ export default () => {
                 setup: self =>
                     self.hook(Hyprland.active.workspace, self => {
                         // Update when going to new ws group
-                        const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / NUM_OF_WORKSPACES_SHOWN);
-                        self.label = `${currentGroup * NUM_OF_WORKSPACES_SHOWN + index}`;
+                        const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / WS_PER_GROUP);
+                        self.label = `${currentGroup * WS_PER_GROUP + index}`;
                     }),
                 ...rest,
             });
@@ -239,7 +237,7 @@ export default () => {
                 if (!client) return;
                 if (
                     client.attribute.ws <= offset ||
-                    client.attribute.ws > offset + NUM_OF_WORKSPACES_SHOWN ||
+                    client.attribute.ws > offset + WS_PER_GROUP ||
                     client.attribute.ws == offset + index
                 ) {
                     client.destroy();
@@ -343,7 +341,7 @@ export default () => {
                     .hook(Hyprland.active.workspace, box => {
                         // Full update when going to new ws group
                         const previousGroup = box.attribute.workspaceGroup;
-                        const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / NUM_OF_WORKSPACES_SHOWN);
+                        const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / WS_PER_GROUP);
                         if (currentGroup !== previousGroup) {
                             box.attribute.update(box);
                             box.attribute.workspaceGroup = currentGroup;
@@ -545,7 +543,7 @@ export default () => {
             setup: self => {
                 const addWs = name => {
                     if (name?.startsWith("special:")) {
-                        if (!specialWorkspaces.length || specialWorkspaces.at(-1).size >= NUM_OF_WORKSPACE_COLS)
+                        if (!specialWorkspaces.length || specialWorkspaces.at(-1).size >= WS_COLS)
                             self.add(SpecialWorkspaceRow(specialWorkspaces.length, SpecialWorkspace(name)));
                         else {
                             const child = self.children.at(-1);
@@ -568,10 +566,10 @@ export default () => {
                 Box({
                     vertical: true,
                     className: "overview-tasks",
-                    children: range(NUM_OF_WORKSPACE_ROWS, 0).map(i =>
+                    children: range(WS_ROWS, 0).map(i =>
                         OverviewRow({
-                            startWorkspace: 1 + i * NUM_OF_WORKSPACE_COLS,
-                            workspaces: NUM_OF_WORKSPACE_COLS,
+                            startWorkspace: 1 + i * WS_COLS,
+                            workspaces: WS_COLS,
                         })
                     ),
                 }),
