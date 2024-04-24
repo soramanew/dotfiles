@@ -1,4 +1,4 @@
-const { GLib } = imports.gi;
+import GLib from "gi://GLib";
 const Mpris = await Service.import("mpris");
 const { exec, execAsync } = Utils;
 const { Box, EventBox, Label, Button, Revealer, Overlay } = Widget;
@@ -8,8 +8,8 @@ import { AnimatedCircProg } from "../.commonwidgets/cairo_circularprogress.js";
 import { showMusicControls } from "../../variables.js";
 import { darkMode, hasPlasmaIntegration } from "../.miscutils/system.js";
 import { clamp } from "../.miscutils/mathfuncs.js";
+import { COMPILED_STYLE_DIR } from "../../constants.js";
 
-const COMPILED_STYLE_DIR = `${GLib.get_user_cache_dir()}/ags/user/generated`;
 const COVER_COLORSCHEME_SUFFIX = "_colorscheme.css";
 let lastCoverPath = "";
 
@@ -92,12 +92,10 @@ const CoverArt = ({ player, ...rest }) => {
         // Fallback
         className: "osd-music-cover-fallback",
         homogeneous: true,
-        children: [
-            Label({
-                className: "icon-material txt-gigantic txt-thin",
-                label: "music_note",
-            }),
-        ],
+        child: Label({
+            className: "icon-material txt-gigantic txt-thin",
+            label: "music_note",
+        }),
     });
     // const coverArtDrawingArea = Widget.DrawingArea({ className: 'osd-music-cover-art' });
     // const coverArtDrawingAreaStyleContext = coverArtDrawingArea.get_style_context();
@@ -207,12 +205,10 @@ const CoverArt = ({ player, ...rest }) => {
     return Box({
         ...rest,
         className: "osd-music-cover",
-        children: [
-            Overlay({
-                child: fallbackCoverArt,
-                overlays: [realCoverArt],
-            }),
-        ],
+        child: Overlay({
+            child: fallbackCoverArt,
+            overlays: [realCoverArt],
+        }),
     });
 };
 
@@ -253,12 +249,12 @@ const TrackControls = ({ player, ...rest }) => {
                 Control({
                     icon: "fast_rewind",
                     onClicked: () => fastForward(-FAST_FORWARD_AMOUNT),
-                    revealChild: false,
+                    revealChild: !(player.canGoPrev && player.canGoNext),
                 }),
                 Control({
                     icon: "fast_forward",
                     onClicked: () => fastForward(FAST_FORWARD_AMOUNT),
-                    revealChild: false,
+                    revealChild: !(player.canGoPrev && player.canGoNext),
                 }),
                 Control({
                     icon: "skip_next",

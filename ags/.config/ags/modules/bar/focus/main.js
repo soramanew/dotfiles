@@ -1,7 +1,6 @@
 const Battery = await Service.import("battery");
 import Workspaces from "./workspaces_hyprland.js";
-
-const BATTERY_LOW = 20;
+import { BATTERY_LOW } from "../../../constants.js";
 
 export default () => {
     const contents = Widget.CenterBox({

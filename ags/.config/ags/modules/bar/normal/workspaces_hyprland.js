@@ -6,13 +6,14 @@ import Cairo from "cairo";
 const { Box, DrawingArea, EventBox } = Widget;
 const { execAsync } = Utils;
 const Hyprland = await Service.import("hyprland");
+import { WS_PER_GROUP as WS_SHOWN } from "../../../constants.js";
 
 const dummyWs = Box({ className: "bar-ws" }); // Not shown. Only for getting size props
 const dummyActiveWs = Box({ className: "bar-ws bar-ws-active" }); // Not shown. Only for getting size props
 const dummyOccupiedWs = Box({ className: "bar-ws bar-ws-occupied" }); // Not shown. Only for getting size props
 
 // Font size = workspace id
-const WorkspaceContents = count =>
+const WorkspaceContents = () =>
     DrawingArea({
         className: "bar-ws-content",
         // css: `transition: 300ms cubic-bezier(0.1, 1, 0, 1);`,
@@ -21,12 +22,12 @@ const WorkspaceContents = count =>
             workspaceMask: 0,
             workspaceGroup: 0,
             updateMask: self => {
-                const offset = Math.floor((Hyprland.active.workspace.id - 1) / count) * count;
+                const offset = Math.floor((Hyprland.active.workspace.id - 1) / WS_SHOWN) * WS_SHOWN;
                 const workspaces = Hyprland.workspaces;
                 let workspaceMask = 0;
                 for (let i = 0; i < workspaces.length; i++) {
                     const ws = workspaces[i];
-                    if (ws.id <= offset || ws.id > offset + count) continue; // Out of range, ignore
+                    if (ws.id <= offset || ws.id > offset + WS_SHOWN) continue; // Out of range, ignore
                     if (workspaces[i].windows > 0) workspaceMask |= 1 << (ws.id - offset);
                 }
                 // console.log('Mask:', workspaceMask.toString(2));
@@ -43,11 +44,11 @@ const WorkspaceContents = count =>
         setup: area =>
             area
                 .hook(Hyprland.active.workspace, self => {
-                    const ws = ((Hyprland.active.workspace.id - 1) % count) + 1;
+                    const ws = ((Hyprland.active.workspace.id - 1) % WS_SHOWN) + 1;
                     area.css = `font-size: ${ws}px; min-width: ${ws * 100}px; min-height: ${ws * 100}px;`;
 
                     const previousGroup = self.attribute.workspaceGroup;
-                    const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / count);
+                    const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / WS_SHOWN);
                     if (currentGroup !== previousGroup) {
                         self.attribute.updateMask(self);
                         self.attribute.workspaceGroup = currentGroup;
@@ -55,7 +56,7 @@ const WorkspaceContents = count =>
                 })
                 .hook(Hyprland, self => self.attribute.updateMask(self), "notify::workspaces")
                 .on("draw", (area, cr) => {
-                    const offset = Math.floor((Hyprland.active.workspace.id - 1) / count) * count;
+                    const offset = Math.floor((Hyprland.active.workspace.id - 1) / WS_SHOWN) * WS_SHOWN;
 
                     const height = area.get_allocated_height();
 
@@ -83,7 +84,7 @@ const WorkspaceContents = count =>
                         Gtk.StateFlags.NORMAL
                     );
                     const activefg = activeWorkspaceStyleContext.get_property("color", Gtk.StateFlags.NORMAL);
-                    area.set_size_request(workspaceDiameter * count, -1);
+                    area.set_size_request(workspaceDiameter * WS_SHOWN, -1);
                     const widgetStyleContext = area.get_style_context();
                     const activeWs = widgetStyleContext.get_property("font-size", Gtk.StateFlags.NORMAL);
 
@@ -98,12 +99,12 @@ const WorkspaceContents = count =>
                     layout.set_font_description(fontDesc);
                     cr.setAntialias(Cairo.Antialias.BEST);
                     // Get kinda min radius for number indicators
-                    layout.set_text("0".repeat(count.toString().length), -1);
+                    layout.set_text("0".repeat(WS_SHOWN.toString().length), -1);
                     const [layoutWidth, layoutHeight] = layout.get_pixel_size();
                     const indicatorRadius = (Math.max(layoutWidth, layoutHeight) / 2) * 1.2; // a bit smaller than sqrt(2)*radius
 
                     // Draw workspace numbers
-                    for (let i = 1; i <= count; i++) {
+                    for (let i = 1; i <= WS_SHOWN; i++) {
                         if (area.attribute.workspaceMask & (1 << i)) {
                             // Draw bg highlight
                             cr.setSourceRGBA(occupiedbg.red, occupiedbg.green, occupiedbg.blue, occupiedbg.alpha);
@@ -181,7 +182,7 @@ const WorkspaceContents = count =>
                 }),
     });
 
-export default (wsCount = 10) =>
+export default () =>
     EventBox({
         onScrollUp: () => Hyprland.messageAsync(`dispatch workspace -1`).catch(print),
         onScrollDown: () => Hyprland.messageAsync(`dispatch workspace +1`).catch(print),
@@ -194,7 +195,7 @@ export default (wsCount = 10) =>
             child: Box({
                 className: "bar-group bar-group-standalone bar-group-pad",
                 css: "min-width: 2px;",
-                child: WorkspaceContents(wsCount),
+                child: WorkspaceContents(),
             }),
         }),
         setup: self => {
@@ -203,7 +204,7 @@ export default (wsCount = 10) =>
                 if (!self.attribute.clicked) return;
                 const cursorX = event.get_coords()[1];
                 const widgetWidth = self.get_allocated_width();
-                const wsId = Math.ceil((cursorX * wsCount) / widgetWidth);
+                const wsId = Math.ceil((cursorX * WS_SHOWN) / widgetWidth);
                 execAsync([`${App.configDir}/scripts/hyprland/workspace_action.sh`, "workspace", String(wsId)]).catch(
                     print
                 );
@@ -213,7 +214,7 @@ export default (wsCount = 10) =>
                     self.attribute.clicked = true;
                     const cursorX = event.get_coords()[1];
                     const widgetWidth = self.get_allocated_width();
-                    const wsId = Math.ceil((cursorX * wsCount) / widgetWidth);
+                    const wsId = Math.ceil((cursorX * WS_SHOWN) / widgetWidth);
                     execAsync([
                         `${App.configDir}/scripts/hyprland/workspace_action.sh`,
                         "workspace",

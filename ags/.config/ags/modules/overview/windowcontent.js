@@ -27,9 +27,9 @@ import fuzzysort from "./fuzzysort.js";
 import mathexprs from "./mathexprs.js";
 import { SCREEN_HEIGHT } from "../../variables.js";
 import { RoundedScrollable } from "../.commonwidgets/cairo_roundedscrollable.js";
+import { SEARCH_MAX_RESULTS as MAX_RESULTS } from "../../constants.js";
 
 const MAX_HEIGHT = SCREEN_HEIGHT * 0.7;
-const MAX_RESULTS = 20;
 
 const parseExpr = expr => {
     try {

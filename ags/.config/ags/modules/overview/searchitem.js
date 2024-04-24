@@ -1,6 +1,5 @@
-import { setupCursorHover } from "../.widgetutils/cursorhover.js";
-
 const { Box, Revealer, Label, Button, Icon } = Widget;
+import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 
 const ActionText = text =>
     Revealer({
