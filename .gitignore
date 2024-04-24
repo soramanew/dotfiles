@@ -1,2 +1,8 @@
 /theming
 /pycharm
+
+# Generated stuff
+generated.*
+/gtk/.config/gtk-[34].0/gtk.css
+/gtk/.config/gtk-[34].0/gtk.css.bak
+/hypr/.config/hypr/hyprlock.conf
