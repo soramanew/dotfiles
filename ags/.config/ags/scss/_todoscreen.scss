@@ -1,0 +1,26 @@
+.todoscreen-bg {
+    @include large-rounding;
+    @include elevation-border;
+    @include elevation2;
+    margin-bottom: 0.682rem;
+    background-color: $layer0;
+    padding: 1.364rem;
+    min-width: 100rem;
+    min-height: 50rem;
+}
+
+.todoscreen-closebtn {
+    @include element_decel;
+    @include full-rounding;
+    min-width: 2.386rem;
+    min-height: 2.386rem;
+}
+
+.todoscreen-closebtn:hover,
+.todoscreen-closebtn:focus {
+    background-color: $layer0Hover;
+}
+
+.todoscreen-closebtn:active {
+    background-color: $layer0Active;
+}
