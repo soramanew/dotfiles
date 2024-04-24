@@ -1,0 +1,10 @@
+[Unit]
+Description=arRPC server for Vesktop
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=node /home/jarrettc/Desktop/Programs/arrpc/src
+
+[Install]
+WantedBy=default.target
