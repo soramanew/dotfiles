@@ -31,7 +31,6 @@
 .osd-label {
     font-size: 1.023rem;
     font-weight: 500;
-    margin-top: 0.341rem;
 }
 
 .osd-value-txt {
@@ -73,7 +72,18 @@
     @include elevation2;
     border-radius: 1.023rem;
     background-color: $layer0;
-    padding: 1.023rem;
+    padding: 0.626rem;
+    padding-right: 0.824rem;
+}
+
+.osd-locklabel {
+    @include titlefont;
+    font-weight: 500;
+    color: $onLayer0;
+}
+
+.osd-lockoff {
+    color: grayscale(darken($onLayer0, 30%));
 }
 
 .osd-colorscheme {
