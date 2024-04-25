@@ -3,6 +3,7 @@ const Audio = await Service.import("audio");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { RoundedScrollable } from "../../.commonwidgets/cairo_roundedscrollable.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
+import { isUsingHeadphones } from "../../.miscutils/system.js";
 // import { AnimatedSlider } from "../../.commonwidgets/cairo_slider.js";
 
 const AppVolume = stream =>
@@ -84,16 +85,14 @@ export default (props = {}) => {
             Label({
                 className: "txt-small margin-top-5 margin-bottom-8",
                 attribute: { headphones: undefined },
-                setup: self => {
-                    const updateAudioDevice = self => {
-                        const usingHeadphones = Audio.speaker?.stream?.port?.toLowerCase().includes("headphone");
-                        if (self.attribute.headphones === undefined || self.attribute.headphones !== usingHeadphones) {
+                setup: self =>
+                    self.hook(Audio, self => {
+                        const usingHeadphones = isUsingHeadphones();
+                        if (self.attribute.headphones !== usingHeadphones) {
                             self.attribute.headphones = usingHeadphones;
                             self.label = `Output: ${usingHeadphones ? "Headphones" : "Speakers"}`;
                         }
-                    };
-                    self.hook(Audio, updateAudioDevice);
-                },
+                    }),
             }),
         ],
     });

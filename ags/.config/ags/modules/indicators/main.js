@@ -4,6 +4,7 @@ import MusicControls from "./musiccontrols.js";
 import ColorScheme from "./colorscheme.js";
 import NotificationPopups from "./notificationpopups.js";
 import LockIndicators from "./lockindicators.js";
+import Clock from "./clock.js";
 
 export default (monitor = 0) =>
     Window({
@@ -17,7 +18,14 @@ export default (monitor = 0) =>
         child: Box({
             vertical: true,
             className: "osd-window",
-            css: "min-height: 2px;",
-            children: [MusicControls(), ColorScheme(), IndicatorValues(), LockIndicators(), NotificationPopups()],
+            // css: "min-height: 2px;",
+            children: [
+                MusicControls(),
+                Clock(),
+                ColorScheme(),
+                IndicatorValues(),
+                LockIndicators(),
+                NotificationPopups(),
+            ],
         }),
     });
