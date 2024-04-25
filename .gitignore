@@ -6,3 +6,5 @@ generated.*
 /gtk/.config/gtk-[34].0/gtk.css
 /gtk/.config/gtk-[34].0/gtk.css.bak
 /hypr/.config/hypr/hyprlock.conf
+/ags/.config/ags/scss/_musicmaterial.scss
+/ags/.config/ags/scss/_musicwal.scss
