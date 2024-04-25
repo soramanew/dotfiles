@@ -1,6 +1,6 @@
 // This is for the right pills of the bar.
 import GLib from "gi://GLib";
-const { Box, Label, Button, Icon, Overlay, Revealer } = Widget;
+const { Box, Label, Button, Icon, Overlay, Revealer, EventBox } = Widget;
 const { execAsync, exec } = Utils;
 const Battery = await Service.import("battery");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
@@ -8,6 +8,7 @@ import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js
 import { WWO_CODE, WEATHER_SYMBOL } from "../../.commondata/weather.js";
 import { BarGroup } from "./main.js";
 import { BATTERY_LOW, CACHE_DIR } from "../../../constants.js";
+import { showClock } from "../../../variables.js";
 
 const WEATHER_CACHE_FOLDER = `${CACHE_DIR}/weather`;
 exec(`mkdir -p "${WEATHER_CACHE_FOLDER}"`);
@@ -31,25 +32,28 @@ const BatBatteryProgress = () =>
 
 const BarClock = () => {
     const getTime = format => GLib.DateTime.new_now_local().format(format);
-    return Box({
-        vpack: "center",
-        className: "spacing-h-4 bar-clock-box",
-        children: [
-            Label({
-                className: "bar-time",
-                label: getTime("%H:%M"),
-                setup: self => self.poll(5000, self => (self.label = getTime("%H:%M"))),
-            }),
-            Label({
-                className: "txt-norm txt-onLayer1",
-                label: "•",
-            }),
-            Label({
-                className: "txt-smallie bar-date",
-                label: getTime("%A, %d/%m"),
-                setup: self => self.poll(60000, self => (self.label = getTime("%A, %d/%m"))),
-            }),
-        ],
+    return EventBox({
+        onPrimaryClick: () => (showClock.value = !showClock.value),
+        child: Box({
+            vpack: "center",
+            className: "spacing-h-4 bar-clock-box",
+            children: [
+                Label({
+                    className: "bar-time",
+                    label: getTime("%H:%M"),
+                    setup: self => self.poll(5000, self => (self.label = getTime("%H:%M"))),
+                }),
+                Label({
+                    className: "txt-norm txt-onLayer1",
+                    label: "•",
+                }),
+                Label({
+                    className: "txt-smallie bar-date",
+                    label: getTime("%A, %d/%m"),
+                    setup: self => self.poll(60000, self => (self.label = getTime("%A, %d/%m"))),
+                }),
+            ],
+        }),
     });
 };
 

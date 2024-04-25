@@ -4,10 +4,12 @@ import { forMonitors } from "./modules/.miscutils/system.js";
 import { pinButton } from "./modules/sideleft/sideleft.js";
 
 // Global vars for external control (through keybinds)
-export const showMusicControls = Variable(false, {});
-export const showColorScheme = Variable(false, {});
+export const showMusicControls = Variable(false);
+export const showColorScheme = Variable(false);
+export const showClock = Variable(false);
 globalThis.openMusicControls = showMusicControls;
 globalThis.openColorScheme = showColorScheme;
+globalThis.openClock = showClock;
 globalThis.mpris = Mpris;
 
 // Screen size

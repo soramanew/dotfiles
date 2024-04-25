@@ -7,6 +7,7 @@ const Hyprland = await Service.import("hyprland");
 import { MaterialIcon } from "./materialicon.js";
 import { languages } from "./statusicons_languages.js";
 import { isCapsLockOn, isNumLockOn } from "../../variables.js";
+import { isUsingHeadphones } from "../.miscutils/system.js";
 
 // A guessing func to try to support langs not listed in data/languages.js
 function isLanguageMatch(abbreviation, word) {
@@ -38,14 +39,7 @@ const VolumeMuteIndicator = () =>
             transition: "slide_up_down",
             transitionDuration: 120,
             children: { speakers: MaterialIcon("volume_off", "norm"), headphones: MaterialIcon("headset_off", "norm") },
-            setup: self =>
-                self.hook(
-                    Audio,
-                    self =>
-                        (self.shown = Audio.speaker?.stream?.port?.toLowerCase().includes("headphone")
-                            ? "headphones"
-                            : "speakers")
-                ),
+            setup: self => self.hook(Audio, self => (self.shown = isUsingHeadphones() ? "headphones" : "speakers")),
         }),
     });
 

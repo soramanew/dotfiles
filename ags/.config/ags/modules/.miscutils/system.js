@@ -1,7 +1,7 @@
 import Gdk from "gi://Gdk";
-import GLib from "gi://GLib";
-import { CACHE_DIR } from "../../constants.js";
 const { exec, readFile } = Utils;
+const Audio = await Service.import("audio");
+import { CACHE_DIR } from "../../constants.js";
 
 export const distroID = exec(`bash -c 'cat /etc/os-release | grep "^ID=" | cut -d "=" -f 2 | sed "s/\\"//g"'`).trim();
 export const isDebianDistro =
@@ -65,3 +65,5 @@ export const forMonitors = fn =>
     range(Gdk.Display.get_default()?.get_n_monitors() || 1, 0)
         .map(fn)
         .flat(1);
+
+export const isUsingHeadphones = () => /head(phone|set)/i.test(Audio.speaker?.stream?.port);

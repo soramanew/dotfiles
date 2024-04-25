@@ -5,6 +5,7 @@ import { MarginRevealer } from "../.widgethacks/advancedrevealers.js";
 import Brightness from "../../services/brightness.js";
 import Indicator from "../../services/indicator.js";
 import { AnimatedSlider } from "../.commonwidgets/cairo_slider.js";
+import { isUsingHeadphones } from "../.miscutils/system.js";
 
 const OsdValue = ({
     name,
@@ -70,19 +71,16 @@ export default () => {
         extraClassName: "osd-volume",
         extraProgressClassName: "osd-volume-progress",
         attribute: { headphones: undefined },
-        nameSetup: self => {
-            const updateAudioDevice = () => {
-                const usingHeadphones = Audio.speaker?.stream?.port?.toLowerCase().includes("headphone");
+        nameSetup: self =>
+            self.hook(Audio, self => {
+                const usingHeadphones = isUsingHeadphones();
                 if (volumeIndicator.attribute.headphones !== usingHeadphones) {
                     volumeIndicator.attribute.headphones = usingHeadphones;
                     self.label = usingHeadphones ? "Headphones" : "Speakers";
                     Indicator.popup(1);
                 }
                 self.toggleClassName("osd-volume-disabled", Audio.speaker?.stream?.isMuted);
-            };
-            self.hook(Audio, updateAudioDevice);
-            Utils.timeout(1000, updateAudioDevice);
-        },
+            }),
         labelSetup: self =>
             self.hook(Audio, self => {
                 self.label = String(Math.round(Audio.speaker?.volume * 100));
