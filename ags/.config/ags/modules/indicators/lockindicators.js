@@ -1,33 +1,39 @@
-const { Box, Label, Revealer } = Widget;
-import { MaterialIcon } from "../.commonwidgets/materialicon.js";
+const { Box, Label, Revealer, EventBox } = Widget;
 import { showLockIndicators, isCapsLockOn, isNumLockOn } from "../../variables.js";
 
-const LockIndicatorContent = (name, lockOnVar, onIcon, offIcon) =>
+const LockIndicatorContent = (name, lockState, onIcon, offIcon) =>
     Box({
-        className: "osd-lockindicator osd-label spacing-v-5",
-        vertical: true,
+        className: "osd-lockindicator",
         hpack: "center",
         children: [
             Label({
-                xalign: 0,
+                className: "icon-material txt-hugerass",
+                label: lockState.bind().as(on => (on ? onIcon : offIcon)),
+            }),
+            Label({
+                className: "margin-left-5 txt-norm osd-locklabel",
                 label: `${name} Lock`,
             }),
-            MaterialIcon(offIcon, "hugerass", {
-                label: lockOnVar.bind().as(on => (on ? onIcon : offIcon)),
-            }),
         ],
+        setup: self =>
+            self.hook(lockState, self =>
+                self.get_children().forEach(ch => ch.toggleClassName("osd-lockoff", !lockState.value))
+            ),
     });
 
 export default () =>
-    Revealer({
-        transition: "slide_down",
-        transitionDuration: 120,
-        revealChild: showLockIndicators.bind(),
-        child: Box({
-            hpack: "center",
-            children: [
-                LockIndicatorContent("Caps", isCapsLockOn, "keyboard_capslock_badge", "keyboard_capslock"),
-                LockIndicatorContent("Num", isNumLockOn, "filter_1", "looks_one"),
-            ],
+    EventBox({
+        onHover: () => (showLockIndicators.value = false),
+        child: Revealer({
+            transition: "slide_down",
+            transitionDuration: 200,
+            revealChild: showLockIndicators.bind(),
+            child: Box({
+                hpack: "center",
+                children: [
+                    LockIndicatorContent("Caps", isCapsLockOn, "keyboard_capslock_badge", "keyboard_capslock"),
+                    LockIndicatorContent("Num", isNumLockOn, "filter_1", "looks_one"),
+                ],
+            }),
         }),
     });

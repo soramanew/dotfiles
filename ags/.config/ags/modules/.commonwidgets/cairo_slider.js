@@ -12,9 +12,13 @@ export const AnimatedSlider = ({
     extraSetup = () => {},
     ...rest
 }) => {
+    const updateProgress = (value, animTime = -1) =>
+        (drawingArea.css =
+            `font-size: ${clamp(value, 0, 100)}px;` + (animTime > -1 ? `transition: ${animTime}ms linear` : ""));
     const drawingArea = DrawingArea({
         ...rest,
         css: `font-size: ${initFrom}px;`,
+        attribute: { updateProgress },
         setup: self => {
             const HALF_PI = Math.PI / 2;
             self.connect("draw", (self, cr) => {
@@ -51,12 +55,10 @@ export const AnimatedSlider = ({
                 cr.fill();
             });
 
+            extraSetup(self);
             if (initFrom != initTo) Utils.timeout(10, () => updateProgress(initTo, initAnimTime), self);
         },
     });
-    const updateProgress = (value, animTime = -1) =>
-        (drawingArea.css =
-            `font-size: ${clamp(value, 0, 100)}px;` + (animTime > -1 ? `transition: ${animTime}ms linear` : ""));
     return EventBox({
         aboveChild: true,
         visibleWindow: false,
@@ -78,7 +80,6 @@ export const AnimatedSlider = ({
                 updateProgress((cursorX / widgetWidth) * 100);
             });
             setupCursorHover(self);
-            extraSetup(self);
         },
     });
 };
