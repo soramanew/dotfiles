@@ -2,9 +2,35 @@
 
 ### ===================== ###
 
-# See https://github.com/hyprwm/hyprpaper for accepted image types
+# See https://github.com/LGFae/swww for accepted image types
 
 ### ===================== ###
+
+function choose-transition
+    ## ------------------------------ ##
+
+    # Chooses a random transition for the wallpaper change
+
+    ## ------------------------------ ##
+
+    set -l transitions 'fade' 'wipewave' 'any'
+    set -l chosen_transition "$(random choice $transitions)"
+    if [ $chosen_transition = 'wipewave' ]
+        if [ $(random 0 1) -eq 0 ]
+            echo 'wipe'
+            echo '--transition-angle'
+            echo "$(random 0 360)"
+        else
+            echo 'wave'
+            echo '--transition-angle'
+            echo "$(random 0 360)"
+            echo '--transition-wave'
+            echo "$(random 20 70),$(random 20 70)"
+        end
+    else
+        echo $chosen_transition
+    end
+end
 
 set cache_dir ~/.cache/ags/user/wallpaper-change
 
@@ -20,8 +46,7 @@ else
 
     # Get all files in $wallpapers_dir and exclude the last wallpaper (if it exists)
     if [ -f "$last_wallpaper_path" -a -n "$(cat $last_wallpaper_path)" ]
-        set last_wallpaper $(cat $last_wallpaper_path)
-        set wallpapers $(find $wallpapers_dir -type f | grep -v $last_wallpaper)
+        set wallpapers $(find $wallpapers_dir -type f | grep -v $(cat $last_wallpaper_path))
     else
         set wallpapers $(find $wallpapers_dir -type f)
     end
@@ -42,9 +67,7 @@ mkdir -p $cache_dir && echo $chosen_wallpaper > $last_wallpaper_path
 # Apply colours from wallpaper to ags & stuff
 ~/.config/ags/scripts/color_generation/colorgen.sh $chosen_wallpaper --apply --smart || echo "Failed to switch colour scheme"
 
-# Change the wallpaper and output change if success
-hyprctl hyprpaper preload $chosen_wallpaper
-for monitor in $(hyprctl -j monitors | jq --raw-output0 '.[] | .name' | string split0)
-    hyprctl hyprpaper wallpaper "$monitor,$chosen_wallpaper" && echo "Changed wallpaper on $monitor to $chosen_wallpaper"
-end
-set -q last_wallpaper && hyprctl hyprpaper unload $last_wallpaper
+sleep 1
+
+# Change the wallpaper with a random transition and output change if success
+swww img $chosen_wallpaper -t $(choose-transition) && echo "Changed wallpaper to $chosen_wallpaper"

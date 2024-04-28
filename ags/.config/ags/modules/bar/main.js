@@ -41,17 +41,25 @@ const BarCorner = (monitor, where) =>
         anchor: where.split(" "),
         exclusivity: "ignore",
         visible: true,
-        child: Box({ child: RoundedCorner(where.replaceAll(/\s/g, ""), { className: "corner" }) }),
+        child: Box({
+            child: RoundedCorner(where.replaceAll(/\s/g, ""), { className: "corner" }),
+            setup: self => {
+                Utils.timeout(
+                    MODE_TRANSITION_LENGTH,
+                    () => (self.css = `margin-top: ${App.getWindow(`bar${monitor}`).get_size()[1]}px;`)
+                );
+                self.hook(currentShellMode, self => {
+                    const ANIM_POINTS = 10;
+                    const TRANSITION_PER_POINT = MODE_TRANSITION_LENGTH / ANIM_POINTS;
+                    for (let i = 1; i <= ANIM_POINTS; i++)
+                        Utils.timeout(
+                            TRANSITION_PER_POINT * i,
+                            () => (self.css = `margin-top: ${App.getWindow(`bar${monitor}`).get_size()[1]}px;`)
+                        );
+                });
+            },
+        }),
         setup: enableClickthrough,
-    }).hook(currentShellMode, self => {
-        const ANIM_POINTS = 10;
-        const TRANSITION_PER_POINT = MODE_TRANSITION_LENGTH / ANIM_POINTS;
-        for (let i = 1; i <= ANIM_POINTS; i++)
-            Utils.timeout(
-                TRANSITION_PER_POINT * i,
-                () => (self.child.css = `margin-top: ${App.getWindow(`bar${monitor}`).get_size()[1]}px;`),
-                self.child
-            );
     });
 
 export const BarCornerTopleft = (monitor = 0) => BarCorner(monitor, "top left");

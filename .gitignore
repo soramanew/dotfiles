@@ -8,3 +8,6 @@ generated.*
 /hypr/.config/hypr/hyprlock.conf
 /ags/.config/ags/scss/_musicmaterial.scss
 /ags/.config/ags/scss/_musicwal.scss
+
+# Unnecessary configs
+/featherpad/.config/featherpad/fp_last_cursor_pos.conf
