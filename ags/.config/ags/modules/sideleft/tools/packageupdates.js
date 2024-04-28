@@ -66,6 +66,8 @@ const Update = (pkg, update) =>
         ],
     });
 
+const TRANSITION_LENGTH = 180;
+
 export default () =>
     SidebarModule({
         icon: MaterialIcon("update", "norm"),
@@ -73,7 +75,7 @@ export default () =>
         revealChild: false,
         child: Revealer({
             transition: "slide_down",
-            transitionDuration: 180,
+            transitionDuration: TRANSITION_LENGTH,
             child: Box({ vertical: true, className: "spacing-v-5" }),
         }),
         attribute: {
@@ -83,15 +85,16 @@ export default () =>
                 const revealer = self.children[1].child.children[0];
                 revealer.revealChild = false;
                 const content = revealer.child;
-                Utils.timeout(180, () => content.get_children().forEach(ch => ch.destroy()), content);
+                Utils.timeout(TRANSITION_LENGTH, () => content.get_children().forEach(ch => ch.destroy()));
                 getUpdates()
                     .then(updates => {
-                        const updatesArr = updates.split("\n").filter(u => u !== repoSeparator && !u.startsWith("->"));
+                        const ERROR_REGEX = /^\s*->/;
+                        const updatesArr = updates.split("\n").filter(u => u !== repoSeparator && !ERROR_REGEX.test(u));
                         const numUpdates = updatesArr.length;
                         const numErrors = updates
                             .split("\n")
-                            .filter(u => u !== repoSeparator && u.startsWith("->")).length;
-                        if (numUpdates === numErrors) {
+                            .filter(u => u !== repoSeparator && ERROR_REGEX.test(u)).length;
+                        if (numErrors > 0 && numUpdates === numErrors) {
                             label.label = "Package updates - Failed to update!!";
                             return;
                         }
@@ -123,7 +126,7 @@ export default () =>
                         for (const update of updatesArr) {
                             if (update === repoSeparator) continue;
                             const pkg = update.split(" ")[0];
-                            if (update.startsWith("->")) errors.push(Update(pkg, update));
+                            if (ERROR_REGEX.test(update)) errors.push(Update(pkg, update));
                             else
                                 for (const repo of repos)
                                     if (repo.repo.includes(pkg)) repo.updates.push(Update(pkg, update));
