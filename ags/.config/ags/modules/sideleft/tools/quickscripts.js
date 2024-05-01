@@ -48,7 +48,9 @@ const scripts = [
     },
     {
         icon: "wallpaper-symbolic",
-        name: Wallpaper.bind("next-exec").as(time => "Change wallpaper" + (time ? ` - Next change at ${time}` : "")),
+        name: Wallpaper.bind("time-until-exec").as(
+            time => "Change wallpaper" + (time ? `\n - next change in ${time}` : "")
+        ),
         command: () => Wallpaper.oneshot(),
         enabled: true,
     },

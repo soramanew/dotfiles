@@ -72,6 +72,7 @@
     @include elevation2;
     border-radius: 1.023rem;
     background-color: $layer0;
+    color: $onLayer0;
     padding: 0.626rem;
     padding-right: 0.824rem;
 }
@@ -79,7 +80,6 @@
 .osd-locklabel {
     @include titlefont;
     font-weight: 500;
-    color: $onLayer0;
 }
 
 .osd-lockoff {

@@ -10,15 +10,27 @@ import { clamp } from "../.miscutils/mathfuncs.js";
 // color for progress colour
 // -- Usage --
 // font size for progress value (0-100px) (hacky i know, but i want animations)
-export const AnimatedCircProg = ({ initFrom = 0, initTo = 0, initAnimTime = 2900, extraSetup = () => {}, ...rest }) =>
+export const AnimatedCircProg = ({
+    initFrom = 0,
+    initTo = 0,
+    initAnimTime = 2900,
+    initDelay = 10,
+    extraSetup = () => {},
+    ...rest
+}) =>
     Widget.DrawingArea({
         ...rest,
         css: `font-size: ${initFrom}px;`,
         attribute: {
+            initDelay,
             updateProgress: (self, value, animTime = -1) =>
                 (self.css =
                     `font-size: ${clamp(value, 0, 100)}px;` +
                     (animTime > -1 ? `transition: ${animTime}ms linear` : "")),
+            stop: self =>
+                (self.css = `font-size: ${self
+                    .get_style_context()
+                    .get_property("font-size", Gtk.StateFlags.NORMAL)}px;`),
         },
         setup: self => {
             self.connect("draw", (area, cr) => {
@@ -77,7 +89,11 @@ export const AnimatedCircProg = ({ initFrom = 0, initTo = 0, initAnimTime = 2900
 
             // Init animation
             if (initFrom != initTo)
-                Utils.timeout(10, () => self.attribute.updateProgress(self, initTo, initAnimTime), self);
+                Utils.timeout(
+                    initDelay,
+                    () => self.attribute.updateProgress(self, initTo, initAnimTime - initDelay),
+                    self
+                );
             extraSetup(self);
         },
     });

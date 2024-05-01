@@ -15,6 +15,7 @@ cpupower
 dart-sass
 dmidecode
 evtest
+expac
 featherpad
 feishin-bin
 ffmpegthumbnailer
@@ -38,6 +39,7 @@ gtksourceview3
 gtksourceviewmm
 gvfs
 gvfs-smb
+howdy
 hyprcursor-git
 hypridle-git
 hyprland-git

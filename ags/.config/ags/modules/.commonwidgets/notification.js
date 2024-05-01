@@ -58,7 +58,7 @@ const NotificationIcon = notifObject => {
     });
 };
 
-export default ({ notifObject, isPopup = false, props = {} } = {}) => {
+export default ({ notifObject, isPopup = false, ...rest }) => {
     if (!notifObject) return;
     const popupTimeout = notifObject.timeout || (notifObject.urgency == "critical" ? 8000 : 3000);
     let destroying = false;
@@ -79,6 +79,9 @@ export default ({ notifObject, isPopup = false, props = {} } = {}) => {
         notificationBox.setCss(middleClickClose);
         Utils.timeout(120, destroyNoSlide);
     };
+    let stoppedTime = 1; // Range 0-1
+    let heldStart;
+    let timeHeld = 0;
     const widget = EventBox({
         onHover: self => {
             self.window.set_cursor(Gdk.Cursor.new_from_name(display, "grab"));
@@ -87,31 +90,44 @@ export default ({ notifObject, isPopup = false, props = {} } = {}) => {
         onHoverLost: self => {
             self.window.set_cursor(null);
             if (wholeThing.attribute.hovered) wholeThing.attribute.hovered = false;
-            if (isPopup) destroyNoSlide();
+            // if (isPopup) destroyNoSlide();
         },
         onMiddleClick: destroyWithAnims,
         setup: self => {
-            self.on("button-press-event", () => {
+            self.on("button-press-event", (_, event) => {
+                if (event.get_button()[1] !== 1) return; // Only want primary click
+                if (event.get_event_type() === 5) {
+                    Utils.execAsync(["wl-copy", notifObject.body]).catch(print);
+                    notifTextSummary.label = notifObject.summary + " (copied)";
+                    Utils.timeout(3000, () => {
+                        if (!destroying) notifTextSummary.label = notifObject.summary;
+                    });
+                    return;
+                }
                 wholeThing.attribute.held = true;
                 notificationContent.toggleClassName(
                     `${isPopup ? "popup-" : ""}notif-clicked-${notifObject.urgency}`,
                     true
                 );
-                Utils.timeout(800, () => {
-                    if (!destroying && wholeThing.attribute.held) {
-                        Utils.execAsync(["wl-copy", notifObject.body]).catch(print);
-                        notifTextSummary.label = notifObject.summary + " (copied)";
-                        Utils.timeout(3000, () => {
-                            if (!destroying) notifTextSummary.label = notifObject.summary;
-                        });
-                    }
-                });
+                if (isPopup) {
+                    timeout?.destroy();
+                    timeout = null;
+                    heldStart = Date.now();
+                    stoppedTime = 1 - (heldStart - initialTime - timeHeld) / popupTimeout;
+                    prog.attribute.stop(prog);
+                }
             }).on("button-release-event", () => {
                 wholeThing.attribute.held = false;
                 notificationContent.toggleClassName(
                     `${isPopup ? "popup-" : ""}notif-clicked-${notifObject.urgency}`,
                     false
                 );
+                if (isPopup) {
+                    timeout?.destroy();
+                    timeout = setTimeout(destroyNoSlide, popupTimeout * stoppedTime);
+                    prog.attribute.updateProgress(prog, 0, (popupTimeout - prog.attribute.initDelay) * stoppedTime);
+                    if (heldStart) timeHeld += Date.now() - heldStart;
+                }
             });
         },
     });
@@ -196,22 +212,23 @@ export default ({ notifObject, isPopup = false, props = {} } = {}) => {
             ],
         }),
     });
+    const prog = isPopup
+        ? AnimatedCircProg({
+              className: `notif-circprog-${notifObject.urgency}`,
+              vpack: "center",
+              hpack: "center",
+              initFrom: 100,
+              initTo: 0,
+              initAnimTime: popupTimeout,
+          })
+        : null;
     const notifIcon = Box({
         vpack: "start",
         children: [
             isPopup
                 ? Overlay({
                       child: NotificationIcon(notifObject),
-                      overlays: [
-                          AnimatedCircProg({
-                              className: `notif-circprog-${notifObject.urgency}`,
-                              vpack: "center",
-                              hpack: "center",
-                              initFrom: 100,
-                              initTo: 0,
-                              initAnimTime: popupTimeout,
-                          }),
-                      ],
+                      overlays: [prog],
                   })
                 : NotificationIcon(notifObject),
         ],
@@ -291,7 +308,7 @@ export default ({ notifObject, isPopup = false, props = {} } = {}) => {
         setup: setupCursorHover,
     });
     const notificationContent = Box({
-        ...props,
+        ...rest,
         className: `${isPopup ? "popup-" : ""}notif-${notifObject.urgency} spacing-h-10`,
         children: [
             notifIcon,
@@ -420,6 +437,7 @@ export default ({ notifObject, isPopup = false, props = {} } = {}) => {
     });
     widget.add(notificationBox);
     wholeThing.child.add(widget);
-    if (isPopup) Utils.timeout(popupTimeout, destroyNoSlide);
+    const initialTime = Date.now();
+    let timeout = isPopup ? setTimeout(destroyNoSlide, popupTimeout) : null;
     return wholeThing;
 };
