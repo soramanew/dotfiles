@@ -80,9 +80,9 @@ const evalMath = text => {
 const EventConsumer = child =>
     EventBox({
         child,
-        onPrimaryClick: closeEverything,
-        onSecondaryClick: closeEverything,
-        onMiddleClick: closeEverything,
+        onPrimaryClick: () => {},
+        onSecondaryClick: () => {},
+        onMiddleClick: () => {},
     });
 
 export default () => {
@@ -145,30 +145,7 @@ export default () => {
             // This is when you hit Enter
             const text = self.text;
             if (!text.length) return;
-            const isAction = text.startsWith(">");
-            const isDir = ["/", "~"].includes(text[0]);
-
-            try {
-                execAndClose(["wl-copy", String(evalMath(text))]);
-                return;
-            } catch (e) {
-                // console.log(e);
-            }
-            if (isDir) {
-                openFile(expandTilde(text));
-            } else if (appSearchResults.length > 0) {
-                App.closeWindow("overview");
-                appSearchResults[0].launch();
-            } else if (isAction) {
-                // Custom commands
-                App.closeWindow("overview");
-                launchCustomCommand(text);
-            } else if (exec(`bash -c "command -v ${text.split(" ")[0]}"`) !== "") {
-                // Fallback: Execute command
-                execAndClose(text, text.startsWith("sudo"));
-            } else {
-                search(text);
-            }
+            resultsBox.get_children()[0].attribute.activate();
         },
         onChange: self => {
             // this is when you type
