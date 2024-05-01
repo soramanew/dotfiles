@@ -25,6 +25,7 @@ const SearchItem = ({ actionName, onActivate, children, extraClassName, ...rest 
     const actionTextRevealer = ActionTextRevealer(actionText);
     return Button({
         ...rest,
+        attribute: { activate: onActivate },
         className: `overview-search-result-btn txt ${extraClassName}`,
         onClicked: onActivate,
         child: Box({ children: [...children, Box({ hexpand: true }), actionTextRevealer] }),
