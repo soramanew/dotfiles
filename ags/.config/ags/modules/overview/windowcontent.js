@@ -145,7 +145,10 @@ export default () => {
             // This is when you hit Enter
             const text = self.text;
             if (!text.length) return;
-            resultsBox.get_children()[0].attribute.activate();
+            if (text.startsWith(">")) {
+                App.closeWindow("overview");
+                launchCustomCommand(text);
+            } else resultsBox.get_children()[0].attribute.activate();
         },
         onChange: self => {
             // this is when you type

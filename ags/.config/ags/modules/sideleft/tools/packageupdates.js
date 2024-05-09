@@ -94,53 +94,50 @@ export default () =>
                         const numErrors = updates
                             .split("\n")
                             .filter(u => u !== repoSeparator && ERROR_REGEX.test(u)).length;
-                        if (numErrors > 0 && numUpdates === numErrors) {
+                        if (numErrors > 0 && numUpdates === numErrors)
                             label.label = "Package updates - Failed to update!!";
-                            return;
+                        else if (numUpdates === 0) label.label = "Package updates - No updates!";
+                        else {
+                            label.label = `Package updates - ${numUpdates} available`;
+                            const repos = [
+                                { repo: getRepo("core"), updates: [], icon: "hub", name: "Core repository" },
+                                { repo: getRepo("extra"), updates: [], icon: "add_circle", name: "Extra repository" },
+                                {
+                                    repo: getRepo("multilib"),
+                                    updates: [],
+                                    icon: "account_tree",
+                                    name: "Multilib repository",
+                                },
+                                {
+                                    repo: updates
+                                        .split(repoSeparator)[1]
+                                        .split("\n")
+                                        .map(u => u.split(" ")[0]),
+                                    updates: [],
+                                    icon: "deployed_code_account",
+                                    name: "AUR",
+                                },
+                            ];
+                            const errors = [];
+                            for (const update of updatesArr) {
+                                if (update === repoSeparator) continue;
+                                const pkg = update.split(" ")[0];
+                                if (ERROR_REGEX.test(update)) errors.push(Update(pkg, update));
+                                else
+                                    for (const repo of repos)
+                                        if (repo.repo.includes(pkg)) repo.updates.push(Update(pkg, update));
+                            }
+                            for (const repo of repos.filter(r => r.updates.length)) {
+                                content.pack_start(
+                                    Repo(repo.icon, `${repo.name} updates - ${repo.updates.length}`, repo.updates),
+                                    false,
+                                    false,
+                                    0
+                                );
+                            }
+                            if (errors.length)
+                                content.pack_start(Repo("error", `Errors - ${errors.length}`, errors), false, false, 0);
                         }
-                        if (numUpdates === 0) {
-                            label.label = "Package updates - No updates!";
-                            return;
-                        }
-                        label.label = `Package updates - ${numUpdates} available`;
-                        const repos = [
-                            { repo: getRepo("core"), updates: [], icon: "hub", name: "Core repository" },
-                            { repo: getRepo("extra"), updates: [], icon: "add_circle", name: "Extra repository" },
-                            {
-                                repo: getRepo("multilib"),
-                                updates: [],
-                                icon: "account_tree",
-                                name: "Multilib repository",
-                            },
-                            {
-                                repo: updates
-                                    .split(repoSeparator)[1]
-                                    .split("\n")
-                                    .map(u => u.split(" ")[0]),
-                                updates: [],
-                                icon: "deployed_code_account",
-                                name: "AUR",
-                            },
-                        ];
-                        const errors = [];
-                        for (const update of updatesArr) {
-                            if (update === repoSeparator) continue;
-                            const pkg = update.split(" ")[0];
-                            if (ERROR_REGEX.test(update)) errors.push(Update(pkg, update));
-                            else
-                                for (const repo of repos)
-                                    if (repo.repo.includes(pkg)) repo.updates.push(Update(pkg, update));
-                        }
-                        for (const repo of repos.filter(r => r.updates.length)) {
-                            content.pack_start(
-                                Repo(repo.icon, `${repo.name} updates - ${repo.updates.length}`, repo.updates),
-                                false,
-                                false,
-                                0
-                            );
-                        }
-                        if (errors.length)
-                            content.pack_start(Repo("error", `Errors - ${errors.length}`, errors), false, false, 0);
                         content.pack_start(
                             CenterBox({
                                 centerWidget: Button({

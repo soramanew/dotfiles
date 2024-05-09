@@ -110,6 +110,7 @@ ttf-jetbrains-mono-nerd
 ttf-material-symbols-variable-git
 ttf-poppins
 ttf-readex-pro
+ttf-roboto-slab
 ttf-rubik-vf
 ttf-space-mono-nerd
 tumbler
