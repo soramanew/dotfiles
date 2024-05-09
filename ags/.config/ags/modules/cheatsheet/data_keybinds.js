@@ -47,7 +47,7 @@ export const keybindList = [
             name: "Widgets (AGS)",
             binds: [
                 { keys: ["󰖳"], action: "Toggle overview/launcher" },
-                { keys: ["Ctrl", "󰖳", "+", "R"], action: "Restart AGS" },
+                { keys: ["Ctrl", "󰖳", "Shift", "+", "R"], action: "Restart AGS" },
                 { keys: ["󰖳", "+", "/"], action: "Toggle this cheatsheet" },
                 { keys: ["󰖳", "+", "N", "OR", "󰖳", "+", "Esc"], action: "Toggle system (right) sidebar" },
                 {
@@ -70,7 +70,7 @@ export const keybindList = [
                 { keys: ["󰖳", "Shift", "+", "T"], action: "Image to text  >>  clipboard" },
                 { keys: ["󰖳", "Shift", "+", "C"], action: "Colour picker" },
                 { keys: ["󰖳", "Alt", "+", "R"], action: "Record region" },
-                { keys: ["Ctrl", "Alt", "+", "R"], action: "Record region with sound" },
+                { keys: ["Ctrl", "Alt", "+", "R"], action: "Record screen" },
                 { keys: ["󰖳", "Shift", "Alt", "+", "R"], action: "Record screen with sound" },
                 { keys: ["Ctrl", "󰖳", "+", "Space"], action: "Play/pause music" },
                 { keys: ["Ctrl", "󰖳", "+", "N", "OR", "Ctrl", "󰖳", "+", "="], action: "Skip song" },

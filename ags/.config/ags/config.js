@@ -1,6 +1,6 @@
 "use strict";
 // Import
-const { exec, notify } = Utils;
+const { exec, execAsync } = Utils;
 const Battery = await Service.import("battery");
 import { forMonitors } from "./modules/.miscutils/system.js";
 import { COMPILED_STYLE_DIR } from "./constants.js";
@@ -47,12 +47,7 @@ function batteryMessage() {
     for (let i = BATTERY_WARN_LEVELS.length - 1; i >= 0; i--) {
         if (perc <= BATTERY_WARN_LEVELS[i] && !batteryWarned[i]) {
             for (let j = i; j >= 0; j--) batteryWarned[j] = true;
-            notify({
-                summary: BATTERY_WARN_TITLES[i],
-                body: BATTERY_WARN_BODIES[i],
-                urgency: "critical",
-                appName: "ags",
-            }).catch(print);
+            execAsync(["notify-send", "-u", "critical", "-t", 8000, "-a", "ags", BATTERY_WARN_TITLES[i], BATTERY_WARN_BODIES[i]]).catch(print);
             break;
         }
     }
