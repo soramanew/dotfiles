@@ -805,9 +805,11 @@ $colorpicker_rounding: 0.341rem;
     }
 }
 
-.sidebar-volmixer-status {
-    color: $onSurface;
-    margin: 0rem 0.682rem;
+.sidebar-volmixer-deviceselector {
+    @include small-rounding;
+    padding: 0.477rem 0.682rem;
+    background-color: $surfaceContainerHigh;
+    color: $onSurfaceVariant;
 }
 
 .sidebar-bluetooth-device {

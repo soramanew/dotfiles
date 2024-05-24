@@ -47,9 +47,9 @@ const WeatherModule = () =>
         className: "spacing-h-4 txt-onSurfaceVariant",
         children: [
             MaterialIcon("device_thermostat", "small"),
-            Label({ label: "Weather  •" }),
+            Label({ className: "txt-smallie", label: "Weather  •" }),
             MaterialIcon("device_thermostat", "small"),
-            Label({ label: "More weather" }),
+            Label({ className: "txt-smallie", label: "More weather" }),
         ],
         setup: self =>
             self.poll(900000, self => {
