@@ -224,7 +224,7 @@ export const ModuleSettingsIcon = (props = {}) =>
         className: "txt-small sidebar-iconbutton",
         tooltipText: "Open Settings",
         onClicked: () => {
-            execAsync("gnome-control-center");
+            execAsync("gnome-control-center").catch(print);
             closeEverything();
         },
         child: MaterialIcon("settings", "norm"),

@@ -38,14 +38,14 @@ globalThis.closeWindowOnAllMonitors = name => forMonitors(id => App.closeWindow(
 globalThis.openWindowOnAllMonitors = name => forMonitors(id => App.openWindow(name + id));
 
 globalThis.closeEverything = () => {
-    closeWindowOnAllMonitors("cheatsheet");
     closeWindowOnAllMonitors("click2close");
+    closeWindowOnAllMonitors("cheatsheet");
+    closeWindowOnAllMonitors("gcheatsheet");
+    App.closeWindow("session");
+    App.closeWindow("todoscreen");
     if (!pinButton.attribute.enabled) App.closeWindow("sideleft");
     App.closeWindow("sideright");
     App.closeWindow("overview");
-    App.closeWindow("session");
-    App.closeWindow("todoscreen");
-    closeWindowOnAllMonitors("gcheatsheet");
 };
 
 export const tabletMode = Variable(false);

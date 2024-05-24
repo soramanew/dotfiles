@@ -2,17 +2,7 @@ import Gdk from "gi://Gdk";
 const { Box, Label, Revealer, Entry, EventBox } = Widget;
 const { exec } = Utils;
 const Applications = await Service.import("applications");
-import {
-    execAndClose,
-    expandTilde,
-    hasUnterminatedBackslash,
-    launchCustomCommand,
-    ls,
-    openFile,
-    search,
-    actions,
-    actionsList,
-} from "./miscfunctions.js";
+import { hasUnterminatedBackslash, launchCustomCommand, ls, actions, actionsList } from "./miscfunctions.js";
 import {
     CalculationResultButton,
     CustomCommandButton,
@@ -77,6 +67,7 @@ const evalMath = text => {
     return parseExpr(expr).evaluate(vars);
 };
 
+// idk if this even does anything (it seems to do something? sooo...)
 const EventConsumer = child =>
     EventBox({
         child,

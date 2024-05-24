@@ -138,7 +138,6 @@ export const ConfigMulipleSelection = ({
     onChange,
     ...rest
 }) => {
-    let lastSelected = initIndex;
     const widget = Box({
         tooltipText: desc,
         className: "multipleselection-container spacing-v-3",
@@ -160,7 +159,6 @@ export const ConfigMulipleSelection = ({
                             kids.forEach(kid => {
                                 kid.toggleClassName("multipleselection-btn-enabled", false);
                             });
-                            lastSelected = id;
                             self.toggleClassName("multipleselection-btn-enabled", true);
                             onChange(option.value, option.name);
                         },

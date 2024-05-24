@@ -70,14 +70,27 @@ const NotificationIndicator = () => {
     return Revealer({
         transition: "slide_left",
         transitionDuration: 150,
-        revealChild: unreadCount.bind().as(unread => unread > 0),
-        tooltipText: unreadCount.bind().as(unread => `${unread} unread notifications`),
+        revealChild: Utils.merge([Notifications.bind("dnd"), unreadCount.bind()], (dnd, unread) => dnd || unread > 0),
+        tooltipText: Utils.merge([Notifications.bind("dnd"), unreadCount.bind()], (dnd, unread) => {
+            const tooltip = [];
+            if (dnd) tooltip.push("Do not disturb enabled");
+            if (unread > 0) tooltip.push(`${unread} unread notification${unread > 1 ? "s" : ""}`);
+            return tooltip.join(" | ");
+        }),
         child: Box({
             children: [
-                MaterialIcon("notifications", "norm"),
-                Label({
-                    className: "txt-small titlefont",
-                    label: unreadCount.bind().as(String),
+                MaterialIcon(
+                    Notifications.bind("dnd").as(dnd => "notifications" + (dnd ? "_paused" : "")),
+                    "norm"
+                ),
+                Revealer({
+                    transition: "slide_left",
+                    transitionDuration: 120,
+                    revealChild: unreadCount.bind().as(unread => unread > 0),
+                    child: Label({
+                        className: "txt-small titlefont",
+                        label: unreadCount.bind().as(String),
+                    }),
                 }),
             ],
         }),
@@ -89,10 +102,11 @@ export const BluetoothIndicator = (tooltip = false) =>
         transition: "slide_up_down",
         transitionDuration: 120,
         tooltipText: tooltip
-            ? Bluetooth.bind("connected-devices").as(
-                  devices =>
-                      "Connected devices: " +
-                      devices.map(d => d.name + (d.batteryPercentage ? ` (${d.batteryPercentage}%)` : "")).join(", ")
+            ? Bluetooth.bind("connected-devices").as(devices =>
+                  devices.length
+                      ? "Connected devices: " +
+                        devices.map(d => d.name + (d.batteryPercentage ? ` (${d.batteryPercentage}%)` : "")).join(", ")
+                      : "No connected devices"
               )
             : "",
         children: {
@@ -157,7 +171,12 @@ const SimpleNetworkIndicator = () =>
 
 const NetworkWifiIcon = (icon, tooltip) =>
     MaterialIcon(icon, "norm", {
-        tooltipText: tooltip ? Network.wifi.bind("strength").as(s => `Network strength: ${s}/100`) : "",
+        tooltipText: tooltip
+            ? Utils.merge(
+                  [Network.wifi.bind("ssid"), Network.wifi.bind("strength")],
+                  (ssid, strength) => `${ssid} | Strength: ${strength}/100`
+              )
+            : "",
     });
 
 const NetworkWifiIndicator = tooltip =>
@@ -193,27 +212,16 @@ export const NetworkIndicator = (tooltip = false) =>
 
 const HyprlandXkbKeyboardLayout = (useFlag = false) => {
     let initLangs = [];
-    let languageStackArray = [];
-    let currentKeyboard;
-
-    const updateCurrentKeyboards = () => {
-        currentKeyboard = JSON.parse(Hyprland.message("j/devices")).keyboards.find(
-            device => device.name === "at-translated-set-2-keyboard"
-        );
-        if (currentKeyboard) initLangs = currentKeyboard.layout.split(",").map(lang => lang.trim());
-
-        languageStackArray = Array.from({ length: initLangs.length }, (_, i) => {
-            const lang = languages.find(lang => lang.layout == initLangs[i]);
-            return lang
-                ? {
-                      [lang.layout]: Label({ label: useFlag ? lang.flag : lang.layout }),
-                  }
-                : {
-                      [initLangs[i]]: Label({ label: initLangs[i] }),
-                  };
-        });
-    };
-    updateCurrentKeyboards();
+    JSON.parse(Hyprland.message("j/devices")).keyboards.forEach(keyboard =>
+        initLangs.push(...keyboard.layout.split(",").map(lang => lang.trim()))
+    );
+    initLangs = [...new Set(initLangs)];
+    const languageStackArray = Array.from({ length: initLangs.length }, (_, i) => {
+        const lang = languages.find(lang => lang.layout == initLangs[i]);
+        return lang
+            ? { [lang.layout]: Label({ label: useFlag ? lang.flag : lang.layout }) }
+            : { [initLangs[i]]: Label({ label: initLangs[i] }) };
+    });
     const widgetRevealer = Revealer({
         transition: "slide_left",
         transitionDuration: 120,
