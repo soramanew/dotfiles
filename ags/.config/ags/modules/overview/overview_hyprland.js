@@ -5,10 +5,11 @@ const Hyprland = await Service.import("hyprland");
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../variables.js";
 import { setupCursorHoverGrab } from "../.widgetutils/cursorhover.js";
 import { dumpToWorkspace, swapWorkspace } from "./actions.js";
-import { substitute } from "../.miscutils/icons.js";
+import { iconExists, substitute } from "../.miscutils/icons.js";
 import { DoubleRevealer } from "../.widgethacks/advancedrevealers.js";
 import { range } from "../.miscutils/system.js";
 import { WS_PER_GROUP, OVERVIEW_ROWS as WS_ROWS, OVERVIEW_COLS as WS_COLS } from "../../constants.js";
+import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 
 const OVERVIEW_SCALE = 0.15;
 const OVERVIEW_WS_NUM_SCALE = 0.09;
@@ -79,10 +80,8 @@ export default () => {
         if (x + w > SCREEN_WIDTH) w = SCREEN_WIDTH - x;
         if (y + h > SCREEN_HEIGHT) h = SCREEN_HEIGHT - y;
 
-        const appIcon = Icon({
-            icon: substitute(c),
-            size: (Math.min(w, h) * OVERVIEW_SCALE) / 2.5,
-        });
+        const appIcon = Icon({ icon: substitute(c), size: (Math.min(w, h) * OVERVIEW_SCALE) / 2.5 });
+
         return Button({
             attribute: {
                 address,

@@ -14,7 +14,7 @@ import {
     ModuleAutoRotate,
 } from "./quicktoggles.js";
 import ModuleNotificationList from "./centermodules/notificationlist.js";
-import ModuleVolumeMixer from "./centermodules/volumemixer.js";
+import ModuleAudioControls from "./centermodules/audiocontrols.js";
 import ModuleWifiNetworks from "./centermodules/wifinetworks.js";
 import ModuleBluetooth from "./centermodules/bluetooth.js";
 import { ModuleCalendar } from "./calendar.js";
@@ -31,7 +31,7 @@ const centerWidgets = [
     {
         name: "Volume mixer",
         materialIcon: "volume_up",
-        contentWidget: ModuleVolumeMixer(),
+        contentWidget: ModuleAudioControls(),
     },
     {
         name: "Bluetooth",
