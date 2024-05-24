@@ -2,11 +2,11 @@ const { Box, CenterBox, Label, Button } = Widget;
 import { TodoWidget } from "./todolist.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import PopupWindow from "../.widgethacks/popupwindow.js";
+import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
 
 const Header = () =>
     CenterBox({
         vertical: false,
-        startWidget: Box(),
         centerWidget: Label({
             hpack: "center",
             className: "txt-title txt",
@@ -25,16 +25,21 @@ const Header = () =>
         }),
     });
 
+const C2C = () => Click2CloseRegion({ name: "todoscreen" });
+
 export default () =>
     PopupWindow({
         name: "todoscreen",
         layer: "overlay",
         keymode: "exclusive",
         visible: false,
-        child: Box({
-            vertical: true,
-            children: [
-                Box({
+        anchor: ["top", "bottom", "left", "right"],
+        child: CenterBox({
+            startWidget: C2C(),
+            centerWidget: CenterBox({
+                vertical: true,
+                startWidget: C2C(),
+                centerWidget: Box({
                     vertical: true,
                     className: "todoscreen-bg spacing-v-15",
                     setup: self => {
@@ -42,6 +47,8 @@ export default () =>
                         self.pack_start(TodoWidget(), true, true, 0);
                     },
                 }),
-            ],
+                endWidget: C2C(),
+            }),
+            endWidget: C2C(),
         }),
     });

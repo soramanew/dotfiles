@@ -1,6 +1,6 @@
 const { Box, FlowBox, Button, Label, Entry, Icon, Stack } = Widget;
 const Applications = await Service.import("applications");
-import { SCREEN_HEIGHT } from "../../variables.js";
+import { SCREEN_HEIGHT } from "../../constants.js";
 import { RoundedScrollable } from "../.commonwidgets/cairo_roundedscrollable.js";
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 

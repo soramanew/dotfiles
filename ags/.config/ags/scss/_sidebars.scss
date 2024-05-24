@@ -5,7 +5,6 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 }
 
 .sidebar-right {
-    @include menu_decel;
     @include elevation-border;
     @include elevation2;
     border-radius: $rounding_large - $elevation_margin + 0.068rem;
@@ -15,7 +14,6 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 }
 
 .sidebar-left {
-    @include menu_decel;
     @include elevation-border;
     @include elevation2;
     border-radius: $rounding_large - $elevation_margin + 0.068rem;

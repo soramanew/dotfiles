@@ -13,7 +13,6 @@ import Overview from "./modules/overview/main.js";
 import Session from "./modules/session/main.js";
 import SideLeft from "./modules/sideleft/main.js";
 import SideRight from "./modules/sideright/main.js";
-import Click2Close from "./modules/click2close/main.js";
 import TodoScreen from "./modules/todoscreen/main.js";
 import AppLauncher from "./modules/applauncher/main.js";
 
@@ -33,22 +32,21 @@ applyStyle();
 
 const Windows = () => [
     Overview(),
-    forMonitors(Indicator),
-    forMonitors(Cheatsheet),
+    AppLauncher(),
+    Cheatsheet(),
     TodoScreen(),
     SideLeft(),
     SideRight(),
     Osk(),
     Session(),
+    forMonitors(Bar),
+    forMonitors(BarCornerTopleft),
+    forMonitors(BarCornerTopright),
+    forMonitors(Indicator),
     forMonitors(id => Corner(id, "top left")),
     forMonitors(id => Corner(id, "top right")),
     forMonitors(id => Corner(id, "bottom left")),
     forMonitors(id => Corner(id, "bottom right")),
-    forMonitors(Bar),
-    forMonitors(BarCornerTopleft),
-    forMonitors(BarCornerTopright),
-    forMonitors(Click2Close),
-    AppLauncher(),
 ];
 
 App.config({

@@ -2,14 +2,19 @@ import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
 const { Box, Label, Button, Icon, Menu, MenuItem, Revealer, EventBox, Overlay, CenterBox } = Widget;
 const Hyprland = await Service.import("hyprland");
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../variables.js";
 import { setupCursorHoverGrab } from "../.widgetutils/cursorhover.js";
 import { dumpToWorkspace, swapWorkspace } from "./actions.js";
-import { iconExists, substitute } from "../.miscutils/icons.js";
+import { substitute } from "../.miscutils/icons.js";
 import { DoubleRevealer } from "../.widgethacks/advancedrevealers.js";
 import { range } from "../.miscutils/system.js";
-import { WS_PER_GROUP, OVERVIEW_ROWS as WS_ROWS, OVERVIEW_COLS as WS_COLS } from "../../constants.js";
-import { MaterialIcon } from "../.commonwidgets/materialicon.js";
+import {
+    SCREEN_HEIGHT,
+    SCREEN_WIDTH,
+    WS_PER_GROUP,
+    OVERVIEW_ROWS as WS_ROWS,
+    OVERVIEW_COLS as WS_COLS,
+} from "../../constants.js";
+import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
 
 const OVERVIEW_SCALE = 0.15;
 const OVERVIEW_WS_NUM_SCALE = 0.09;
@@ -30,6 +35,8 @@ const calcCss = (x, y, w, h) => `
     margin-right: -${Math.round((x + w) * OVERVIEW_SCALE)}px;
     margin-bottom: -${Math.round((y + h) * OVERVIEW_SCALE)}px;
 `;
+
+const C2C = () => Click2CloseRegion({ name: "overview" });
 
 export default () => {
     const clientMap = new Map();
@@ -224,7 +231,7 @@ export default () => {
                         });
                     },
                     child: Overlay({
-                        child: Box({}),
+                        child: Box(),
                         overlays: [WorkspaceNumber({ index: index, hpack: "start", vpack: "start" }), fixed],
                     }),
                 }),
@@ -562,26 +569,32 @@ export default () => {
         child: Box({
             vertical: true,
             children: [
-                Box({
-                    vertical: true,
-                    className: "overview-tasks",
-                    children: range(WS_ROWS, 0).map(i =>
-                        OverviewRow({
-                            startWorkspace: 1 + i * WS_COLS,
-                            workspaces: WS_COLS,
-                        })
-                    ),
+                CenterBox({
+                    vexpand: false,
+                    startWidget: C2C(),
+                    centerWidget: Box({
+                        vertical: true,
+                        className: "overview-tasks",
+                        children: range(WS_ROWS, 0).map(i =>
+                            OverviewRow({
+                                startWorkspace: 1 + i * WS_COLS,
+                                workspaces: WS_COLS,
+                            })
+                        ),
+                    }),
+                    endWidget: C2C(),
                 }),
                 Revealer({
                     transition: "slide_down",
                     transitionDuration: 200,
                     revealChild: Hyprland.bind("workspaces").as(
-                        wss => !!wss.filter(ws => ws.name.startsWith("special:")).length
+                        wss => wss.filter(ws => ws.name.startsWith("special:")).length > 0
                     ),
                     child: CenterBox({
-                        startWidget: Box({ hexpand: true }),
+                        vexpand: false,
+                        startWidget: C2C(),
                         centerWidget: SpecialWorkspaces(),
-                        endWidget: Box({ hexpand: true }),
+                        endWidget: C2C(),
                     }),
                 }),
             ],
