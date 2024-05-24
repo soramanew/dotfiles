@@ -1,5 +1,5 @@
 import PopupWindow from "../.widgethacks/popupwindow.js";
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../variables.js";
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../constants.js";
 import AppLauncher, { close } from "./applauncher.js";
 
 export default () => {

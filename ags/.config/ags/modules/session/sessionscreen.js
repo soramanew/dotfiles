@@ -1,6 +1,6 @@
 import Gtk from "gi://Gtk";
 const { Box, Revealer, Button, Overlay, Label } = Widget;
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../variables.js";
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../constants.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 
 const SessionButtonRow = children =>
