@@ -6,7 +6,6 @@ class BrightnessService extends Service {
         Service.register(this, { "screen-changed": ["float"] }, { "screen-value": ["float", "rw"] });
     }
 
-    #animPoints = [];
     #screenValue;
 
     // the getter has to be in snake_case
@@ -17,31 +16,17 @@ class BrightnessService extends Service {
     // the setter has to be in snake_case too
     set screen_value(percent) {
         percent = clamp(percent, 0, 1);
-        const originalPercent = this.#screenValue;
         this.#screenValue = percent;
-        this.emit("screen-changed", percent);
         this.notify("screen-value");
-
-        this.#animPoints.forEach(p => p.destroy());
-        this.#animPoints.length = 0;
-
-        const ANIM_TIME = 200;
-        const ANIM_POINTS = 10;
-        const timePerPoint = ANIM_TIME / ANIM_POINTS;
-        const diffPerPoint = (percent - originalPercent) / ANIM_POINTS;
-        for (let i = 0; i < ANIM_POINTS; i++)
-            this.#animPoints.push(
-                setTimeout(() => {
-                    execAsync(
-                        `brightnessctl set ${Math.round((originalPercent + diffPerPoint * (i + 1)) * 100)}% -q`
-                    ).catch(print);
-                }, i * timePerPoint)
-            );
+        this.emit("screen-changed", percent);
+        execAsync(`ddcutil setvcp 10 ${Math.round(percent * 100)}`).catch(print);
     }
 
     constructor() {
         super();
-        this.#screenValue = Number(exec("brightnessctl get")) / Number(exec("brightnessctl max"));
+        let info = exec(`ddcutil getvcp 10 --brief`).split("\n");
+        info = info[info.length - 1].split(" ");
+        this._screenValue = Number(info[3]) / Number(info[4]);
     }
 
     // overwriting connectWidget method, lets you

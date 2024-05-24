@@ -5,13 +5,13 @@ export default (id = "") =>
     PopupWindow({
         name: `overview${id}`,
         exclusivity: "ignore",
-        keymode: "exclusive",
+        keymode: "on-demand",
         visible: false,
         anchor: ["top", "bottom"],
         layer: "overlay",
         child: Widget.EventBox({
             onPrimaryClick: closeEverything,
-            onSecondaryClick: closeEverything,
+            // onSecondaryClick: closeEverything,
             onMiddleClick: closeEverything,
             child: SearchAndWindows(),
         }),

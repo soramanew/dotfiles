@@ -10,7 +10,7 @@ import { DoubleRevealer } from "../.widgethacks/advancedrevealers.js";
 import { range } from "../.miscutils/system.js";
 import { WS_PER_GROUP, OVERVIEW_ROWS as WS_ROWS, OVERVIEW_COLS as WS_COLS } from "../../constants.js";
 
-const OVERVIEW_SCALE = 0.18;
+const OVERVIEW_SCALE = 0.15;
 const OVERVIEW_WS_NUM_SCALE = 0.09;
 const OVERVIEW_WS_NUM_MARGIN_SCALE = 0.07;
 const TARGET = [Gtk.TargetEntry.new("text/plain", Gtk.TargetFlags.SAME_APP, 0)];

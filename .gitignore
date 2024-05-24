@@ -1,5 +1,6 @@
-/theming
-/pycharm
+# Too large
+/theming/
+/pycharm/
 
 # Generated stuff
 generated.*
