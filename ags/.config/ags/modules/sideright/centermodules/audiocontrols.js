@@ -30,7 +30,7 @@ const AppVolume = stream =>
                             Label({
                                 hexpand: true,
                                 xalign: 0,
-                                maxWidthChars: 10,
+                                maxWidthChars: 1,
                                 truncate: "end",
                                 label: Utils.merge(
                                     [stream.bind("stream"), stream.bind("description")],
@@ -83,7 +83,7 @@ const AudioDevices = input => {
                         xalign: 0,
                         className: "txt-small",
                         truncate: "end",
-                        maxWidthChars: 10,
+                        maxWidthChars: 1,
                         label: stream.description,
                     }),
                 ],
@@ -105,7 +105,7 @@ const AudioDevices = input => {
                     xalign: 0,
                     className: "txt-small",
                     truncate: "end",
-                    maxWidthChars: 10,
+                    maxWidthChars: 1,
                     label: Audio[type].bind("description").as(desc => `${input ? "[In]" : "[Out]"} ${desc}`),
                 }),
                 Label({

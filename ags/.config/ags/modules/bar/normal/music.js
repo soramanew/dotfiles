@@ -140,7 +140,7 @@ export default () => {
         hexpand: true,
         className: "txt-smallie bar-music-txt",
         truncate: "end",
-        maxWidthChars: 10, // Doesn't matter, just needs to be non negative
+        maxWidthChars: 1,
         setup: self =>
             self.hook(Mpris, self => {
                 const player = Mpris.getPlayer("");

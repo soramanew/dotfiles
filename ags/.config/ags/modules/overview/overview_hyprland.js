@@ -150,7 +150,7 @@ export default () => {
                             transition2: "slide_down",
                             revealChild: revealInfoCondition,
                             child: Label({
-                                maxWidthChars: 10, // Doesn't matter what number
+                                maxWidthChars: 1, // Min width when ellipsizing (truncated)
                                 truncate: "end",
                                 className: `margin-top-5 ${xwayland ? "txt txt-italic" : "txt"}`,
                                 css: `
