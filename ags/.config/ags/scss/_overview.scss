@@ -1,3 +1,7 @@
+.overview-top-space {
+    min-height: 2.727rem;
+}
+
 .overview-results-scrollcorner {
     @include largeish-rounding;
     background-color: $layer0;
@@ -111,11 +115,11 @@
 
 .overview-search-result-btn:hover,
 .overview-search-result-btn:focus {
-    background-color: $hovercolor;
+    background-color: $layer0Hover;
 }
 
 .overview-search-result-btn:active {
-    background-color: $activecolor;
+    background-color: $layer0Active;
 }
 
 .overview-tasks {

@@ -63,7 +63,7 @@ export default () => {
         });
 
     const Window = (
-        { address, at: [x, y], size: [w, h], workspace: { id, name }, class: c, title, xwayland },
+        { address, at: [x, y], size: [w, h], workspace: { id, name }, class: c, initialClass, title, xwayland },
         screenCoords,
         onClicked = () => dispatchAndClose(`focuswindow address:${address}`)
     ) => {
@@ -87,6 +87,7 @@ export default () => {
         if (x + w > SCREEN_WIDTH) w = SCREEN_WIDTH - x;
         if (y + h > SCREEN_HEIGHT) h = SCREEN_HEIGHT - y;
 
+        if (c.length === 0) c = initialClass;
         const appIcon = Icon({ icon: substitute(c), size: (Math.min(w, h) * OVERVIEW_SCALE) / 2.5 });
 
         return Button({

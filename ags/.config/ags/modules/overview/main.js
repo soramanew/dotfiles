@@ -13,7 +13,7 @@ export default () =>
         child: Widget.Box({
             vertical: true,
             children: [
-                Click2CloseRegion({ name: "overview", expand: false, className: "bar-top-space" }),
+                Click2CloseRegion({ name: "overview", expand: false, className: "overview-top-space" }),
                 SearchAndWindows(),
             ],
         }),

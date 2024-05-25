@@ -46,6 +46,7 @@ const NotificationIcon = notifObject => {
         hexpand: false,
         className: `notif-icon notif-icon-material-${notifObject.urgency}`,
         homogeneous: true,
+        tooltipText: `Urgency: ${notifObject.urgency}`,
         children: [
             icon !== "NO_ICON"
                 ? Icon({ vpack: "center", icon })
@@ -351,7 +352,7 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
     const notificationBox = Box({
         attribute: { ready: false },
         homogeneous: true,
-        children: [notificationContent],
+        child: notificationContent,
         setup: self =>
             self
                 .hook(

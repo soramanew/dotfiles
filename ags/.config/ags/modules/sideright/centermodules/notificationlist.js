@@ -147,7 +147,7 @@ export default props => {
         hexpand: true,
         hscroll: "never",
         vscroll: "automatic",
-        child: Box({ vexpand: true, children: [notificationList] }),
+        child: Box({ vexpand: true, child: notificationList }),
         overlayClass: "sidebar-scrollcorner1",
         setup: self => {
             const vScrollbar = self.get_vscrollbar();
