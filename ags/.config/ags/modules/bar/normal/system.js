@@ -1,6 +1,6 @@
 // This is for the right pills of the bar.
 import GLib from "gi://GLib";
-const { Box, Label, EventBox } = Widget;
+const { Box, Button, Label, EventBox } = Widget;
 const { execAsync, exec } = Utils;
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { WWO_CODE, WEATHER_SYMBOL } from "../../.commondata/weather.js";
@@ -39,6 +39,38 @@ const BarClock = () => {
         }),
     });
 };
+
+const UtilButton = ({ name, icon, onClicked }) =>
+    Button({
+        vpack: "center",
+        tooltipText: name,
+        onClicked: onClicked,
+        className: "bar-util-btn icon-material txt-norm",
+        label: icon,
+    });
+
+const Utilities = () =>
+    Box({
+        hpack: "center",
+        className: "spacing-h-4",
+        children: [
+            UtilButton({
+                name: "Screen snip",
+                icon: "screenshot_region",
+                onClicked: () => execAsync(["bash", "-c", "grimblast --freeze save area - | swappy -f -"]).catch(print),
+            }),
+            UtilButton({
+                name: "Colour picker",
+                icon: "colorize",
+                onClicked: () => execAsync(["hyprpicker", "-a"]).catch(print),
+            }),
+            UtilButton({
+                name: "Toggle on-screen keyboard",
+                icon: "keyboard",
+                onClicked: () => App.toggleWindow("osk"),
+            }),
+        ],
+    });
 
 const WeatherModule = () =>
     Box({
@@ -93,4 +125,7 @@ const WeatherModule = () =>
     });
 
 export default () =>
-    Box({ className: "bar-sidemodule", children: [BarGroupSystem(BarClock()), BarGroupSystem(WeatherModule())] });
+    Box({
+        className: "bar-sidemodule",
+        children: [BarGroupSystem(BarClock()), BarGroupSystem(Utilities()), BarGroupSystem(WeatherModule())],
+    });
