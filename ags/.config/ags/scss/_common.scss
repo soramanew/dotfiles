@@ -192,9 +192,6 @@ popover {
     color: $onSecondaryContainer;
 }
 
-.multipleselection-container {
-}
-
 .multipleselection-btn {
     @include small-rounding;
     padding: 0rem 0.341rem;
@@ -250,12 +247,13 @@ popover {
     color: $onLayer0;
 }
 
-.tab-btn:hover {
-    background-color: $layer0Hover;
+.tab-btn:hover,
+.tab-btn:focus {
+    background-color: mix($layer0, $layer0Hover, 50%);
 }
 
-.tab-btn:focus {
-    background-color: $surfaceContainerLow;
+.tab-btn:active {
+    background-color: $surfaceContainerHighest;
 }
 
 .tab-btn-active > box > label {

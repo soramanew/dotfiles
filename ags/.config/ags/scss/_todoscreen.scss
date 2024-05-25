@@ -24,3 +24,39 @@
 .todoscreen-closebtn:active {
     background-color: $layer0Active;
 }
+
+.todoscreen-todo-item {
+    @include small-rounding;
+    padding: 0.273rem 0.273rem 0.273rem 0.545rem;
+}
+
+.todoscreen-todo-item-wrapper {
+    @include small-rounding;
+}
+
+.todoscreen-todo-item-hovered {
+    background-color: mix($layer0, $layer0Hover, 50%);
+}
+
+.todoscreen-todo-crosser {
+    @include small-rounding;
+    padding: 0.273rem 0.273rem 0.273rem 0.545rem;
+    transition: margin 200ms cubic-bezier(0.1, 1, 0, 1), background-color 0ms;
+    min-width: 0rem;
+}
+
+.todoscreen-todo-item-action {
+    @include element_decel;
+    border-radius: 9999px;
+    min-width: 1.705rem;
+    min-height: 1.705rem;
+}
+
+.todoscreen-todo-item-action:hover,
+.todoscreen-todo-item-action:focus {
+    background-color: mix($primary, $layer1Hover, 20%);
+}
+
+.todoscreen-todo-item-action:active {
+    background-color: mix($primary, $layer1Active, 40%);
+}
