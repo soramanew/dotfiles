@@ -8,7 +8,7 @@ const WindowTitleInner = (className, type, placeholder) => {
     return Label({
         xalign: 0,
         truncate: "end",
-        maxWidthChars: 10,
+        maxWidthChars: 1,
         className: className,
         label: label,
         tooltipText: label,
