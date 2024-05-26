@@ -14,7 +14,7 @@
   <property name="last-location-bar" type="string" value="ThunarLocationButtons"/>
   <property name="last-tabs-left" type="array">
     <value type="string" value="file:///home/jarrettc/Pictures/Wallpapers"/>
-    <value type="string" value="file:///home/jarrettc/.dotfiles"/>
+    <value type="string" value="file:///home/jarrettc/.cache/ags/user"/>
   </property>
   <property name="last-focused-tab-left" type="int" value="1"/>
   <property name="last-focused-tab-right" type="int" value="0"/>
