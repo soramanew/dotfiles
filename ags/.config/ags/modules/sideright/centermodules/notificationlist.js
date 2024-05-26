@@ -16,7 +16,7 @@ export default props => {
             Box({
                 vertical: true,
                 vpack: "center",
-                className: "txt spacing-v-10",
+                className: "txt-subtext spacing-v-10",
                 children: [
                     Box({
                         vertical: true,

@@ -91,10 +91,13 @@ const TodoItems = isDone =>
                                     hexpand: true,
                                     vertical: true,
                                     vpack: "center",
-                                    className: "txt",
+                                    className: "txt-subtext",
                                     children: [
                                         MaterialIcon(isDone ? "checklist" : "check_circle", "gigantic"),
-                                        Label({ label: isDone ? "Finished tasks will go here" : "Nothing here!" }),
+                                        Label({
+                                            label: isDone ? "Finished tasks will go here" : "Nothing here!",
+                                            className: "txt-large",
+                                        }),
                                     ],
                                 }),
                             ];
