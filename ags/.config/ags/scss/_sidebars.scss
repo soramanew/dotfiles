@@ -5,7 +5,6 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 }
 
 .sidebar-right {
-    @include menu_decel;
     @include elevation-border;
     @include elevation2;
     border-radius: $rounding_large - $elevation_margin + 0.068rem;
@@ -15,7 +14,6 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 }
 
 .sidebar-left {
-    @include menu_decel;
     @include elevation-border;
     @include elevation2;
     border-radius: $rounding_large - $elevation_margin + 0.068rem;
@@ -59,25 +57,11 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 
 .sidebar-iconbutton:hover,
 .sidebar-iconbutton:focus {
-    background-color: $hovercolor;
+    background-color: $layer1Hover;
 }
 
 .sidebar-iconbutton:active {
-    background-color: $activecolor;
-}
-
-.sidebar-button {
-    @include element_decel;
-    padding: 0rem $rounding_small;
-}
-
-.sidebar-button:hover,
-.sidebar-button:focus {
-    background-color: $hovercolor;
-}
-
-.sidebar-button:active {
-    background-color: $activecolor;
+    background-color: $layer1Active;
 }
 
 .sidebar-button-active {
@@ -87,11 +71,11 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 
 .sidebar-button-active:hover,
 .sidebar-button-active:focus {
-    background-color: mix($primary, $hovercolor, 70%);
+    background-color: mix($primary, $layer1Hover, 70%);
 }
 
 .sidebar-button-active:active {
-    background-color: mix($primary, $hovercolor, 40%);
+    background-color: mix($primary, $layer1Active, 40%);
 }
 
 .sidebar-buttons-separator {
@@ -111,11 +95,11 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 
 .sidebar-navrail-btn:hover > box > label:first-child,
 .sidebar-navrail-btn:focus > box > label:first-child {
-    background-color: $hovercolor;
+    background-color: $layer1Hover;
 }
 
 .sidebar-navrail-btn:active > box > label:first-child {
-    background-color: $activecolor;
+    background-color: $layer1Active;
 }
 
 .sidebar-navrail-btn-active > box > label:first-child {
@@ -125,8 +109,8 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 
 .sidebar-navrail-btn-active:hover > box > label:first-child,
 .sidebar-navrail-btn-active:focus > box > label:first-child {
-    background-color: mix($secondaryContainer, $hovercolor, 90%);
-    color: mix($onSecondaryContainer, $hovercolor, 90%);
+    background-color: mix($secondaryContainer, $layer1Hover, 90%);
+    color: mix($onSecondaryContainer, $layer1Hover, 90%);
 }
 
 .sidebar-sysinfo-grouppad {
@@ -199,11 +183,11 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 
 .sidebar-calendar-btn:hover,
 .sidebar-calendar-btn:focus {
-    background-color: $hovercolor;
+    background-color: $layer1Hover;
 }
 
 .sidebar-calendar-btn:active {
-    background-color: $activecolor;
+    background-color: $layer1Active;
 }
 
 .sidebar-calendar-btn-txt {
@@ -218,11 +202,11 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 
 .sidebar-calendar-btn-today:hover,
 .sidebar-calendar-btn-today:focus {
-    background-color: mix($primary, $hovercolor, 70%);
+    background-color: mix($primary, $layer1Hover, 70%);
 }
 
 .sidebar-calendar-btn-today:active {
-    background-color: mix($primary, $hovercolor, 40%);
+    background-color: mix($primary, $layer1Active, 40%);
 }
 
 .sidebar-calendar-btn-othermonth {
@@ -243,11 +227,11 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 
 .sidebar-calendar-monthyear-btn:hover,
 .sidebar-calendar-monthyear-btn:focus {
-    background-color: $hovercolor;
+    background-color: $layer1Hover;
 }
 
 .sidebar-calendar-monthyear-btn:active {
-    background-color: $activecolor;
+    background-color: $layer1Active;
 }
 
 .sidebar-calendar-monthshift-btn {
@@ -260,19 +244,15 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 }
 
 .sidebar-calendar-monthshift-btn:hover {
-    background-color: $hovercolor;
+    background-color: $layer1Hover;
 }
 
 .sidebar-calendar-monthshift-btn:active {
-    background-color: $activecolor;
+    background-color: $layer1Active;
 }
 
-.sidebar-todo-item {
-    padding-right: 0.545rem;
-}
-
-.sidebar-todo-item-hovered {
-    background-color: $layer1;
+.sidebar-todolist {
+    padding: calc($rounding_small / 2);
 }
 
 .sidebar-todo-item-action {
@@ -284,11 +264,11 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 
 .sidebar-todo-item-action:hover,
 .sidebar-todo-item-action:focus {
-    background-color: $hovercolor;
+    background-color: $layer2Hover;
 }
 
 .sidebar-todo-item-action:active {
-    background-color: $activecolor;
+    background-color: $layer2Active;
 }
 
 .sidebar-todo-crosser {
@@ -307,21 +287,19 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 .sidebar-todo-new {
     @include full-rounding;
     @include element_decel;
-    background-color: $layer2;
-    color: $onLayer2;
+    color: $onSecondaryContainer;
+    background-color: $secondaryContainer;
     margin: 0.341rem;
     padding: 0.205rem 0.545rem;
 }
 
-.sidebar-todo-new,
+.sidebar-todo-new:hover,
 .sidebar-todo-new:focus {
-    color: $onSecondaryContainer;
-    background-color: $secondaryContainer;
+    background-color: mix($secondaryContainer, $layer1Hover, 10%);
 }
 
 .sidebar-todo-new:active {
-    color: $onPrimaryContainer;
-    background-color: $primaryContainer;
+    background-color: mix($secondaryContainer, $layer1Active, 10%);
 }
 
 .sidebar-todo-add {
@@ -354,11 +332,11 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 
 .sidebar-todo-add-available:hover,
 .sidebar-todo-add-available:focus {
-    background-color: mix($primary, $hovercolor, 70%);
+    background-color: mix($primary, $layer1Hover, 70%);
 }
 
 .sidebar-todo-add-available:active {
-    background-color: mix($primary, $hovercolor, 40%);
+    background-color: mix($primary, $layer1Active, 40%);
 }
 
 .sidebar-todo-entry {
@@ -564,11 +542,11 @@ $colorpicker_rounding: 0.341rem;
 
 .sidebar-chat-send-available:hover,
 .sidebar-chat-send-available:focus {
-    background-color: mix($primary, $hovercolor, 70%);
+    background-color: mix($primary, $layer2Hover, 70%);
 }
 
 .sidebar-chat-send-available:active {
-    background-color: mix($primary, $hovercolor, 40%);
+    background-color: mix($primary, $layer2Active, 40%);
 }
 
 .sidebar-chat-message {
@@ -710,11 +688,11 @@ $colorpicker_rounding: 0.341rem;
 
 .sidebar-chat-chip-action:hover,
 .sidebar-chat-chip-action:focus {
-    background-color: $hovercolor;
+    background-color: $layer1Hover;
 }
 
 .sidebar-chat-chip-action:active {
-    background-color: $activecolor;
+    background-color: $layer1Active;
 }
 
 .sidebar-chat-chip-action-active {
@@ -732,11 +710,11 @@ $colorpicker_rounding: 0.341rem;
 
 .sidebar-chat-chip-toggle:focus,
 .sidebar-chat-chip-toggle:hover {
-    background-color: $hovercolor;
+    background-color: $layer1Hover;
 }
 
 .sidebar-chat-chip-toggle:active {
-    background-color: $activecolor;
+    background-color: $layer1Active;
 }
 
 .sidebar-pin {
@@ -749,11 +727,11 @@ $colorpicker_rounding: 0.341rem;
 
 .sidebar-pin:hover,
 .sidebar-pin:focus {
-    background-color: $hovercolor;
+    background-color: $layer1Hover;
 }
 
 .sidebar-pin:active {
-    background-color: $activecolor;
+    background-color: $layer1Active;
 }
 
 .sidebar-pin-enabled {
@@ -766,11 +744,11 @@ $colorpicker_rounding: 0.341rem;
 
 .sidebar-pin-enabled:hover,
 .sidebar-pin-enabled:focus {
-    background-color: mix($primary, $hovercolor, 70%);
+    background-color: mix($primary, $layer2Hover, 70%);
 }
 
 .sidebar-pin-enabled:active {
-    background-color: mix($primary, $hovercolor, 40%);
+    background-color: mix($primary, $layer2Active, 40%);
 }
 
 .sidebar-volmixer-stream {
@@ -805,9 +783,11 @@ $colorpicker_rounding: 0.341rem;
     }
 }
 
-.sidebar-volmixer-status {
-    color: $onSurface;
-    margin: 0rem 0.682rem;
+.sidebar-volmixer-deviceselector {
+    @include small-rounding;
+    padding: 0.477rem 0.682rem;
+    background-color: $surfaceContainerHigh;
+    color: $onSurfaceVariant;
 }
 
 .sidebar-bluetooth-device {

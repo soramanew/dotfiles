@@ -1,59 +1,65 @@
-const { Box, EventBox, Button, Label, Revealer, Scrollable, Entry } = Widget;
+const { Box, EventBox, Button, Label, Revealer, Entry } = Widget;
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { TabContainer } from "../.commonwidgets/tabcontainer.js";
 import Todo from "../../services/todo.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
+import { RoundedScrollable } from "../.commonwidgets/cairo_roundedscrollable.js";
 
 const TodoListItem = (task, id, isDone) => {
-    const crosser = Box({ className: "sidebar-todo-crosser" });
+    const crosser = Box({ className: "todoscreen-todo-crosser" });
     const todoContent = Box({
-        className: "sidebar-todo-item spacing-h-5",
+        className: "todoscreen-todo-item-wrapper",
         children: [
-            Label({
-                hexpand: true,
-                xalign: 0,
-                wrap: true,
-                className: "txt txt-small sidebar-todo-txt",
-                label: task.content,
-                selectable: true,
-            }),
-            Button({
-                // Check/Uncheck
-                vpack: "center",
-                className: "txt sidebar-todo-item-action",
-                child: MaterialIcon(isDone ? "remove_done" : "check", "norm", { vpack: "center" }),
-                onClicked: () => {
-                    const contentWidth = todoContent.get_allocated_width();
-                    crosser.toggleClassName("sidebar-todo-crosser-crossed", true);
-                    crosser.css = `margin-left: -${contentWidth}px;`;
-                    Utils.timeout(200, () => (widgetRevealer.revealChild = false));
-                    Utils.timeout(350, () => {
-                        if (isDone) Todo.uncheck(id);
-                        else Todo.check(id);
-                    });
-                },
-                setup: setupCursorHover,
-            }),
-            Button({
-                // Remove
-                vpack: "center",
-                className: "txt sidebar-todo-item-action",
-                child: MaterialIcon("delete_forever", "norm", { vpack: "center" }),
-                onClicked: () => {
-                    const contentWidth = todoContent.get_allocated_width();
-                    crosser.toggleClassName("sidebar-todo-crosser-removed", true);
-                    crosser.css = `margin-left: -${contentWidth}px;`;
-                    Utils.timeout(200, () => (widgetRevealer.revealChild = false));
-                    Utils.timeout(350, () => Todo.remove(id));
-                },
-                setup: setupCursorHover,
+            Box({
+                className: "todoscreen-todo-item spacing-h-5",
+                children: [
+                    Label({
+                        hexpand: true,
+                        xalign: 0,
+                        wrap: true,
+                        className: "txt txt-small sidebar-todo-txt",
+                        label: task.content,
+                        selectable: true,
+                    }),
+                    Button({
+                        // Check/Uncheck
+                        vpack: "center",
+                        className: "txt todoscreen-todo-item-action",
+                        child: MaterialIcon(isDone ? "remove_done" : "check", "norm", { vpack: "center" }),
+                        onClicked: () => {
+                            const contentWidth = todoContent.get_allocated_width();
+                            crosser.toggleClassName("sidebar-todo-crosser-crossed", true);
+                            crosser.css = `margin-left: -${contentWidth}px;`;
+                            Utils.timeout(200, () => (widgetRevealer.revealChild = false));
+                            Utils.timeout(350, () => {
+                                if (isDone) Todo.uncheck(id);
+                                else Todo.check(id);
+                            });
+                        },
+                        setup: setupCursorHover,
+                    }),
+                    Button({
+                        // Remove
+                        vpack: "center",
+                        className: "txt todoscreen-todo-item-action",
+                        child: MaterialIcon("delete_forever", "norm", { vpack: "center" }),
+                        onClicked: () => {
+                            const contentWidth = todoContent.get_allocated_width();
+                            crosser.toggleClassName("sidebar-todo-crosser-removed", true);
+                            crosser.css = `margin-left: -${contentWidth}px;`;
+                            Utils.timeout(200, () => (widgetRevealer.revealChild = false));
+                            Utils.timeout(350, () => Todo.remove(id));
+                        },
+                        setup: setupCursorHover,
+                    }),
+                ],
             }),
             crosser,
         ],
     });
     const highlightOnHover = EventBox({
-        onHover: () => todoContent.toggleClassName("sidebar-todo-item-hovered", true),
-        onHoverLost: () => todoContent.toggleClassName("sidebar-todo-item-hovered", false),
+        onHover: () => todoContent.toggleClassName("todoscreen-todo-item-hovered", true),
+        onHoverLost: () => todoContent.toggleClassName("todoscreen-todo-item-hovered", false),
         child: todoContent,
     });
     const widgetRevealer = Revealer({
@@ -66,7 +72,7 @@ const TodoListItem = (task, id, isDone) => {
 };
 
 const TodoItems = isDone =>
-    Scrollable({
+    RoundedScrollable({
         hscroll: "never",
         vscroll: "automatic",
         child: Box({
@@ -85,10 +91,13 @@ const TodoItems = isDone =>
                                     hexpand: true,
                                     vertical: true,
                                     vpack: "center",
-                                    className: "txt",
+                                    className: "txt-subtext",
                                     children: [
                                         MaterialIcon(isDone ? "checklist" : "check_circle", "gigantic"),
-                                        Label({ label: isDone ? "Finished tasks will go here" : "Nothing here!" }),
+                                        Label({
+                                            label: isDone ? "Finished tasks will go here" : "Nothing here!",
+                                            className: "txt-large",
+                                        }),
                                     ],
                                 }),
                             ];
@@ -97,8 +106,9 @@ const TodoItems = isDone =>
                     "updated"
                 ),
         }),
-        setup: listContents => {
-            const vScrollbar = listContents.get_vscrollbar();
+        overlayClass: "sidebar-scrollcorner0",
+        setup: self => {
+            const vScrollbar = self.get_vscrollbar();
             vScrollbar.get_style_context().add_class("sidebar-scrollbar");
         },
     });

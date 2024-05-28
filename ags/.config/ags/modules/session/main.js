@@ -1,13 +1,13 @@
 import SessionScreen from "./sessionscreen.js";
 import PopupWindow from "../.widgethacks/popupwindow.js";
 
-export default (id = "") =>
+export default () =>
     PopupWindow({
-        name: `session${id}`,
+        name: "session",
         visible: false,
-        keymode: "exclusive",
+        keymode: "on-demand",
         layer: "overlay",
         exclusivity: "ignore",
         anchor: ["top", "bottom", "left", "right"],
-        child: SessionScreen(id),
+        child: SessionScreen(),
     });

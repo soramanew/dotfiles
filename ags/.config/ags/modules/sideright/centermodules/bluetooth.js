@@ -1,4 +1,4 @@
-const { Box, Button, Icon, Label, Scrollable, Stack } = Widget;
+const { Box, Button, Icon, Label, Stack } = Widget;
 const { execAsync } = Utils;
 const Bluetooth = await Service.import("bluetooth");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
@@ -6,12 +6,9 @@ import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { ConfigToggle } from "../../.commonwidgets/configwidgets.js";
 import { RoundedScrollable } from "../../.commonwidgets/cairo_roundedscrollable.js";
 
-// can't connect: sync_problem
-
 const USE_SYMBOLIC_ICONS = true;
 
 const BluetoothDevice = device => {
-    // console.log(device);
     const deviceIcon = Icon({
         className: "sidebar-bluetooth-appicon",
         vpack: "center",
@@ -26,14 +23,14 @@ const BluetoothDevice = device => {
         children: [
             Label({
                 xalign: 0,
-                maxWidthChars: 10,
+                maxWidthChars: 1,
                 truncate: "end",
                 label: device.bind("name"),
                 className: "txt-small",
             }),
             Label({
                 xalign: 0,
-                maxWidthChars: 10,
+                maxWidthChars: 1,
                 truncate: "end",
                 label: Utils.merge([device.bind("connected"), device.bind("paired")], (connected, paired) =>
                     connected ? "Connected" : paired ? "Paired" : ""

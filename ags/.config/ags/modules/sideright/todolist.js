@@ -1,15 +1,16 @@
-const { Box, Button, Label, Revealer, Scrollable, Entry } = Widget;
+const { Box, Button, Label, Revealer, Entry } = Widget;
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { TabContainer } from "../.commonwidgets/tabcontainer.js";
 import Todo from "../../services/todo.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
+import { RoundedScrollable } from "../.commonwidgets/cairo_roundedscrollable.js";
 
 const TodoListItem = (task, id, isDone) => {
     const crosser = Box({
         className: "sidebar-todo-crosser",
     });
     const todoContent = Box({
-        className: "sidebar-todo-item spacing-h-5",
+        className: "spacing-h-5",
         children: [
             Label({
                 hexpand: true,
@@ -63,11 +64,12 @@ const TodoListItem = (task, id, isDone) => {
 };
 
 const TodoItems = isDone =>
-    Scrollable({
+    RoundedScrollable({
         hscroll: "never",
         vscroll: "automatic",
         child: Box({
             vertical: true,
+            className: "sidebar-todolist",
             setup: self =>
                 self.hook(
                     Todo,
@@ -82,10 +84,13 @@ const TodoItems = isDone =>
                                     hexpand: true,
                                     vertical: true,
                                     vpack: "center",
-                                    className: "txt",
+                                    className: "txt-subtext",
                                     children: [
                                         MaterialIcon(isDone ? "checklist" : "check_circle", "gigantic"),
-                                        Label({ label: isDone ? "Finished tasks will go here" : "Nothing here!" }),
+                                        Label({
+                                            label: isDone ? "Finished tasks will go here" : "Nothing here!",
+                                            className: "txt-small",
+                                        }),
                                     ],
                                 }),
                             ];
@@ -94,6 +99,7 @@ const TodoItems = isDone =>
                     "updated"
                 ),
         }),
+        overlayClass: "sidebar-scrollcorner1",
         setup: listContents => {
             const vScrollbar = listContents.get_vscrollbar();
             vScrollbar.get_style_context().add_class("sidebar-scrollbar");

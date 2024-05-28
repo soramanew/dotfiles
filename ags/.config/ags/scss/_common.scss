@@ -80,8 +80,9 @@ tooltip {
     animation-timing-function: ease-out;
     animation-iteration-count: 1;
     @include normal-rounding;
-    background-color: opacify($color: $inverseSurface, $amount: 1);
-    color: $inverseOnSurface;
+    background-color: opacify($color: $secondaryContainer, $amount: 1);
+    color: $onSecondaryContainer;
+    border: 0.034rem solid $inverseSurface;
 }
 
 /////////////////////////////////////////
@@ -192,9 +193,6 @@ popover {
     color: $onSecondaryContainer;
 }
 
-.multipleselection-container {
-}
-
 .multipleselection-btn {
     @include small-rounding;
     padding: 0rem 0.341rem;
@@ -250,12 +248,13 @@ popover {
     color: $onLayer0;
 }
 
-.tab-btn:hover {
-    background-color: $layer0Hover;
+.tab-btn:hover,
+.tab-btn:focus {
+    background-color: mix($layer0, $layer0Hover, 50%);
 }
 
-.tab-btn:focus {
-    background-color: $surfaceContainerLow;
+.tab-btn:active {
+    background-color: $surfaceContainerHighest;
 }
 
 .tab-btn-active > box > label {

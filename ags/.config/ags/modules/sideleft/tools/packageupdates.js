@@ -44,7 +44,7 @@ const Repo = (icon, name, children) => {
         child: Box({
             className: "margin-top-5",
             homogeneous: true,
-            children: [Box({ vertical: true, className: "spacing-v-5", children: children })],
+            child: Box({ vertical: true, className: "spacing-v-5", children: children }),
         }),
     });
     return Box({ className: "sidebar-module-repo", vertical: true, children: [header, content] });
@@ -55,11 +55,11 @@ const Update = (pkg, update) =>
         className: "spacing-h-5 txt",
         children: [
             Label({
+                xalign: 0,
                 className: "txt-small",
-                hpack: "start",
                 hexpand: true,
                 truncate: "end",
-                maxWidthChars: 40,
+                maxWidthChars: 1,
                 label: update,
                 tooltipText: addVersionChangeToDesc(update, getDesc(pkg)),
             }),

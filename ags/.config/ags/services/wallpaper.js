@@ -1,16 +1,23 @@
 import GLib from "gi://GLib";
+import { CACHE_DIR } from "../constants.js";
 const { exec, execAsync } = Utils;
+const Hyprland = await Service.import("hyprland");
 
 class WallpaperService extends Service {
     static {
         Service.register(
             this,
             { triggered: [] },
-            { enabled: ["boolean", "rw"], "next-exec": ["string", "r"], "time-until-exec": ["string", "r"] }
+            {
+                enabled: ["boolean", "rw"],
+                "next-exec": ["string", "r"],
+                "time-until-exec": ["string", "r"],
+                paused: ["boolean", "rw"],
+            }
         );
     }
 
-    #cacheDir = `${GLib.get_user_cache_dir()}/ags/user/wallpaper_change`;
+    #cacheDir = `${CACHE_DIR}/user/wallpaper`;
     #enabledStorage = `${this.#cacheDir}/enabled.txt`;
     #changeScript = `${App.configDir}/scripts/color_generation/change-wallpaper.sh`;
     #timeoutLength = 900; // seconds
@@ -21,6 +28,9 @@ class WallpaperService extends Service {
     #interval;
     #nextExec;
     #timeUntilExec;
+    #paused;
+    #secsToNextExec;
+    #fullscreenCheckInterval;
 
     get enabled() {
         return this.#enabled;
@@ -28,6 +38,7 @@ class WallpaperService extends Service {
 
     set enabled(value) {
         this.#enabled = value;
+        this.notify("enabled");
         execAsync(["bash", "-c", `echo '${value}' > '${this.#enabledStorage}'`]).catch(print);
         if (!value) this.#stop();
         else if (this.#timeout === null) this.#go();
@@ -41,20 +52,43 @@ class WallpaperService extends Service {
         return this.#timeUntilExec;
     }
 
-    #go() {
+    get paused() {
+        return this.#paused;
+    }
+
+    set paused(value) {
+        if (value) this.#pause();
+        else this.#resume();
+    }
+
+    #go(delay = this.#timeoutLength) {
         this.#stop();
         this.#timeout = setTimeout(() => {
             execAsync(this.#changeScript).catch(print);
             this.emit("triggered");
             this.#go();
-        }, this.#timeoutLength * 1000); // because seconds
-        this.#nextExec = GLib.DateTime.new_now_local().add_seconds(this.#timeoutLength);
+        }, delay * 1000); // because seconds
+        this.#nextExec = GLib.DateTime.new_now_local().add_seconds(delay);
         this.notify("next-exec");
         this.#interval = setInterval(() => this.#updateTime(), this.#pollFrequency);
+        this.#fullscreenCheckInterval = setInterval(() => {
+            execAsync([
+                "bash",
+                "-c",
+                `hyprctl clients -j | jq '[.[] | select(.address == "${Hyprland.active.client.address}" and .fullscreen)]' | jq length`,
+            ])
+                .then(out => {
+                    if (parseInt(out, 10) > 0) this.#pause();
+                    else if (this.#paused) this.#resume();
+                })
+                .catch(print);
+        }, this.#pollFrequency);
     }
 
     #updateTime() {
-        const secDiff = Math.floor(this.#nextExec.difference(GLib.DateTime.new_now_local()) / 1e6);
+        const exactSecDiff = this.#nextExec.difference(GLib.DateTime.new_now_local()) / 1e6;
+        this.#secsToNextExec = exactSecDiff;
+        const secDiff = Math.floor(exactSecDiff);
         const seconds = secDiff % 60;
         const minutes = Math.floor(secDiff / 60) % 60;
         const hours = Math.floor(secDiff / 60 / 60) % 24;
@@ -67,15 +101,29 @@ class WallpaperService extends Service {
         this.notify("time-until-exec");
     }
 
-    #stop() {
+    #stop(pause = false) {
         this.#timeout?.destroy();
         this.#timeout = null;
         this.#interval?.destroy();
         this.#interval = null;
         this.#nextExec = "";
         this.notify("next-exec");
-        this.#timeUntilExec = "";
-        this.notify("time-until-exec");
+        this.#paused = pause;
+        this.notify("paused");
+        if (!pause) {
+            this.#timeUntilExec = "";
+            this.notify("time-until-exec");
+            this.#fullscreenCheckInterval?.destroy();
+            this.#fullscreenCheckInterval = null;
+        }
+    }
+
+    #pause() {
+        this.#stop(true);
+    }
+
+    #resume() {
+        this.#go(this.#secsToNextExec);
     }
 
     oneshot() {

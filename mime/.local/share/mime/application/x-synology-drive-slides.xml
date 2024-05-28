@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<mime-type xmlns="http://www.freedesktop.org/standards/shared-mime-info" type="application/x-synology-drive-slides">
-  <!--Created automatically by update-mime-database. DO NOT EDIT!-->
-  <comment>Synology Office Document</comment>
-  <icon name="application-x-synology-drive-slides"/>
-  <glob case-sensitive="false" pattern="*.oslides"/>
-</mime-type>

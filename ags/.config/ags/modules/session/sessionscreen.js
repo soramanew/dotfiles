@@ -1,6 +1,6 @@
 import Gtk from "gi://Gtk";
 const { Box, Revealer, Button, Overlay, Label } = Widget;
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../variables.js";
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../constants.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 
 const SessionButtonRow = children =>
@@ -10,7 +10,7 @@ const SessionButtonRow = children =>
         children: children,
     });
 
-export default (id = "") => {
+export default () => {
     const SessionButton = ({ name, icon, command = null, colourId = 0, extraClassName = "", ...rest }) => {
         const buttonDescription = Revealer({
             vpack: "end",
@@ -28,7 +28,7 @@ export default (id = "") => {
         };
         return Button({
             onClicked: () => {
-                App.closeWindow(`session${id}`);
+                App.closeWindow("session");
                 if (command) Utils.execAsync(command).catch(print);
             },
             className: `session-button session-colour-${colourId} ${extraClassName}`,

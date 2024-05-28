@@ -28,6 +28,7 @@ const NotificationIcon = notifObject => {
             valign: Gtk.Align.CENTER,
             hexpand: false,
             className: "notif-icon",
+            tooltipText: `Urgency: ${notifObject.urgency}`,
             css: `
                 background-image: url("${notifObject.image}");
                 background-size: auto 100%;
@@ -46,6 +47,7 @@ const NotificationIcon = notifObject => {
         hexpand: false,
         className: `notif-icon notif-icon-material-${notifObject.urgency}`,
         homogeneous: true,
+        tooltipText: `Urgency: ${notifObject.urgency}`,
         children: [
             icon !== "NO_ICON"
                 ? Icon({ vpack: "center", icon })
@@ -58,10 +60,33 @@ const NotificationIcon = notifObject => {
     });
 };
 
+const getFriendlyTime = time => {
+    let notifTime, timeCategory;
+    const messageTime = GLib.DateTime.new_from_unix_local(time);
+    const todayDay = GLib.DateTime.new_now_local().get_day_of_year();
+    if (messageTime.get_day_of_year() == todayDay) {
+        if (messageTime.compare(GLib.DateTime.new_now_local().add_seconds(-60)) > 0) notifTime = "Now";
+        else notifTime = messageTime.format("%H:%M");
+        timeCategory = "Today";
+    } else if (messageTime.get_day_of_year() == todayDay - 1) {
+        notifTime = "Yesterday";
+        timeCategory = "Yesterday";
+    } else {
+        notifTime = messageTime.format("%d/%m");
+        if (messageTime.get_day_of_year() >= todayDay - 7) timeCategory = "Last week";
+        else timeCategory = "A long time ago";
+    }
+    return { notifTime, timeCategory };
+};
+
 export default ({ notifObject, isPopup = false, ...rest }) => {
     if (!notifObject) return;
     const popupTimeout = notifObject.timeout || (notifObject.urgency == "critical" ? 8000 : 3000);
     let destroying = false;
+    const safeTimeout = (delay, callback) =>
+        setTimeout(() => {
+            if (!destroying) callback();
+        }, delay);
     const destroyNoSlide = () => {
         if (destroying) return;
         destroying = true;
@@ -100,9 +125,7 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
                     // Double click
                     Utils.execAsync(["wl-copy", notifObject.body]).catch(print);
                     notifTextSummary.label = notifObject.summary + " (copied)";
-                    Utils.timeout(3000, () => {
-                        if (!destroying) notifTextSummary.label = notifObject.summary;
-                    });
+                    safeTimeout(3000, () => (notifTextSummary.label = notifObject.summary));
                     return;
                 }
                 wholeThing.attribute.held = true;
@@ -125,7 +148,7 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
                 );
                 if (isPopup) {
                     timeout?.destroy();
-                    timeout = setTimeout(destroyNoSlide, popupTimeout * stoppedTime);
+                    timeout = safeTimeout(popupTimeout * stoppedTime, destroyNoSlide);
                     prog.attribute.updateProgress(prog, 0, (popupTimeout - prog.attribute.initDelay) * stoppedTime);
                     if (heldStart) timeHeld += Date.now() - heldStart;
                 }
@@ -167,7 +190,7 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
             useMarkup: true,
             xalign: 0,
             justify: Gtk.Justification.LEFT,
-            maxWidthChars: 24,
+            maxWidthChars: 1,
             truncate: "end",
             label: notifObject.body.split("\n")[0],
         }),
@@ -185,7 +208,7 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
                     className: `txt-smallie notif-body-${notifObject.urgency}`,
                     useMarkup: true,
                     justify: Gtk.Justification.LEFT,
-                    maxWidthChars: 24,
+                    maxWidthChars: 1,
                     wrap: true,
                     label: notifObject.body,
                 }),
@@ -234,31 +257,20 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
                 : NotificationIcon(notifObject),
         ],
     });
-    let notifTime = "";
-    const messageTime = GLib.DateTime.new_from_unix_local(notifObject.time);
-    const todayDay = GLib.DateTime.new_now_local().get_day_of_year();
-    if (messageTime.get_day_of_year() == todayDay) {
-        notifTime = messageTime.format("%H:%M");
-        wholeThing.attribute.timeCategory = "Today";
-    } else if (messageTime.get_day_of_year() == todayDay - 1) {
-        notifTime = "Yesterday";
-        wholeThing.attribute.timeCategory = "Yesterday";
-    } else {
-        notifTime = messageTime.format("%d/%m");
-        if (messageTime.get_day_of_year() >= todayDay - 7) wholeThing.attribute.timeCategory = "Last week";
-        else wholeThing.attribute.timeCategory = "A long time ago";
-    }
     const notifTextSummary = Label({
         xalign: 0,
         className: "txt-small txt-semibold titlefont",
         justify: Gtk.Justification.LEFT,
         hexpand: true,
-        maxWidthChars: 24,
+        maxWidthChars: 1,
         truncate: "end",
         ellipsize: 3,
         useMarkup: true,
         label: notifObject.summary,
+        tooltipText: notifObject.summary,
     });
+    const { notifTime, timeCategory } = getFriendlyTime(notifObject.time);
+    wholeThing.attribute.timeCategory = timeCategory;
     const notifTimeLabel = Label({
         vpack: "center",
         justification: "right",
@@ -266,13 +278,15 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
         label: notifTime,
         tooltipText: notifObject.appName ? `Sender: ${notifObject.appName}` : "",
     });
+    if (notifTime === "Now")
+        safeTimeout(60000, () => (notifTimeLabel.label = getFriendlyTime(notifObject.time).notifTime));
     const notifAppName =
         notifObject.appName && notifObject.appName.length < 10
             ? Label({
                   vpack: "center",
                   justification: "right",
                   className: `txt-smallie notif-body-${notifObject.urgency}`,
-                  label: ` - ${notifObject.appName}`,
+                  label: `- ${notifObject.appName}`,
               })
             : null;
     const notifText = Box({
@@ -351,7 +365,7 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
     const notificationBox = Box({
         attribute: { ready: false },
         homogeneous: true,
-        children: [notificationContent],
+        child: notificationContent,
         setup: self =>
             self
                 .hook(
@@ -420,7 +434,7 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
                                 self.setCss(leftAnim1);
                                 widget.sensitive = false;
                             }
-                            Utils.timeout(120, destroyNoSlide);
+                            safeTimeout(120, destroyNoSlide);
                         } else {
                             self.setCss(`transition: margin 200ms cubic-bezier(0.05, 0.7, 0.1, 1), opacity 200ms cubic-bezier(0.05, 0.7, 0.1, 1);
                                          margin-left: ${startMargin}px; margin-right: ${startMargin}px;
@@ -439,6 +453,6 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
     widget.add(notificationBox);
     wholeThing.child.add(widget);
     const initialTime = Date.now();
-    let timeout = isPopup ? setTimeout(destroyNoSlide, popupTimeout) : null;
+    let timeout = isPopup ? safeTimeout(popupTimeout, destroyNoSlide) : null;
     return wholeThing;
 };

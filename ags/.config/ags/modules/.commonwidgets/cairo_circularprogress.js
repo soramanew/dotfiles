@@ -89,11 +89,7 @@ export const AnimatedCircProg = ({
 
             // Init animation
             if (initFrom != initTo)
-                Utils.timeout(
-                    initDelay,
-                    () => self.attribute.updateProgress(self, initTo, initAnimTime - initDelay),
-                    self
-                );
+                Utils.timeout(initDelay, () => self.attribute.updateProgress(self, initTo, initAnimTime - initDelay));
             extraSetup(self);
         },
     });

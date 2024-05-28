@@ -2,13 +2,19 @@ import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
 const { Box, Label, Button, Icon, Menu, MenuItem, Revealer, EventBox, Overlay, CenterBox } = Widget;
 const Hyprland = await Service.import("hyprland");
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../variables.js";
 import { setupCursorHoverGrab } from "../.widgetutils/cursorhover.js";
 import { dumpToWorkspace, swapWorkspace } from "./actions.js";
 import { substitute } from "../.miscutils/icons.js";
 import { DoubleRevealer } from "../.widgethacks/advancedrevealers.js";
 import { range } from "../.miscutils/system.js";
-import { WS_PER_GROUP, OVERVIEW_ROWS as WS_ROWS, OVERVIEW_COLS as WS_COLS } from "../../constants.js";
+import {
+    SCREEN_HEIGHT,
+    SCREEN_WIDTH,
+    WS_PER_GROUP,
+    OVERVIEW_ROWS as WS_ROWS,
+    OVERVIEW_COLS as WS_COLS,
+} from "../../constants.js";
+import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
 
 const OVERVIEW_SCALE = 0.18;
 const OVERVIEW_WS_NUM_SCALE = 0.09;
@@ -29,6 +35,8 @@ const calcCss = (x, y, w, h) => `
     margin-right: -${Math.round((x + w) * OVERVIEW_SCALE)}px;
     margin-bottom: -${Math.round((y + h) * OVERVIEW_SCALE)}px;
 `;
+
+const C2C = () => Click2CloseRegion({ name: "overview" });
 
 export default () => {
     const clientMap = new Map();
@@ -55,7 +63,7 @@ export default () => {
         });
 
     const Window = (
-        { address, at: [x, y], size: [w, h], workspace: { id, name }, class: c, title, xwayland },
+        { address, at: [x, y], size: [w, h], workspace: { id, name }, class: c, initialClass, title, xwayland },
         screenCoords,
         onClicked = () => dispatchAndClose(`focuswindow address:${address}`)
     ) => {
@@ -79,10 +87,9 @@ export default () => {
         if (x + w > SCREEN_WIDTH) w = SCREEN_WIDTH - x;
         if (y + h > SCREEN_HEIGHT) h = SCREEN_HEIGHT - y;
 
-        const appIcon = Icon({
-            icon: substitute(c),
-            size: (Math.min(w, h) * OVERVIEW_SCALE) / 2.5,
-        });
+        if (c.length === 0) c = initialClass;
+        const appIcon = Icon({ icon: substitute(c), size: (Math.min(w, h) * OVERVIEW_SCALE) / 2.5 });
+
         return Button({
             attribute: {
                 address,
@@ -143,7 +150,7 @@ export default () => {
                             transition2: "slide_down",
                             revealChild: revealInfoCondition,
                             child: Label({
-                                maxWidthChars: 10, // Doesn't matter what number
+                                maxWidthChars: 1, // Min width when ellipsizing (truncated)
                                 truncate: "end",
                                 className: `margin-top-5 ${xwayland ? "txt txt-italic" : "txt"}`,
                                 css: `
@@ -225,7 +232,7 @@ export default () => {
                         });
                     },
                     child: Overlay({
-                        child: Box({}),
+                        child: Box(),
                         overlays: [WorkspaceNumber({ index: index, hpack: "start", vpack: "start" }), fixed],
                     }),
                 }),
@@ -563,26 +570,32 @@ export default () => {
         child: Box({
             vertical: true,
             children: [
-                Box({
-                    vertical: true,
-                    className: "overview-tasks",
-                    children: range(WS_ROWS, 0).map(i =>
-                        OverviewRow({
-                            startWorkspace: 1 + i * WS_COLS,
-                            workspaces: WS_COLS,
-                        })
-                    ),
+                CenterBox({
+                    vexpand: false,
+                    startWidget: C2C(),
+                    centerWidget: Box({
+                        vertical: true,
+                        className: "overview-tasks",
+                        children: range(WS_ROWS, 0).map(i =>
+                            OverviewRow({
+                                startWorkspace: 1 + i * WS_COLS,
+                                workspaces: WS_COLS,
+                            })
+                        ),
+                    }),
+                    endWidget: C2C(),
                 }),
                 Revealer({
                     transition: "slide_down",
                     transitionDuration: 200,
                     revealChild: Hyprland.bind("workspaces").as(
-                        wss => !!wss.filter(ws => ws.name.startsWith("special:")).length
+                        wss => wss.filter(ws => ws.name.startsWith("special:")).length > 0
                     ),
                     child: CenterBox({
-                        startWidget: Box({ hexpand: true }),
+                        vexpand: false,
+                        startWidget: C2C(),
                         centerWidget: SpecialWorkspaces(),
-                        endWidget: Box({ hexpand: true }),
+                        endWidget: C2C(),
                     }),
                 }),
             ],

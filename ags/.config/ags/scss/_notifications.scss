@@ -27,13 +27,13 @@
 }
 
 .notif-category-clicked {
-    background-color: $surfaceContainerLow;
+    background-color: $layer1Hover;
 }
 
 .notif-low {
     @include notif-rounding;
-    background-color: $layer2;
-    color: $onLayer2;
+    background-color: mix($layer1, $secondaryContainer, 80%);
+    color: $onLayer1;
     padding: $rounding_small;
     padding-right: $rounding_small + 0.545rem;
 }
@@ -55,29 +55,28 @@
 }
 
 .notif-clicked-low {
-    background-color: $surfaceContainerLow;
+    background-color: mix($secondaryContainer, $surfaceContainerLow, 50%);
 }
 
 .notif-clicked-normal {
-    background-color: $surfaceContainerLow;
+    background-color: $surfaceContainerHigh;
 }
 
 .notif-clicked-critical {
     background-color: $onSecondary;
-    color: $onSecondaryContainer;
 }
 
 .popup-notif-low {
     @include notif-rounding;
     min-width: 30.682rem;
-    background-color: $layer2;
+    background-color: $layer1;
 
     @if $transparent ==True {
         background-color: $layer0;
     }
 
     border: 0.034rem solid $outlineVariant;
-    color: $onLayer2;
+    color: $onLayer1;
     padding: $rounding_small;
     padding-right: $rounding_small + 0.545rem;
 }
@@ -241,8 +240,8 @@
 }
 
 .notif-action-low {
-    background-color: $surfaceContainerHighest;
-    color: $onLayer2;
+    background-color: mix($surfaceContainerHighest, $secondaryContainer, 70%);
+    color: $onSurfaceVariant;
 }
 
 .notif-action-low:focus,
