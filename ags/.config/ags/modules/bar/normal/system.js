@@ -77,7 +77,7 @@ const Utilities = () =>
                 onClicked: () => execAsync(["bash", "-c", "grimblast --freeze save area - | swappy -f -"]).catch(print),
             }),
             UtilButton({
-                name: "Color picker",
+                name: "Colour picker",
                 icon: "colorize",
                 onClicked: () => execAsync(["hyprpicker", "-a"]).catch(print),
             }),
@@ -135,84 +135,20 @@ const BarBattery = () =>
                     vpack: "center",
                     className: "bar-batt",
                     homogeneous: true,
-                    children: [Icon({ className: "txt-smaller", icon: Battery.bind("icon_name") })],
+                    child: Icon({ className: "txt-smaller", icon: Battery.bind("icon_name") }),
                     setup: self =>
                         self.hook(Battery, box => {
                             box.toggleClassName("bar-batt-low", Battery.percent <= BATTERY_LOW);
                             box.toggleClassName("bar-batt-full", Battery.charged);
                         }),
-                    // children: [MaterialIcon("battery_change", "small")],
-                    // setup: self =>
-                    //     self.hook(Battery, box => {
-                    //         box.toggleClassName("bar-batt-low", Battery.percent <= BATTERY_LOW);
-                    //         box.toggleClassName("bar-batt-full", Battery.charged);
-
-                    //         const changeIcon = (charging, not) =>
-                    //             (box.children[0].label = Battery.charging ? charging : not);
-
-                    //         if (Battery.percent <= 10) changeIcon("battery_charging_full", "battery_alert");
-                    //         else if (Battery.percent <= 20) changeIcon("battery_charging_20", "battery_1_bar");
-                    //         else if (Battery.percent <= 30) changeIcon("battery_charging_30", "battery_2_bar");
-                    //         else if (Battery.percent <= 50) changeIcon("battery_charging_50", "battery_3_bar");
-                    //         else if (Battery.percent <= 60) changeIcon("battery_charging_60", "battery_4_bar");
-                    //         else if (Battery.percent <= 80) changeIcon("battery_charging_80", "battery_5_bar");
-                    //         else if (Battery.percent <= 90) changeIcon("battery_charging_90", "battery_6_bar");
-                    //         else changeIcon("battery_full", "battery_full");
-                    //     }),
                 }),
                 overlays: [BatBatteryProgress()],
             }),
         ],
     });
 
-const WeatherModule = () =>
+export default () =>
     Box({
-        hexpand: true,
-        hpack: "center",
-        className: "spacing-h-4 txt-onSurfaceVariant",
-        children: [MaterialIcon("device_thermostat", "small"), Label({ label: "Weather" })],
-        setup: self =>
-            self.poll(900000, self => {
-                const WEATHER_CACHE_PATH = WEATHER_CACHE_FOLDER + "/wttr.in.txt";
-                const updateWeatherForCity = city =>
-                    execAsync(`curl https://wttr.in/${city.replace(/ /g, "%20")}?format=j1`)
-                        .then(output => {
-                            const weather = JSON.parse(output);
-                            Utils.writeFile(JSON.stringify(weather), WEATHER_CACHE_PATH).catch(print);
-                            const weatherCode = weather.current_condition[0].weatherCode;
-                            const weatherDesc = weather.current_condition[0].weatherDesc[0].value;
-                            const temperature = weather.current_condition[0].temp_C;
-                            const feelsLike = weather.current_condition[0].FeelsLikeC;
-                            const weatherSymbol = WEATHER_SYMBOL[WWO_CODE[weatherCode]];
-                            self.children[0].label = weatherSymbol;
-                            self.children[1].label = `${temperature}℃ • Feels like ${feelsLike}℃`;
-                            self.tooltipText = weatherDesc;
-                        })
-                        .catch(err => {
-                            print(`Error updating weather for ${city}. Stderr:\n${err}`);
-                            try {
-                                // Read from cache
-                                const weather = JSON.parse(Utils.readFile(WEATHER_CACHE_PATH));
-                                const weatherCode = weather.current_condition[0].weatherCode;
-                                const weatherDesc = weather.current_condition[0].weatherDesc[0].value;
-                                const temperature = weather.current_condition[0].temp_C;
-                                const feelsLike = weather.current_condition[0].FeelsLikeC;
-                                const weatherSymbol = WEATHER_SYMBOL[WWO_CODE[weatherCode]];
-                                self.children[0].label = weatherSymbol;
-                                self.children[1].label = `${temperature}℃ • Feels like ${feelsLike}℃`;
-                                self.tooltipText = weatherDesc;
-                            } catch (err) {
-                                print(err);
-                            }
-                        });
-                execAsync("curl ipinfo.io")
-                    .then(output => JSON.parse(output).city.toLowerCase())
-                    .then(updateWeatherForCity)
-                    .catch(print);
-            }),
+        className: "bar-sidemodule",
+        children: [BarGroupSystem(BarClock()), BarGroupSystem(Utilities()), BarGroupSystem(BarBattery())],
     });
-
-const VariableModule = () =>
-    Battery.available ? [BarGroupSystem(Utilities()), BarGroupSystem(BarBattery())] : [BarGroupSystem(WeatherModule())];
-
-export default () => Box({ className: "bar-sidemodule", children: [BarGroupSystem(BarClock()), ...VariableModule()] });

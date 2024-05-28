@@ -14,7 +14,6 @@ import Overview from "./modules/overview/main.js";
 import Session from "./modules/session/main.js";
 import SideLeft from "./modules/sideleft/main.js";
 import SideRight from "./modules/sideright/main.js";
-import Click2Close from "./modules/click2close/main.js";
 import TodoScreen from "./modules/todoscreen/main.js";
 import AppLauncher from "./modules/applauncher/main.js";
 import GCheatsheet from "./modules/gcheatsheet/main.js";
@@ -34,6 +33,7 @@ globalThis.reloadCss = applyStyle;
 applyStyle();
 
 // Battery low notifications
+const BATTERY_SLEEP_LEVEL = 3;
 const BATTERY_WARN_LEVELS = [20, 15, 5];
 const BATTERY_WARN_TITLES = ["Low battery", "Very low battery", "Critical Battery"];
 const BATTERY_WARN_BODIES = ["Plug in the charger", "You there?", "PLUG THE CHARGER ALREADY"];
@@ -44,10 +44,35 @@ function batteryMessage() {
         return;
     }
     const perc = Battery.percent;
+    if (perc <= BATTERY_SLEEP_LEVEL) {
+        execAsync([
+            "notify-send",
+            "-u",
+            "critical",
+            "-t",
+            8000,
+            "-a",
+            "ags",
+            "CRITICAL BATTERY",
+            "Hibernating to prevent data loss...",
+        ]);
+        Utils.timeout(2000, () => execAsync("systemctl hibernate"));
+        return;
+    }
     for (let i = BATTERY_WARN_LEVELS.length - 1; i >= 0; i--) {
         if (perc <= BATTERY_WARN_LEVELS[i] && !batteryWarned[i]) {
             for (let j = i; j >= 0; j--) batteryWarned[j] = true;
-            execAsync(["notify-send", "-u", "critical", "-t", 8000, "-a", "ags", BATTERY_WARN_TITLES[i], BATTERY_WARN_BODIES[i]]).catch(print);
+            execAsync([
+                "notify-send",
+                "-u",
+                "critical",
+                "-t",
+                8000,
+                "-a",
+                "ags",
+                BATTERY_WARN_TITLES[i],
+                BATTERY_WARN_BODIES[i],
+            ]).catch(print);
             break;
         }
     }
@@ -56,23 +81,22 @@ Battery.connect("changed", batteryMessage);
 
 const Windows = () => [
     Overview(),
-    forMonitors(Indicator),
-    forMonitors(Cheatsheet),
-    forMonitors(GCheatsheet),
+    AppLauncher(),
+    Cheatsheet(),
+    GCheatsheet(),
     TodoScreen(),
     SideLeft(),
     SideRight(),
     Osk(),
     Session(),
+    forMonitors(Bar),
+    forMonitors(BarCornerTopleft),
+    forMonitors(BarCornerTopright),
+    forMonitors(Indicator),
     forMonitors(id => Corner(id, "top left")),
     forMonitors(id => Corner(id, "top right")),
     forMonitors(id => Corner(id, "bottom left")),
     forMonitors(id => Corner(id, "bottom right")),
-    forMonitors(Bar),
-    forMonitors(BarCornerTopleft),
-    forMonitors(BarCornerTopright),
-    forMonitors(Click2Close),
-    AppLauncher(),
 ];
 
 App.config({

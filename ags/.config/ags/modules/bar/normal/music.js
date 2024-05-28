@@ -34,20 +34,18 @@ const BarResource = (
     });
     const resourceProgress = Box({
         homogeneous: true,
-        children: [
-            Overlay({
-                child: Box({
-                    vpack: "center",
-                    className: iconClassName,
-                    homogeneous: true,
-                    children: [MaterialIcon(icon, "small")],
-                }),
-                overlays: [resourceCircProg],
+        child: Overlay({
+            child: Box({
+                vpack: "center",
+                className: iconClassName,
+                homogeneous: true,
+                child: MaterialIcon(icon, "small"),
             }),
-        ],
+            overlays: [resourceCircProg],
+        }),
     });
     const resourceLabel = Label({ className: `txt-smallie ${textClassName}` });
-    const widget = Button({
+    return Button({
         onClicked: () => execAsync(`${GLib.get_user_home_dir()}/.config/hypr/scripts/toggle-sysmon.sh`).catch(print),
         child: Box({
             className: `spacing-h-4 ${textClassName}`,
@@ -56,15 +54,15 @@ const BarResource = (
                 self.poll(5000, () =>
                     execAsync(["bash", "-c", command])
                         .then(output => {
-                            resourceCircProg.css = `font-size: ${Number(output)}px;`;
-                            resourceLabel.label = `${Math.round(Number(output))}%`;
-                            widget.tooltipText = `${name}: ${Math.round(Number(output))}%`;
+                            output = parseFloat(output);
+                            resourceCircProg.css = `font-size: ${output}px;`;
+                            resourceLabel.label = `${Math.round(output)}%`;
+                            self.tooltipText = `${name}: ${output}%`;
                         })
                         .catch(print)
                 ),
         }),
     });
-    return widget;
 };
 
 const TrackProgress = () => {
@@ -112,7 +110,7 @@ export default () => {
         hexpand: true,
         className: "txt-smallie bar-music-txt",
         truncate: "end",
-        maxWidthChars: 10, // Doesn't matter, just needs to be non negative
+        maxWidthChars: 1,
         setup: self =>
             self.hook(Mpris, self => {
                 const player = Mpris.getPlayer("");

@@ -1,13 +1,10 @@
-const { GLib } = imports.gi;
 const { Box, Button, Icon, Label } = Widget;
-const { exec, execAsync } = Utils;
+const { execAsync } = Utils;
 import Wallpaper from "../../../services/wallpaper.js";
 import SidebarModule from "./module.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { distroID, isArchDistro, isDebianDistro, hasFlatpak } from "../../.miscutils/system.js";
-
-const changeWallpaperScript = `${GLib.get_home_dir()}/.config/hypr/scripts/wallpaper-change.sh`;
 
 const scripts = [
     {
@@ -48,8 +45,10 @@ const scripts = [
     },
     {
         icon: "wallpaper-symbolic",
-        name: Wallpaper.bind("time-until-exec").as(
-            time => "Change wallpaper" + (time ? `\n - next change in ${time}` : "")
+        name: Utils.merge(
+            [Wallpaper.bind("time-until-exec"), Wallpaper.bind("paused")],
+            (time, paused) =>
+                "Change wallpaper" + (paused ? " (paused)" : "") + (time ? `\n - next change in ${time}` : "")
         ),
         command: () => Wallpaper.oneshot(),
         enabled: true,

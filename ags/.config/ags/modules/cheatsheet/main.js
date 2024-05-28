@@ -3,6 +3,7 @@ const { Box, CenterBox, Label, Button } = Widget;
 import Keybinds from "./keybinds.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import PopupWindow from "../.widgethacks/popupwindow.js";
+import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
 
 const Header = () =>
     CenterBox({
@@ -51,7 +52,7 @@ const Header = () =>
             vpack: "start",
             hpack: "end",
             className: "cheatsheet-closebtn icon-material txt txt-hugeass",
-            onClicked: () => closeWindowOnAllMonitors("cheatsheet"),
+            onClicked: () => App.closeWindow("cheatsheet"),
             child: Label({
                 className: "icon-material txt txt-hugeass",
                 label: "close",
@@ -60,20 +61,32 @@ const Header = () =>
         }),
     });
 
-export default id =>
+const C2C = () => Click2CloseRegion({ name: "cheatsheet" });
+
+export default () =>
     PopupWindow({
-        name: `cheatsheet${id}`,
+        name: "cheatsheet",
         layer: "overlay",
-        keymode: "exclusive",
+        keymode: "on-demand",
         visible: false,
+        anchor: ["top", "bottom", "left", "right"],
         child: Box({
             vertical: true,
             children: [
+                C2C(),
                 Box({
-                    vertical: true,
-                    className: "cheatsheet-bg spacing-v-15",
-                    children: [Header(), Keybinds()],
+                    vexpand: false,
+                    children: [
+                        C2C(),
+                        Box({
+                            vertical: true,
+                            className: "cheatsheet-bg spacing-v-15",
+                            children: [Header(), Keybinds()],
+                        }),
+                        C2C(),
+                    ],
                 }),
+                C2C(),
             ],
         }),
     });

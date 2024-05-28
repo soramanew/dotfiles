@@ -83,25 +83,38 @@ export const HyprToggleIcon = (icon, name, hyprlandConfigValue, props = {}) =>
     });
 
 export const ModuleNightLight = (props = {}) =>
-    Button({
-        attribute: { enabled: false },
-        className: "txt-small sidebar-iconbutton",
-        tooltipText: "Night Light",
-        onClicked: self => {
-            self.attribute.enabled = !self.attribute.enabled;
-            self.toggleClassName("sidebar-button-active", self.attribute.enabled);
-            if (self.attribute.enabled)
-                execAsync(["bash", "-c", "pidof wlsunset || wlsunset -l 31.3 -L 146.9"]).catch(print);
-            else execAsync("pkill wlsunset").catch(print);
-        },
-        child: MaterialIcon("nightlight", "norm"),
-        setup: self => {
-            setupCursorHover(self);
-            self.attribute.enabled = !!exec("pidof wlsunset");
-            self.toggleClassName("sidebar-button-active", self.attribute.enabled);
-        },
-        ...props,
-    });
+    exec("bash -c 'command -v gammastep'")
+        ? Button({
+              attribute: { enabled: false },
+              className: "txt-small sidebar-iconbutton",
+              tooltipText: "Night Light",
+              onClicked: self => {
+                  self.attribute.enabled = !self.attribute.enabled;
+                  self.toggleClassName("sidebar-button-active", self.attribute.enabled);
+                  if (self.attribute.enabled) execAsync("gammastep").catch(print);
+                  else
+                      execAsync("pkill gammastep")
+                          .then(() => {
+                              // disable the button until fully terminated to avoid race
+                              self.sensitive = false;
+                              const interval = setInterval(() => {
+                                  execAsync("pkill -0 gammastep").catch(() => {
+                                      self.sensitive = true;
+                                      interval.destroy();
+                                  });
+                              }, 500);
+                          })
+                          .catch(print);
+              },
+              child: MaterialIcon("nightlight", "norm"),
+              setup: self => {
+                  setupCursorHover(self);
+                  self.attribute.enabled = !!exec("pidof gammastep");
+                  self.toggleClassName("sidebar-button-active", self.attribute.enabled);
+              },
+              ...props,
+          })
+        : null;
 
 export const ModuleInvertColors = (props = {}) =>
     Button({
@@ -224,7 +237,7 @@ export const ModuleSettingsIcon = (props = {}) =>
         className: "txt-small sidebar-iconbutton",
         tooltipText: "Open Settings",
         onClicked: () => {
-            execAsync("gnome-control-center");
+            execAsync("gnome-control-center").catch(print);
             closeEverything();
         },
         child: MaterialIcon("settings", "norm"),

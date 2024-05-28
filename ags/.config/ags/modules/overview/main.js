@@ -1,18 +1,20 @@
+import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
 import PopupWindow from "../.widgethacks/popupwindow.js";
 import SearchAndWindows from "./windowcontent.js";
 
-export default (id = "") =>
+export default () =>
     PopupWindow({
-        name: `overview${id}`,
+        name: "overview",
         exclusivity: "ignore",
-        keymode: "exclusive",
+        keymode: "on-demand",
         visible: false,
-        anchor: ["top", "bottom"],
+        anchor: ["top", "bottom", "left", "right"],
         layer: "overlay",
-        child: Widget.EventBox({
-            onPrimaryClick: closeEverything,
-            onSecondaryClick: closeEverything,
-            onMiddleClick: closeEverything,
-            child: SearchAndWindows(),
+        child: Widget.Box({
+            vertical: true,
+            children: [
+                Click2CloseRegion({ name: "overview", expand: false, className: "overview-top-space" }),
+                SearchAndWindows(),
+            ],
         }),
     });

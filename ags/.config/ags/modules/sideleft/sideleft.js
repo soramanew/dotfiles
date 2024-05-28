@@ -6,7 +6,7 @@ import ToolBox from "./toolbox.js";
 import { apiWidgets, chatEntry } from "./apiwidgets.js";
 import { TabContainer } from "../.commonwidgets/tabcontainer.js";
 import { checkKeybind, keybinds } from "../.widgetutils/keybind.js";
-import { close, open } from "../click2close/main.js";
+import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
 
 const contents = [
     {
@@ -23,7 +23,7 @@ const contents = [
     },
 ];
 
-export const pinButton = Button({
+const pinButton = Button({
     attribute: {
         enabled: false,
         toggle: (self, force = null) => {
@@ -33,9 +33,9 @@ export const pinButton = Button({
             const sideleftWindow = App.getWindow("sideleft");
             const sideleftContent = sideleftWindow.child.children[0];
             sideleftContent.toggleClassName("sidebar-pinned", self.attribute.enabled);
+            if (self.attribute.enabled) click2Close.attribute.noFill(click2Close);
+            else click2Close.attribute.fill(click2Close);
             sideleftWindow.exclusivity = self.attribute.enabled ? "exclusive" : "normal";
-            if (self.attribute.enabled) close("sideleft");
-            else if (force !== false) open("sideleft");
         },
     },
     vpack: "start",
@@ -46,10 +46,7 @@ export const pinButton = Button({
     setup: self => {
         setupCursorHover(self);
         self.hook(App, (self, currentName, visible) => {
-            if (currentName === "sideleft") {
-                if (visible) self.grab_focus();
-                else if (self.attribute.enabled) self.attribute.toggle(self, false);
-            }
+            if (currentName === "sideleft" && visible) self.grab_focus();
         });
     },
 });
@@ -59,20 +56,15 @@ export const widgetContent = TabContainer({
     names: contents.map(item => item.friendlyName),
     children: contents.map(item => item.content),
     className: "sidebar-left spacing-v-10",
-    setup: self =>
-        self.hook(App, (self, currentName, visible) => {
-            if (currentName === "sideleft")
-                self.toggleClassName("sidebar-pinned", pinButton.attribute.enabled && visible);
-        }),
 });
+
+const click2Close = Click2CloseRegion({ name: "sideleft", fill: "h" });
 
 export default () =>
     Box({
         // vertical: true,
         vexpand: true,
-        hexpand: true,
-        css: "min-width: 2px;",
-        children: [widgetContent],
+        children: [widgetContent, click2Close],
         setup: self =>
             self.on("key-press-event", (widget, event) => {
                 // Handle keybinds

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<mime-type xmlns="http://www.freedesktop.org/standards/shared-mime-info" type="application/x-synology-drive-sheet">
-  <!--Created automatically by update-mime-database. DO NOT EDIT!-->
-  <comment>Synology Office Spreadsheet</comment>
-  <icon name="application-x-synology-drive-sheet"/>
-  <glob case-sensitive="false" pattern="*.osheet"/>
-</mime-type>

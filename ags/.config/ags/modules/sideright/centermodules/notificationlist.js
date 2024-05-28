@@ -16,7 +16,7 @@ export default props => {
             Box({
                 vertical: true,
                 vpack: "center",
-                className: "txt spacing-v-10",
+                className: "txt-subtext spacing-v-10",
                 children: [
                     Box({
                         vertical: true,
@@ -147,7 +147,7 @@ export default props => {
         hexpand: true,
         hscroll: "never",
         vscroll: "automatic",
-        child: Box({ vexpand: true, children: [notificationList] }),
+        child: Box({ vexpand: true, child: notificationList }),
         overlayClass: "sidebar-scrollcorner1",
         setup: self => {
             const vScrollbar = self.get_vscrollbar();

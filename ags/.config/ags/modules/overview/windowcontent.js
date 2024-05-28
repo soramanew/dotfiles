@@ -1,18 +1,8 @@
 import Gdk from "gi://Gdk";
-const { Box, Label, Revealer, Entry, EventBox } = Widget;
+const { Box, Label, Revealer, Entry } = Widget;
 const { exec } = Utils;
 const Applications = await Service.import("applications");
-import {
-    execAndClose,
-    expandTilde,
-    hasUnterminatedBackslash,
-    launchCustomCommand,
-    ls,
-    openFile,
-    search,
-    actions,
-    actionsList,
-} from "./miscfunctions.js";
+import { hasUnterminatedBackslash, launchCustomCommand, ls, actions, actionsList } from "./miscfunctions.js";
 import {
     CalculationResultButton,
     CustomCommandButton,
@@ -25,9 +15,9 @@ import { checkKeybind, keybinds } from "../.widgetutils/keybind.js";
 import Overview from "./overview_hyprland.js";
 import fuzzysort from "./fuzzysort.js";
 import mathexprs from "./mathexprs.js";
-import { SCREEN_HEIGHT } from "../../variables.js";
 import { RoundedScrollable } from "../.commonwidgets/cairo_roundedscrollable.js";
-import { SEARCH_MAX_RESULTS as MAX_RESULTS } from "../../constants.js";
+import { SCREEN_HEIGHT, SEARCH_MAX_RESULTS as MAX_RESULTS } from "../../constants.js";
+import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
 
 const MAX_HEIGHT = SCREEN_HEIGHT * 0.7;
 
@@ -77,13 +67,7 @@ const evalMath = text => {
     return parseExpr(expr).evaluate(vars);
 };
 
-const EventConsumer = child =>
-    EventBox({
-        child,
-        onPrimaryClick: () => {},
-        onSecondaryClick: () => {},
-        onMiddleClick: () => {},
-    });
+const C2C = () => Click2CloseRegion({ name: "overview" });
 
 export default () => {
     const overviewContent = Overview();
@@ -106,20 +90,15 @@ export default () => {
         revealChild: false,
         transition: "slide_down",
         hpack: "center",
-        child: Box({
-            className: "overview-search-results",
-            children: [resultsScrollable],
-        }),
+        hexpand: false,
+        child: Box({ className: "overview-search-results", child: resultsScrollable }),
     });
     const entryPromptRevealer = Revealer({
         transition: "crossfade",
         transitionDuration: 150,
         revealChild: true,
         hpack: "center",
-        child: Label({
-            className: "overview-search-prompt txt-small txt",
-            label: "Type to search",
-        }),
+        child: Label({ className: "overview-search-prompt txt-small txt", label: "Type to search" }),
     });
 
     const entryIconRevealer = Revealer({
@@ -127,10 +106,7 @@ export default () => {
         transitionDuration: 150,
         revealChild: false,
         hpack: "end",
-        child: Label({
-            className: "txt txt-large icon-material overview-search-icon",
-            label: "search",
-        }),
+        child: Label({ className: "txt txt-large icon-material overview-search-icon", label: "search" }),
     });
 
     const entryIcon = Box({
@@ -211,8 +187,7 @@ export default () => {
             if (appSearchResults.length > MAX_RESULTS) appSearchResults.length = MAX_RESULTS;
             appSearchResults.forEach(app => resultsBox.add(DesktopEntryButton(app)));
 
-            // Fallbacks
-            // if the first word is an actual command
+            // If the first word is an actual command
             if (
                 !isAction &&
                 !hasUnterminatedBackslash(text) &&
@@ -220,7 +195,7 @@ export default () => {
             )
                 resultsBox.add(ExecuteCommandButton({ command: self.text, terminal: self.text.startsWith("sudo") }));
 
-            // Add fallback: search
+            // Search
             resultsBox.add(SearchButton({ text: self.text }));
             resultsBox.show_all();
 
@@ -234,21 +209,27 @@ export default () => {
         className: "overview-window",
         vertical: true,
         children: [
-            EventConsumer(
-                Box({
-                    hpack: "center",
-                    children: [
-                        entry,
-                        Box({
-                            className: "overview-search-icon-box",
-                            setup: box => box.pack_start(entryPromptRevealer, true, true, 0),
-                        }),
-                        entryIcon,
-                    ],
-                })
-            ),
-            EventConsumer(overviewContent),
-            EventConsumer(resultsRevealer),
+            Box({
+                vexpand: false,
+                children: [
+                    C2C(),
+                    Box({
+                        hpack: "center",
+                        children: [
+                            entry,
+                            Box({
+                                className: "overview-search-icon-box",
+                                setup: box => box.pack_start(entryPromptRevealer, true, true, 0),
+                            }),
+                            entryIcon,
+                        ],
+                    }),
+                    C2C(),
+                ],
+            }),
+            overviewContent,
+            Box({ vexpand: false, children: [C2C(), resultsRevealer, C2C()] }),
+            C2C(),
         ],
         setup: self =>
             self

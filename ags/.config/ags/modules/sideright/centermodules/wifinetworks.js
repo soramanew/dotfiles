@@ -163,7 +163,19 @@ export default (props = {}) => {
                 overlayClass: "sidebar-scrollcorner1",
                 child: Box({
                     attribute: {
-                        updateNetworks: self => (self.children = Network.wifi?.access_points?.map(WifiNetwork)),
+                        updateNetworks: self =>
+                            (self.children = Object.values(
+                                (Network.wifi?.access_points || []).reduce((a, accessPoint) => {
+                                    // Only keep max strength networks by ssid
+                                    if (!a[accessPoint.ssid] || a[accessPoint.ssid].strength < accessPoint.strength) {
+                                        a[accessPoint.ssid] = accessPoint;
+                                        a[accessPoint.ssid].active |= accessPoint.active;
+                                    }
+                                    return a;
+                                }, {})
+                            )
+                                .sort((a, b) => b.strength - a.strength)
+                                .map(WifiNetwork)),
                     },
                     vertical: true,
                     className: "spacing-v-5",
