@@ -3,6 +3,6 @@
     "discordBranch": "stable",
     "arRPC": "on",
     "splashColor": "rgb(220, 221, 222)",
-    "splashBackground": "rgb(49, 51, 56)",
-    "splashTheming": true
+    "splashBackground": "oklab(0.321088 -0.000220731 -0.00934622)",
+    "splashTheming": false
 }

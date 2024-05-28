@@ -85,6 +85,7 @@ const AudioDevices = input => {
                         truncate: "end",
                         maxWidthChars: 1,
                         label: stream.description,
+                        tooltipText: stream.description,
                     }),
                 ],
             }),

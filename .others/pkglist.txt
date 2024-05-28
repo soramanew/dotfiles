@@ -24,6 +24,7 @@ fish
 foot
 fuzzel-git
 fwupd
+gammastep
 git
 github-cli
 github-desktop-bin
@@ -127,7 +128,6 @@ wf-recorder
 wireplumber
 wlogout
 wlr-randr
-wlsunset
 xdg-desktop-portal-hyprland-git
 xdg-user-dirs-gtk
 yad
