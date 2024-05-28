@@ -18,6 +18,7 @@ evtest
 expac
 featherpad
 feishin-bin
+feishin-bin-debug
 ffmpegthumbnailer
 file-roller
 fish
@@ -102,6 +103,7 @@ starship
 stow
 swappy
 synology-drive
+synology-drive-debug
 thunar
 thunar-archive-plugin
 thunar-media-tags-plugin
