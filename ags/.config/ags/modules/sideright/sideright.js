@@ -11,7 +11,6 @@ import {
     ModuleSettingsIcon,
     ModulePowerIcon,
     ModuleRawInput,
-    ModuleAutoRotate,
 } from "./quicktoggles.js";
 import ModuleNotificationList from "./centermodules/notificationlist.js";
 import ModuleAudioControls from "./centermodules/audiocontrols.js";
@@ -85,7 +84,6 @@ const togglesBox = Box({
         ModuleNightLight(),
         ModuleInvertColors(),
         ModuleIdleInhibitor(),
-        ModuleAutoRotate(),
     ],
 });
 

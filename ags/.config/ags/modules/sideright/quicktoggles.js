@@ -186,33 +186,6 @@ export const ModuleIdleInhibitor = (props = {}) =>
         ...props,
     });
 
-export const ModuleAutoRotate = (props = {}) =>
-    Revealer({
-        transition: "slide_right",
-        transitionDuration: 180,
-        revealChild: tabletMode.bind(),
-        child: Button({
-            attribute: {
-                enabled: false,
-                update: (self, value = !self.attribute.enabled) => {
-                    self.attribute.enabled = value;
-                    self.toggleClassName("sidebar-button-active", value);
-                    if (value) execAsync(["pkill", "-CONT", "rot8"]).catch(print);
-                    else execAsync(["pkill", "-STOP", "rot8"]).catch(print);
-                },
-            },
-            className: "txt-small sidebar-iconbutton",
-            tooltipText: "Auto rotate",
-            onClicked: self => self.attribute.update(self),
-            child: MaterialIcon("crop_rotate", "norm"),
-            setup: self => {
-                setupCursorHover(self);
-                self.hook(tabletMode, self.attribute.update);
-            },
-            ...props,
-        }),
-    });
-
 export const ModuleReloadIcon = (props = {}) => {
     const icon = MaterialIcon("refresh", "norm");
     let timeout;
