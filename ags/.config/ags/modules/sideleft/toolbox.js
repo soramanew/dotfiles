@@ -4,6 +4,7 @@ import QuickScripts from "./tools/quickscripts.js";
 import ColorPicker from "./tools/colorpicker.js";
 import PerfToggles from "./tools/perftoggles.js";
 import PackageUpdates from "./tools/packageupdates.js";
+import Timer from "./tools/timer.js";
 
 export default () =>
     RoundedScrollable({
@@ -13,6 +14,6 @@ export default () =>
         child: Box({
             vertical: true,
             className: "spacing-v-10",
-            children: [QuickScripts(), PerfToggles(), ColorPicker(), PackageUpdates()],
+            children: [QuickScripts(), PerfToggles(), ColorPicker(), PackageUpdates(), Timer()],
         }),
     });

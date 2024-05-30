@@ -10,7 +10,6 @@ import { CACHE_DIR } from "../../../constants.js";
 
 const confDir = `${GLib.get_home_dir()}/.config`;
 const perfConfPath = `${confDir}/hypr/hyprland/perf.conf`;
-const cacheDir = GLib.get_user_cache_dir();
 
 const ToggleButton = ({ icon, onClicked, enabled = false, tooltip, extraSetup = () => {}, ...rest }) =>
     Button({

@@ -12,7 +12,7 @@ import { clamp } from "../.miscutils/mathfuncs.js";
 // font size for progress value (0-100px) (hacky i know, but i want animations)
 export const AnimatedCircProg = ({
     initFrom = 0,
-    initTo = 0,
+    initTo = initFrom,
     initAnimTime = 2900,
     initDelay = 10,
     extraSetup = () => {},

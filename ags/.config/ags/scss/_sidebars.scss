@@ -871,3 +871,69 @@ $colorpicker_rounding: 0.341rem;
     @include smallish-rounding;
     background-color: $layer1;
 }
+
+.sidebar-timer {
+    padding: 0.682rem;
+}
+
+.sidebar-timer-time {
+    color: $onLayer2;
+}
+
+@keyframes sidebar-timer-flash-fg {
+    50% {
+        color: $error;
+    }
+}
+
+@keyframes sidebar-timer-flash-bg {
+    50% {
+        background-color: $errorContainer;
+        color: $onErrorContainer;
+    }
+}
+
+.sidebar-timer-time-flash {
+    animation-name: sidebar-timer-flash-fg;
+    animation-duration: 500ms;
+    animation-iteration-count: infinite;
+}
+
+.sidebar-timer-prog-flash {
+    animation-name: sidebar-timer-flash-bg;
+    animation-duration: 500ms;
+    animation-iteration-count: infinite;
+}
+
+.sidebar-timer-btn {
+    @include full-rounding;
+    @include element_decel;
+    min-width: 2.045rem;
+    min-height: 2.045rem;
+    background-color: $layer2;
+    color: $onLayer2;
+    border: 0.068rem solid mix($primary, $layer2, 50%);
+
+    &:hover,
+    & :focus {
+        background-color: $layer2Hover;
+    }
+
+    &:active {
+        background-color: $layer2Active;
+    }
+}
+
+.sidebar-timer-circprog {
+    @include fluent_decel_long;
+    min-width: 0.272rem; // line width
+    min-height: 13.088rem;
+    padding: 0rem;
+    background-color: $layer2;
+    color: $primary;
+}
+
+.sidebar-timer-info {
+    min-width: 13.088rem;
+    min-height: 13.088rem;
+}
