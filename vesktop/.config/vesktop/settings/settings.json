@@ -436,9 +436,6 @@
         "ServerListIndicators": {
             "enabled": false
         },
-        "ServerProfile": {
-            "enabled": false
-        },
         "ShikiCodeblocks": {
             "enabled": true,
             "theme": "https://raw.githubusercontent.com/shikijs/shiki/0b28ad8ccfbf2615f2d9d38ea8255416b8ac3043/packages/shiki/themes/material-default.json",
@@ -610,6 +607,9 @@
         },
         "ReplaceGoogleSearch": {
             "enabled": false
+        },
+        "ServerInfo": {
+            "enabled": false
         }
     },
     "notifications": {
@@ -622,6 +622,6 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1716521380550
+        "settingsSyncVersion": 1717657004490
     }
 }

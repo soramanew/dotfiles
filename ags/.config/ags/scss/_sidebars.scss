@@ -383,6 +383,7 @@ $sidebar_chat_textboxareaColor: mix($onSurfaceVariant, $surfaceVariant, 40%);
 .sidebar-module-scripts-button {
     @include full-rounding;
     @include icon-material;
+    @include element-decel;
     background-color: $layer1;
     min-width: 1.705rem;
     min-height: 1.705rem;
@@ -466,16 +467,17 @@ $colorpicker_rounding: 0.341rem;
 .sidebar-module-reload {
     @include normal-rounding;
     @include group-padding;
-    background-color: $layer3;
+    @include element-decel;
+    background-color: $layer2;
     padding: 0.543rem 0.782rem 0.543rem 0.682rem;
 
     &:hover,
     &:focus {
-        background-color: $layer3Hover;
+        background-color: $layer2Hover;
     }
 
     &:active {
-        background-color: $layer3Active;
+        background-color: $layer2Active;
     }
 }
 
