@@ -9,6 +9,7 @@ blueman
 bluez-utils
 btop
 cliphist
+cowfortune
 cpupower
 dart-sass
 ddcutil
@@ -19,6 +20,7 @@ fastfetch
 featherpad
 feishin-bin
 ffmpegthumbnailer
+figlet
 file-roller
 firefox
 fish

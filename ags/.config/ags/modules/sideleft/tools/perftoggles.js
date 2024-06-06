@@ -5,7 +5,6 @@ import Wallpaper from "../../../services/wallpaper.js";
 import SidebarModule from "./module.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
-import { applyStyle } from "../../../config.js";
 import { CACHE_DIR } from "../../../constants.js";
 
 const confDir = `${GLib.get_home_dir()}/.config`;
@@ -87,39 +86,22 @@ export default () =>
                         setting: "opacity",
                         tooltip: "opacity for everything",
                         icon: "opacity",
-                        extraFn: (_, toggled) => {
-                            // Change fuzzel transparency
-                            const fuzzelConfDir = `${confDir}/fuzzel`;
-                            const fuzzelConf = `${fuzzelConfDir}/fuzzel.ini`;
-                            execAsync(`readlink '${fuzzelConf}'`)
-                                .then(currentConf =>
+                        extraFn: (_, toggled) =>
+                            execAsync([
+                                `bash`,
+                                `-c`,
+                                `mkdir -p ${CACHE_DIR}/user && sed -i "2s/.*/${
+                                    toggled ? "transparent" : "opaque"
+                                }/"  ${CACHE_DIR}/user/colormode.txt`,
+                            ])
+                                .then(() =>
                                     execAsync([
-                                        "ln",
-                                        "-sf",
-                                        `${fuzzelConfDir}/${
-                                            currentConf.endsWith("not_opaque/chosen.ini") ? "" : "not_"
-                                        }opaque/chosen.ini`,
-                                        fuzzelConf,
+                                        "bash",
+                                        "-c",
+                                        `${App.configDir}/scripts/color_generation/switchcolor.sh`,
                                     ]).catch(print)
                                 )
-                                .catch(print);
-                            // Change ags transparency
-                            execAsync([
-                                "sed",
-                                "-i",
-                                toggled ? "2s/False/True/" : "2s/True/False/",
-                                `${App.configDir}/scss/colour/generated.scss`,
-                            ])
-                                .then(applyStyle)
-                                .catch(print);
-                            // Change ags colourmode to account for changed transparency
-                            execAsync([
-                                "sed",
-                                "-i",
-                                toggled ? "2s/opaque/transparent/" : "2s/transparent/opaque/",
-                                `${CACHE_DIR}/user/colormode.txt`,
-                            ]).catch(print);
-                        },
+                                .catch(print),
                     }),
                     ToggleSetting({
                         setting: "animations",
