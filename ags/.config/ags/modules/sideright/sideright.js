@@ -45,47 +45,49 @@ const centerWidgets = [
     },
 ];
 
-const timeRow = Box({
-    className: "spacing-h-10 sidebar-group-invisible-morehorizpad",
-    children: [
-        Icon({
-            icon: getDistroIcon(),
-            className: "txt txt-larger",
-        }),
-        Label({
-            hpack: "center",
-            className: "txt-small txt",
-            setup: self =>
-                self.poll(5000, label => {
-                    execAsync([
-                        "bash",
-                        "-c",
-                        `uptime -p | sed -e 's/...//;s/ day\\| days/d/;s/ hour\\| hours/h/;s/ minute\\| minutes/m/;s/,[^,]*//2'`,
-                    ])
-                        .then(upTimeString => (label.label = `Uptime ${upTimeString}`))
-                        .catch(print);
-                }),
-        }),
-        Box({ hexpand: true }),
-        ModuleReloadIcon({ hpack: "end" }),
-        ModuleSettingsIcon({ hpack: "end" }),
-        ModulePowerIcon({ hpack: "end" }),
-    ],
-});
+const TimeRow = () =>
+    Box({
+        className: "spacing-h-10 sidebar-group-invisible-morehorizpad",
+        children: [
+            Icon({
+                icon: getDistroIcon(),
+                className: "txt txt-larger",
+            }),
+            Label({
+                hpack: "center",
+                className: "txt-small txt",
+                setup: self =>
+                    self.poll(5000, label => {
+                        execAsync([
+                            "bash",
+                            "-c",
+                            `uptime -p | sed -e 's/...//;s/ day\\| days/d/;s/ hour\\| hours/h/;s/ minute\\| minutes/m/;s/,[^,]*//2'`,
+                        ])
+                            .then(upTimeString => (label.label = `Uptime ${upTimeString}`))
+                            .catch(print);
+                    }),
+            }),
+            Box({ hexpand: true }),
+            ModuleReloadIcon(),
+            ModuleSettingsIcon(),
+            ModulePowerIcon(),
+        ],
+    });
 
-const togglesBox = Box({
-    hpack: "center",
-    className: "sidebar-togglesbox spacing-h-10",
-    children: [
-        ToggleIconWifi(),
-        ToggleIconBluetooth(),
-        ModuleRawInput(),
-        HyprToggleIcon("touchpad_mouse", "No touchpad while typing", "input:touchpad:disable_while_typing"),
-        ModuleNightLight(),
-        ModuleInvertColors(),
-        ModuleIdleInhibitor(),
-    ],
-});
+const QuickToggles = () =>
+    Box({
+        hpack: "center",
+        className: "sidebar-togglesbox spacing-h-10",
+        children: [
+            ToggleIconWifi(),
+            ToggleIconBluetooth(),
+            ModuleRawInput(),
+            HyprToggleIcon("touchpad_mouse", "No touchpad while typing", "input:touchpad:disable_while_typing"),
+            ModuleNightLight(),
+            ModuleInvertColors(),
+            ModuleIdleInhibitor(),
+        ],
+    });
 
 export const sidebarOptionsStack = ExpandingIconTabContainer({
     tabsHpack: "center",
@@ -109,16 +111,9 @@ export default () =>
             Box({
                 vertical: true,
                 className: "spacing-v-5",
-                children: [
-                    timeRow,
-                    // togglesFlowBox,
-                    togglesBox,
-                ],
+                children: [TimeRow(), QuickToggles()],
             }),
-            Box({
-                className: "sidebar-group",
-                children: [sidebarOptionsStack],
-            }),
+            Box({ className: "sidebar-group", child: sidebarOptionsStack }),
             ModuleCalendar(),
         ],
         setup: self =>

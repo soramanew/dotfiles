@@ -1,4 +1,4 @@
-const { GLib } = imports.gi;
+import GLib from "gi://GLib";
 const { Box, Button } = Widget;
 const { execAsync } = Utils;
 import { DEFAULT_OSK_LAYOUT, oskLayouts } from "./data_keyboardlayouts.js";
@@ -8,8 +8,8 @@ const keyboardJson = oskLayouts[keyboardLayout];
 
 function releaseAllKeys() {
     const keycodes = Array.from(Array(249).keys());
-    execAsync([`ydotool`, `key`, ...keycodes.map(keycode => `${keycode}:0`)])
-        .then(console.log("[OSK] Released all keys"))
+    execAsync(["ydotool", "key", ...keycodes.map(keycode => `${keycode}:0`)])
+        .then(console.log("[LOG] Osk: Released all keys"))
         .catch(print);
 }
 class ShiftMode {
@@ -41,10 +41,7 @@ const KeyboardControls = () =>
         children: [
             Button({
                 className: "osk-control-button txt-norm icon-material",
-                onClicked: () => {
-                    releaseAllKeys();
-                    App.closeWindow(`osk`);
-                },
+                onClicked: () => App.closeWindow("osk"),
                 label: "keyboard_hide",
                 tooltipText: "Close osk",
             }),
@@ -220,4 +217,8 @@ export default () =>
                 children: [KeyboardControls(), Box({ className: "separator-line" }), KeyboardItself(keyboardJson)],
             }),
         ],
+        setup: self =>
+            self.hook(App, (_, window, visible) => {
+                if (!visible && window === "osk") releaseAllKeys();
+            }),
     });
