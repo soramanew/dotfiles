@@ -1,7 +1,7 @@
 const Hyprland = await Service.import("hyprland");
 
 function moveClientToWorkspace(address, workspace) {
-    Hyprland.messageAsync(`dispatch movetoworkspacesilent ${workspace},address:${address}`);
+    Hyprland.messageAsync(`dispatch movetoworkspacesilent ${workspace},address:${address}`).catch(print);
 }
 
 export function dumpToWorkspace(from, to) {

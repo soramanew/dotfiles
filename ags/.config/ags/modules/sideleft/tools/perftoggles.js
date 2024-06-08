@@ -10,18 +10,16 @@ import { CACHE_DIR } from "../../../constants.js";
 const confDir = `${GLib.get_home_dir()}/.config`;
 const perfConfPath = `${confDir}/hypr/hyprland/perf.conf`;
 
-const ToggleButton = ({ icon, onClicked, enabled = false, tooltip, extraSetup = () => {}, ...rest }) =>
+const ToggleButton = ({ icon, onClicked, enabled = false, extraSetup = () => {}, ...rest }) =>
     Button({
         ...rest,
         className: "txt-small sidebar-iconbutton",
-        tooltipText: `${enabled ? "Disable" : "Enable"} ${tooltip}`,
         child: MaterialIcon(icon, "norm", { hpack: "center" }),
         attribute: {
             toggled: enabled,
             toggle: self => {
                 self.attribute.toggled = !self.attribute.toggled;
                 self.toggleClassName("sidebar-button-active", self.attribute.toggled);
-                self.tooltipText = `${self.attribute.toggled ? "Disable" : "Enable"} ${tooltip}`;
                 onClicked(self, self.attribute.toggled);
             },
         },
@@ -33,7 +31,7 @@ const ToggleButton = ({ icon, onClicked, enabled = false, tooltip, extraSetup = 
         },
     });
 
-const ToggleSetting = ({ setting, tooltip, icon, inverted = false, extraFn = () => {}, ...rest }) => {
+const ToggleSetting = ({ setting, icon, inverted = false, extraFn = () => {}, ...rest }) => {
     // Commented when enabled
     const isEnabled = () => {
         const perfFileContent = readFile(perfConfPath).split("\n");
@@ -49,7 +47,6 @@ const ToggleSetting = ({ setting, tooltip, icon, inverted = false, extraFn = () 
     return ToggleButton({
         ...rest,
         icon,
-        tooltip,
         enabled: isEnabled(),
         onClicked: (self, toggled) => {
             const perfFileContent = readFile(perfConfPath).split("\n");
@@ -79,17 +76,17 @@ export default () =>
                 children: [
                     ToggleSetting({
                         setting: "blur",
-                        tooltip: "blur for everything",
+                        tooltipText: "Blur windows and layers",
                         icon: "deblur",
                     }),
                     ToggleSetting({
                         setting: "opacity",
-                        tooltip: "opacity for everything",
+                        tooltipText: "Transparent windows and layers",
                         icon: "opacity",
                         extraFn: (_, toggled) =>
                             execAsync([
-                                `bash`,
-                                `-c`,
+                                "bash",
+                                "-c",
                                 `mkdir -p ${CACHE_DIR}/user && sed -i "2s/.*/${
                                     toggled ? "transparent" : "opaque"
                                 }/"  ${CACHE_DIR}/user/colormode.txt`,
@@ -105,23 +102,23 @@ export default () =>
                     }),
                     ToggleSetting({
                         setting: "animations",
-                        tooltip: "all animations",
+                        tooltipText: "Hyprland animations",
                         icon: "animation",
                     }),
                     ToggleSetting({
                         setting: "borderanim",
-                        tooltip: "border gradient animation",
+                        tooltipText: "Window border gradient animation",
                         icon: "border_color",
                     }),
                     ToggleButton({
                         icon: "wallpaper_slideshow",
-                        tooltip: "wallpaper slideshow",
+                        tooltipText: "Wallpaper slideshow",
                         enabled: Wallpaper.enabled,
                         onClicked: (_, toggled) => (Wallpaper.enabled = toggled),
                     }),
                     ToggleSetting({
                         setting: "xray",
-                        tooltip: "xray for blur",
+                        tooltipText: "Xray for blur",
                         icon: "filter_b_and_w",
                     }),
                 ],

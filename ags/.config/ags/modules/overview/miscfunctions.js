@@ -13,18 +13,6 @@ export const hasUnterminatedBackslash = inputString => /\\+$/.test(inputString);
 export const expandTilde = path => (path.startsWith("~") ? GLib.get_home_dir() + path.slice(1) : path);
 
 export const actions = {
-    raw: {
-        desc: "Toggle mouse raw input",
-        go: () =>
-            Hyprland.messageAsync("j/getoption input:accel_profile").then(output => {
-                const value = JSON.parse(output)["str"].trim();
-                if (value != "[[EMPTY]]" && value != "") {
-                    Hyprland.messageAsync("keyword input:accel_profile [[EMPTY]]").catch(print);
-                } else {
-                    Hyprland.messageAsync("keyword input:accel_profile flat").catch(print);
-                }
-            }),
-    },
     img: {
         desc: "Change wallpaper",
         go: () => execAsync(`${App.configDir}/scripts/color_generation/switchwall.sh`).catch(print),
@@ -70,15 +58,15 @@ export const actions = {
     },
     shutdown: {
         desc: "Shutdown",
-        go: () => execAsync([`bash`, `-c`, `systemctl poweroff || loginctl poweroff`]).catch(print),
+        go: () => execAsync(["bash", "-c", "systemctl poweroff || loginctl poweroff"]).catch(print),
     },
     reboot: {
         desc: "Restart",
-        go: () => execAsync([`bash`, `-c`, `systemctl reboot || loginctl reboot`]).catch(print),
+        go: () => execAsync(["bash", "-c", "systemctl reboot || loginctl reboot"]).catch(print),
     },
     sleep: {
         desc: "Suspend",
-        go: () => execAsync([`bash`, `-c`, `systemctl suspend || loginctl suspend`]).catch(print),
+        go: () => execAsync(["bash", "-c", "systemctl suspend || loginctl suspend"]).catch(print),
     },
     logout: {
         desc: "Logout",
