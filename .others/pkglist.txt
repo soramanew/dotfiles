@@ -64,6 +64,7 @@ man-db
 mkinitcpio-firmware
 mpv
 nano
+nemo
 neofetch
 networkmanager
 noto-fonts
