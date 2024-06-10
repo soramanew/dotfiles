@@ -88,6 +88,7 @@ export const keybindList = [
                 { keys: ["󰖳", "+", "W"], action: "Launch browser: Waterfox" },
                 { keys: ["󰖳", "+", "C"], action: "Launch editor: VSCodium" },
                 { keys: ["󰖳", "Alt", "+", "C"], action: "Launch editor: PyCharm" },
+                { keys: ["󰖳", "+", "G"], action: "Launch git GUI: Github Desktop" },
                 // { keys: ["󰖳", "+", "X"], action: "Launch editor: FeatherPad" },
                 { keys: ["󰖳", "+", "M"], action: "Launch music player: Feishin" },
                 { keys: ["󰖳", "+", "D"], action: "Launch Discord client: Vesktop" },
