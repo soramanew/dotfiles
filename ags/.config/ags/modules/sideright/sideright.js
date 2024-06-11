@@ -1,12 +1,12 @@
-import GLib from "gi://GLib";
 const { Box, Icon, Label } = Widget;
 const { exec, execAsync } = Utils;
 import {
     ToggleIconBluetooth,
     ToggleIconWifi,
-    HyprToggleIconInt,
-    HyprToggleIconStr,
+    HyprToggleIcon,
     ModuleNightLight,
+    ModuleInvertColour,
+    ModuleRawInput,
     ModuleIdleInhibitor,
     ModuleReloadIcon,
     ModuleSettingsIcon,
@@ -80,17 +80,14 @@ const togglesBox = Box({
     children: [
         ToggleIconWifi(),
         ToggleIconBluetooth(),
-        HyprToggleIconStr("mouse", "Raw input", "input:accel_profile", ["[[EMPTY]]", "flat"]),
-        HyprToggleIconInt("touchpad_mouse", "No touchpad while typing", "input:touchpad:disable_while_typing"),
+        ModuleRawInput(),
+        HyprToggleIcon("touchpad_mouse", "No touchpad while typing", "input:touchpad:disable_while_typing"),
         ModuleNightLight(),
-        HyprToggleIconStr("invert_colors", "Colour inversion", "decoration:screen_shader", [
-            "[[EMPTY]]",
-            `${GLib.get_home_dir()}/.config/hypr/shaders/invert.frag`,
-        ]),
+        ModuleInvertColour(),
         ModuleIdleInhibitor(),
         ModuleAutoRotate(),
         exec("bash -c 'udevadm info --export-db | grep ID_INPUT_TOUCHSCREEN=1'").trim() !== ""
-            ? HyprToggleIconInt("do_not_touch", "Disable touchscreen", "input:touchdevice:enabled", [1, 0])
+            ? HyprToggleIcon("do_not_touch", "Disable touchscreen", "input:touchdevice:enabled", [1, 0])
             : null,
     ],
 });

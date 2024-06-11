@@ -1,7 +1,6 @@
 // This file is for brightness/volume indicators
 const { Box, Label, EventBox, Revealer } = Widget;
 const Audio = await Service.import("audio");
-import { MarginRevealer } from "../.widgethacks/advancedrevealers.js";
 import Brightness from "../../services/brightness.js";
 import Indicator from "../../services/indicator.js";
 import { AnimatedSlider } from "../.commonwidgets/cairo_slider.js";
@@ -61,7 +60,13 @@ export default () => {
         progressSetup: self =>
             self.hook(
                 Brightness,
-                self => self.attribute.updateProgress(Brightness.screen_value * 100),
+                self => {
+                    const updateValue = Brightness.screen_value * 100;
+                    if (updateValue !== self.attribute.value) {
+                        Indicator.popup(1);
+                        self.attribute.updateProgress(updateValue);
+                    }
+                },
                 "notify::screen-value"
             ),
     });
@@ -70,7 +75,7 @@ export default () => {
         name: "Volume",
         extraClassName: "osd-volume",
         extraProgressClassName: "osd-volume-progress",
-        attribute: { headphones: undefined },
+        attribute: { headphones: undefined, muted: Audio.speaker?.stream?.isMuted },
         nameSetup: self =>
             self.hook(Audio, self => {
                 const usingHeadphones = isUsingHeadphones();
@@ -88,9 +93,20 @@ export default () => {
             }),
         progressSetup: self =>
             self.hook(Audio, self => {
-                const updateValue = Audio.speaker?.volume;
-                if (!isNaN(updateValue)) self.attribute.updateProgress(updateValue * 100);
-                self.toggleClassName("osd-volume-progress-disabled", Audio.speaker?.stream?.isMuted);
+                let updateValue = Audio.speaker?.volume;
+                if (!isNaN(updateValue)) {
+                    updateValue *= 100;
+                    if (updateValue !== self.attribute.value) {
+                        Indicator.popup(1);
+                        self.attribute.updateProgress(updateValue);
+                    }
+                }
+                const muted = Audio.speaker?.stream?.isMuted;
+                if (muted !== volumeIndicator.attribute.muted) {
+                    Indicator.popup(1);
+                    self.toggleClassName("osd-volume-progress-disabled", muted);
+                    volumeIndicator.attribute.muted = muted;
+                }
             }),
     });
 

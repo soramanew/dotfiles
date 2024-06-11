@@ -85,6 +85,7 @@ pipewire-v4l2
 playerctl
 plymouth-theme-circle-git
 polkit-gnome
+powertop
 pycharm-community-edition
 python-materialyoucolor-git
 python-psutil

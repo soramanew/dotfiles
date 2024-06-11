@@ -40,29 +40,11 @@ export const actions = {
     },
     light: {
         desc: "Switch to light mode",
-        go: () => {
-            darkMode.value = false;
-            execAsync([
-                `bash`,
-                `-c`,
-                `mkdir -p ${CACHE_DIR}/user && sed -i "1s/.*/light/"  ${CACHE_DIR}/user/colormode.txt`,
-            ])
-                .then(execAsync(`${App.configDir}/scripts/color_generation/switchcolor.sh`).catch(print))
-                .catch(print);
-        },
+        go: () => (darkMode.value = false),
     },
     dark: {
         desc: "Switch to dark mode",
-        go: () => {
-            darkMode.value = true;
-            execAsync([
-                `bash`,
-                `-c`,
-                `mkdir -p ${CACHE_DIR}/user && sed -i "1s/.*/dark/"  ${CACHE_DIR}/user/colormode.txt`,
-            ])
-                .then(execAsync(`${App.configDir}/scripts/color_generation/switchcolor.sh`).catch(print))
-                .catch(print);
-        },
+        go: () => (darkMode.value = true),
     },
     todo: {
         desc: "Add a todo",

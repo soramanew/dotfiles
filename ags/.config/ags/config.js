@@ -50,13 +50,13 @@ function batteryMessage() {
             "-u",
             "critical",
             "-t",
-            8000,
+            4000,
             "-a",
             "ags",
             "CRITICAL BATTERY",
             "Hibernating to prevent data loss...",
-        ]);
-        Utils.timeout(2000, () => execAsync("systemctl hibernate"));
+        ]).catch(print);
+        Utils.timeout(4000, () => execAsync("systemctl hibernate").catch(print));
         return;
     }
     for (let i = BATTERY_WARN_LEVELS.length - 1; i >= 0; i--) {
