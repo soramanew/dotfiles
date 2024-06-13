@@ -244,9 +244,8 @@ export default () => {
                     ]).catch(print),
                 setup: self =>
                     self.on("button-press-event", (_, event) => {
-                        if (event.get_button()[1] === 8)
-                            // Side button
-                            execAsync("playerctl previous").catch(print);
+                        // Side button
+                        if (event.get_button()[1] === 8) execAsync("playerctl previous").catch(print);
                     }),
             }),
         ],

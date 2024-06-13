@@ -1,7 +1,7 @@
 // This is for the right pills of the bar.
 import GLib from "gi://GLib";
 const { Box, Button, Label, EventBox } = Widget;
-const { execAsync, exec } = Utils;
+const { execAsync, exec, readFile, writeFile } = Utils;
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { WWO_CODE, WEATHER_SYMBOL } from "../../.commondata/weather.js";
 import { BarGroup } from "./main.js";
@@ -109,14 +109,14 @@ const WeatherModule = () =>
                 execAsync(`curl https://wttr.in/?format=j1`)
                     .then(output => {
                         const weather = JSON.parse(output).current_condition[0];
-                        Utils.writeFile(JSON.stringify(weather), WEATHER_CACHE_PATH).catch(print);
+                        writeFile(JSON.stringify(weather), WEATHER_CACHE_PATH).catch(print);
                         updateWeather(weather);
                     })
                     .catch(err => {
                         print(`Error updating weather. Stderr:\n${err}`);
                         try {
                             // Read from cache
-                            updateWeather(JSON.parse(Utils.readFile(WEATHER_CACHE_PATH)));
+                            updateWeather(JSON.parse(readFile(WEATHER_CACHE_PATH)));
                         } catch (err) {
                             print(err);
                         }
