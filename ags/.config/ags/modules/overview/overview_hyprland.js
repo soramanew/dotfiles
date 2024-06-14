@@ -144,7 +144,6 @@ export default () => {
                     vpack: "center",
                     children: [
                         appIcon,
-                        // TODO: Add xwayland tag instead of just having italics
                         DoubleRevealer({
                             transition1: "slide_right",
                             transition2: "slide_down",
@@ -479,10 +478,7 @@ export default () => {
                             kids[specialWorkspaces[row].get(client.workspace.name)].set(client, screenCoords);
                         }
                     }
-                    kids.forEach(kid => {
-                        if (kid.isEmpty()) box.attribute.removeWorkspace(box, kid.attribute.name);
-                        else kid.show();
-                    });
+                    kids.forEach(kid => kid.show());
                 },
                 updateWorkspace: (box, name) => {
                     // Not in this row, ignore
@@ -498,14 +494,14 @@ export default () => {
                     else ws.show();
                 },
                 addWorkspace: (self, ws) => {
-                    specialWorkspaces[row].set(ws.attribute.name, self.children.length);
+                    specialWorkspaces[row].set(ws.attribute.name, self.get_children().length);
                     self.pack_start(ws, false, false, 0);
                     self.show_all();
                 },
                 removeWorkspace: (self, ws) => {
                     const index = specialWorkspaces[row].get(ws);
                     specialWorkspaces[row].delete(ws);
-                    self.children[index].destroy();
+                    self.get_children()[index].destroy();
                     specialWorkspaces[row].forEach((v, k) => {
                         if (v > index) specialWorkspaces[row].set(k, v - 1);
                     });
@@ -553,13 +549,23 @@ export default () => {
                         if (!specialWorkspaces.length || specialWorkspaces.at(-1).size >= WS_COLS)
                             self.add(SpecialWorkspaceRow(specialWorkspaces.length, SpecialWorkspace(name)));
                         else {
-                            const child = self.children.at(-1);
+                            const child = self.get_children().at(-1);
                             child.attribute.addWorkspace(child, SpecialWorkspace(name));
                         }
                     }
                 };
                 JSON.parse(Hyprland.message("j/workspaces")).forEach(ws => addWs(ws.name));
                 self.hook(Hyprland, (_, name) => addWs(name), "workspace-added");
+                self.hook(
+                    Hyprland,
+                    (_, name) => {
+                        if (name?.startsWith("special:")) {
+                            const child = self.get_children()[specialWorkspaces.findIndex(ws => ws.has(name))];
+                            child.attribute.removeWorkspace(child, name);
+                        }
+                    },
+                    "workspace-removed"
+                );
             },
         });
 

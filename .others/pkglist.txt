@@ -21,6 +21,7 @@ featherpad
 feishin-bin
 ffmpegthumbnailer
 file-roller
+firefox
 fish
 foot
 fuzzel-git

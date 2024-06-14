@@ -99,9 +99,9 @@ const Windows = () => [
     forMonitors(id => Corner(id, "bottom right")),
 ];
 
+App.addIcons(`${App.configDir}/assets/icons`);
 App.config({
     css: `${COMPILED_STYLE_DIR}/style.css`,
     stackTraceOnError: true,
     windows: Windows().flat(1),
-    icons: `${App.configDir}/assets/icons`,
 });
