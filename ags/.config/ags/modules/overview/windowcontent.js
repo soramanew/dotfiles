@@ -121,7 +121,7 @@ export default () => {
             // This is when you hit Enter
             const text = self.text;
             if (!text.length) return;
-            if (text.startsWith(">")) {
+            if (text.startsWith(">todo")) {
                 App.closeWindow("overview");
                 launchCustomCommand(text);
             } else resultsBox.get_children()[0].attribute.activate();

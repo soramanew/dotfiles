@@ -68,7 +68,7 @@ export default () => {
     const sleepButton = SessionButton({
         name: "Sleep",
         icon: "sleep",
-        command: ["bash", "-c", "systemctl suspend || loginctl suspend"],
+        command: ["bash", "-c", "systemctl suspend-then-hibernate || loginctl suspend"],
         colourId: 3,
     });
     // hibernate, shutdown, reboot
