@@ -50,6 +50,7 @@ hyprlang-git
 hyprlock-git
 hyprpaper-git
 hyprpicker-git
+hyprutils-git
 hyprwayland-scanner-git
 imagemagick
 intel-media-driver
