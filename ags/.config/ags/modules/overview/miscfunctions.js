@@ -5,7 +5,6 @@ const Hyprland = await Service.import("hyprland");
 const Applications = await Service.import("applications");
 import Todo from "../../services/todo.js";
 import { darkMode } from "../.miscutils/system.js";
-import { CACHE_DIR } from "../../constants.js";
 
 // Use a regular expression to match a trailing odd number of backslashes
 export const hasUnterminatedBackslash = inputString => /\\+$/.test(inputString);
@@ -21,36 +20,18 @@ export const actions = {
         desc: "Generate colourscheme from colour picker",
         go: () =>
             execAsync([
-                `bash`,
-                `-c`,
+                "bash",
+                "-c",
                 `sleep .5 && ${App.configDir}/scripts/color_generation/switchcolor.sh --pick`,
             ]).catch(print),
     },
     light: {
         desc: "Switch to light mode",
-        go: () => {
-            darkMode.value = false;
-            execAsync([
-                `bash`,
-                `-c`,
-                `mkdir -p ${CACHE_DIR}/user && sed -i "1s/.*/light/"  ${CACHE_DIR}/user/colormode.txt`,
-            ])
-                .then(execAsync(`${App.configDir}/scripts/color_generation/switchcolor.sh`).catch(print))
-                .catch(print);
-        },
+        go: () => (darkMode.value = false),
     },
     dark: {
         desc: "Switch to dark mode",
-        go: () => {
-            darkMode.value = true;
-            execAsync([
-                `bash`,
-                `-c`,
-                `mkdir -p ${CACHE_DIR}/user && sed -i "1s/.*/dark/"  ${CACHE_DIR}/user/colormode.txt`,
-            ])
-                .then(execAsync(`${App.configDir}/scripts/color_generation/switchcolor.sh`).catch(print))
-                .catch(print);
-        },
+        go: () => (darkMode.value = true),
     },
     todo: {
         desc: "Add a todo",
@@ -66,7 +47,7 @@ export const actions = {
     },
     sleep: {
         desc: "Suspend",
-        go: () => execAsync(["bash", "-c", "systemctl suspend || loginctl suspend"]).catch(print),
+        go: () => execAsync(["bash", "-c", "systemctl suspend-then-hibernate || loginctl suspend"]).catch(print),
     },
     logout: {
         desc: "Logout",

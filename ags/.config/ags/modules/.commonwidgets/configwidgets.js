@@ -120,7 +120,7 @@ export const ConfigSegmentedSelection = ({
     return widget;
 };
 
-export const ConfigMulipleSelection = ({
+export const ConfigMultipleSelection = ({
     icon,
     name,
     desc = "",

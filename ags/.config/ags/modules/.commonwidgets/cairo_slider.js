@@ -6,19 +6,21 @@ import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 
 export const AnimatedSlider = ({
     initFrom = 0,
-    initTo = 0,
+    initTo = initFrom,
     initAnimTime = 2900,
     onChange = () => {},
     extraSetup = () => {},
     ...rest
 }) => {
-    const updateProgress = (value, animTime = -1) =>
-        (drawingArea.css =
-            `font-size: ${clamp(value, 0, 100)}px;` + (animTime > -1 ? `transition: ${animTime}ms linear` : ""));
+    const updateProgress = (value, animTime = -1) => {
+        value = clamp(value, 0, 100);
+        drawingArea.css = `font-size: ${value}px;` + (animTime > -1 ? `transition: ${animTime}ms linear` : "");
+        drawingArea.attribute.value = value;
+    };
     const drawingArea = DrawingArea({
         ...rest,
         css: `font-size: ${initFrom}px;`,
-        attribute: { updateProgress },
+        attribute: { updateProgress, value: initFrom },
         setup: self => {
             const HALF_PI = Math.PI / 2;
             self.connect("draw", (self, cr) => {
@@ -56,7 +58,7 @@ export const AnimatedSlider = ({
             });
 
             extraSetup(self);
-            if (initFrom != initTo) Utils.timeout(10, () => updateProgress(initTo, initAnimTime), self);
+            if (initFrom != initTo) Utils.timeout(10, () => updateProgress(initTo, initAnimTime));
         },
     });
     return EventBox({
