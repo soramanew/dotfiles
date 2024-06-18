@@ -14,7 +14,10 @@ set last_wallpaper_path $cache_dir'/last.txt'
 # Use wallpaper given as argument else choose random
 if [ -f "$argv[1]" ]
     set chosen_wallpaper "$(cd $(dirname $argv[1]) && pwd)/$(basename $argv[1])"
-    [ -f "$last_wallpaper_path" -a -n "$(cat $last_wallpaper_path)" ] && set last_wallpaper $(cat $last_wallpaper_path)
+    if [ -f "$last_wallpaper_path" ]
+        set last_wallpaper "$(cat $last_wallpaper_path)"
+        [ -z "$last_wallpaper" -o "$last_wallpaper" = "$chosen_wallpaper" ] && set -e last_wallpaper
+    end
 else
     # The path to the directory containing the selection of wallpapers
     [ -d "$argv[1]" ] && set wallpapers_dir $argv[1] || set wallpapers_dir ~/Pictures/Wallpapers/
