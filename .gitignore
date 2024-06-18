@@ -11,7 +11,6 @@ generated.*
 /ags/.config/ags/scss/_musicwal.scss
 
 # Unnecessary configs
-/featherpad/.config/featherpad/fp_last_cursor_pos.conf
 /thunar/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
 
 # Get separately
