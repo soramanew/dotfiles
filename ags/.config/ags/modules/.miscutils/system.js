@@ -1,5 +1,5 @@
 import Gdk from "gi://Gdk";
-const { exec, readFile } = Utils;
+const { exec, execAsync, readFile } = Utils;
 const Audio = await Service.import("audio");
 import { CACHE_DIR } from "../../constants.js";
 
@@ -16,7 +16,17 @@ export const isArchDistro = distroID === "arch" || distroID === "endeavouros" ||
 export const hasFlatpak = !!exec(`bash -c 'command -v flatpak'`);
 
 const LIGHTDARK_FILE_LOCATION = `${CACHE_DIR}/user/colormode.txt`;
-export let darkMode = Variable(readFile(LIGHTDARK_FILE_LOCATION).split("\n")[0].trim() !== "light");
+export const darkMode = Variable(readFile(LIGHTDARK_FILE_LOCATION).split("\n")[0].trim() !== "light");
+darkMode.connect("changed", ({ value }) => {
+    let lightdark = value ? "dark" : "light";
+    execAsync([
+        "bash",
+        "-c",
+        `mkdir -p ${CACHE_DIR}/user && sed -i "1s/.*/${lightdark}/"  ${CACHE_DIR}/user/colormode.txt`,
+    ])
+        .then(() => execAsync(`${App.configDir}/scripts/color_generation/switchcolor.sh`).catch(print))
+        .catch(print);
+});
 export const hasPlasmaIntegration = !!exec('bash -c "command -v plasma-browser-integration-host"');
 
 export const getDistroIcon = () => {

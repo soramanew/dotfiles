@@ -68,60 +68,56 @@ export default () =>
         icon: MaterialIcon("memory", "norm"),
         name: "Performance settings",
         child: Box({
-            vertical: true,
-            className: "spacing-v-5",
-            child: Box({
-                hpack: "center",
-                className: "sidebar-togglesbox spacing-h-10",
-                children: [
-                    ToggleSetting({
-                        setting: "blur",
-                        tooltipText: "Blur windows and layers",
-                        icon: "deblur",
-                    }),
-                    ToggleSetting({
-                        setting: "opacity",
-                        tooltipText: "Transparent windows and layers",
-                        icon: "opacity",
-                        extraFn: (_, toggled) =>
-                            execAsync([
-                                "bash",
-                                "-c",
-                                `mkdir -p ${CACHE_DIR}/user && sed -i "2s/.*/${
-                                    toggled ? "transparent" : "opaque"
-                                }/"  ${CACHE_DIR}/user/colormode.txt`,
-                            ])
-                                .then(() =>
-                                    execAsync([
-                                        "bash",
-                                        "-c",
-                                        `${App.configDir}/scripts/color_generation/switchcolor.sh`,
-                                    ]).catch(print)
-                                )
-                                .catch(print),
-                    }),
-                    ToggleSetting({
-                        setting: "animations",
-                        tooltipText: "Hyprland animations",
-                        icon: "animation",
-                    }),
-                    ToggleSetting({
-                        setting: "borderanim",
-                        tooltipText: "Window border gradient animation",
-                        icon: "border_color",
-                    }),
-                    ToggleButton({
-                        icon: "wallpaper_slideshow",
-                        tooltipText: "Wallpaper slideshow",
-                        enabled: Wallpaper.enabled,
-                        onClicked: (_, toggled) => (Wallpaper.enabled = toggled),
-                    }),
-                    ToggleSetting({
-                        setting: "xray",
-                        tooltipText: "Xray for blur",
-                        icon: "filter_b_and_w",
-                    }),
-                ],
-            }),
+            hpack: "center",
+            className: "sidebar-perftoggles spacing-h-10",
+            children: [
+                ToggleSetting({
+                    setting: "blur",
+                    tooltipText: "Blur windows and layers",
+                    icon: "deblur",
+                }),
+                ToggleSetting({
+                    setting: "opacity",
+                    tooltipText: "Transparent windows and layers",
+                    icon: "opacity",
+                    extraFn: (_, toggled) =>
+                        execAsync([
+                            "bash",
+                            "-c",
+                            `mkdir -p ${CACHE_DIR}/user && sed -i "2s/.*/${
+                                toggled ? "transparent" : "opaque"
+                            }/"  ${CACHE_DIR}/user/colormode.txt`,
+                        ])
+                            .then(() =>
+                                execAsync([
+                                    "bash",
+                                    "-c",
+                                    `${App.configDir}/scripts/color_generation/switchcolor.sh`,
+                                ]).catch(print)
+                            )
+                            .catch(print),
+                }),
+                ToggleSetting({
+                    setting: "animations",
+                    tooltipText: "Hyprland animations",
+                    icon: "animation",
+                }),
+                ToggleSetting({
+                    setting: "borderanim",
+                    tooltipText: "Window border gradient animation",
+                    icon: "border_color",
+                }),
+                ToggleButton({
+                    icon: "wallpaper_slideshow",
+                    tooltipText: "Wallpaper slideshow",
+                    enabled: Wallpaper.enabled,
+                    onClicked: (_, toggled) => (Wallpaper.enabled = toggled),
+                }),
+                ToggleSetting({
+                    setting: "xray",
+                    tooltipText: "Xray for blur",
+                    icon: "filter_b_and_w",
+                }),
+            ],
         }),
     });

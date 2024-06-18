@@ -23,10 +23,12 @@ export const AnimatedCircProg = ({
         css: `font-size: ${initFrom}px;`,
         attribute: {
             initDelay,
-            updateProgress: (self, value, animTime = -1) =>
-                (self.css =
-                    `font-size: ${clamp(value, 0, 100)}px;` +
-                    (animTime > -1 ? `transition: ${animTime}ms linear` : "")),
+            value: initFrom,
+            updateProgress: (self, value, animTime = -1) => {
+                value = clamp(value, 0, 100);
+                self.css = `font-size: ${value}px;` + (animTime > -1 ? `transition: ${animTime}ms linear` : "");
+                self.attribute.value = value;
+            },
             stop: self =>
                 (self.css = `font-size: ${self
                     .get_style_context()

@@ -1,7 +1,6 @@
-import GLib from "gi://GLib";
-const { Box, EventBox, Label, Revealer, Button } = Widget;
+const { Box, EventBox, Revealer, Button, Label } = Widget;
 const { exec, execAsync } = Utils;
-import { ConfigToggle, ConfigMulipleSelection } from "../.commonwidgets/configwidgets.js";
+import { ConfigToggle, ConfigMultipleSelection } from "../.commonwidgets/configwidgets.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import { showColorScheme } from "../../variables.js";
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
@@ -28,10 +27,10 @@ const ColourSchemeSettingsRevealer = () => {
         transitionDuration: 200,
         child: ColorSchemeSettings(),
         setup: self =>
-            self.hook(isHoveredColourschemeSettings, revealer => {
+            self.hook(isHoveredColourschemeSettings, self => {
                 if (isHoveredColourschemeSettings.value == false) {
-                    Utils.timeout(1500, () => {
-                        if (isHoveredColourschemeSettings.value == false) revealer.revealChild = false;
+                    Utils.timeout(375, () => {
+                        if (isHoveredColourschemeSettings.value == false) self.revealChild = false;
                         headerButtonIcon.label = "expand_more";
                     });
                 }
@@ -63,9 +62,6 @@ const schemeOptionsArr = [
         { name: "Vibrant", value: "vibrant" },
     ],
     [{ name: "Vibrant+", value: "morevibrant" }],
-    //[
-    //  { name: 'Content', value: 'content' },
-    //]
 ];
 
 const LIGHTDARK_FILE_LOCATION = `${CACHE_DIR}/user/colormode.txt`;
@@ -109,15 +105,15 @@ const ColorSchemeSettings = () =>
                         hpack: "center",
                     }),
                     //////////////////
-                    ConfigMulipleSelection({
+                    ConfigMultipleSelection({
                         hpack: "center",
                         vpack: "center",
                         optionsArr: schemeOptionsArr,
                         initIndex: initSchemeIndex,
                         onChange: value => {
                             execAsync([
-                                `bash`,
-                                `-c`,
+                                "bash",
+                                "-c",
                                 `mkdir -p ${CACHE_DIR}/user && sed -i "3s/.*/${value}/" ${CACHE_DIR}/user/colormode.txt`,
                             ])
                                 .then(() =>
@@ -187,13 +183,13 @@ export default () =>
             child: ColourschemeContent(),
         }),
         setup: self => {
-            self.hook(showColorScheme, revealer => {
-                if (showColorScheme.value == true) revealer.revealChild = true;
-                else revealer.revealChild = isHoveredColourschemeSettings.value;
-            }).hook(isHoveredColourschemeSettings, revealer => {
+            self.hook(showColorScheme, self => {
+                if (showColorScheme.value == true) self.revealChild = true;
+                else self.revealChild = isHoveredColourschemeSettings.value;
+            }).hook(isHoveredColourschemeSettings, self => {
                 if (isHoveredColourschemeSettings.value == false) {
                     Utils.timeout(500, () => {
-                        if (isHoveredColourschemeSettings.value == false) revealer.revealChild = showColorScheme.value;
+                        if (isHoveredColourschemeSettings.value == false) self.revealChild = showColorScheme.value;
                     });
                 }
             });

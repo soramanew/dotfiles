@@ -38,33 +38,33 @@ export default () => {
         vexpand: true,
         children: [
             Box({
-                className: "sidebar-left",
-                child: RoundedScrollable({
-                    hscroll: "never",
-                    vscroll: "automatic",
-                    overlayClass: "sidebar-scrollcorner0",
-                    child: Box({
-                        vertical: true,
-                        className: "spacing-v-10",
+                vertical: true,
+                className: "sidebar-left spacing-v-10",
+                children: [
+                    Box({
+                        className: "spacing-h-5",
                         children: [
-                            Box({
-                                className: "spacing-h-5",
-                                children: [
-                                    Box({ hexpand: true }),
-                                    MaterialIcon("home_repair_service", "larger"),
-                                    Label({ className: "txt txt-large", label: "Toolbox" }),
-                                    Box({ hexpand: true }),
-                                    pinButton,
-                                ],
-                            }),
-                            QuickScripts(),
-                            PerfToggles(),
-                            ColourPicker(),
-                            PackageUpdates(),
-                            Timer(),
+                            Box({ hexpand: true }),
+                            MaterialIcon("home_repair_service", "larger"),
+                            Label({ className: "txt txt-large", label: "Toolbox" }),
+                            Box({ hexpand: true }),
+                            pinButton,
                         ],
                     }),
-                }),
+                    Box({
+                        vexpand: true,
+                        child: RoundedScrollable({
+                            hscroll: "never",
+                            vscroll: "automatic",
+                            overlayClass: "sidebar-scrollcorner0",
+                            child: Box({
+                                vertical: true,
+                                className: "spacing-v-10",
+                                children: [QuickScripts(), PerfToggles(), ColourPicker(), PackageUpdates(), Timer()],
+                            }),
+                        }),
+                    }),
+                ],
             }),
             click2Close,
         ],
