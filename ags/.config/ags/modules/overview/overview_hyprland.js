@@ -142,6 +142,7 @@ export default () => {
                 child: Box({
                     vertical: true,
                     vpack: "center",
+                    className: "spacing-v-5",
                     children: [
                         appIcon,
                         DoubleRevealer({
@@ -151,7 +152,7 @@ export default () => {
                             child: Label({
                                 maxWidthChars: 1, // Min width when ellipsizing (truncated)
                                 truncate: "end",
-                                className: `margin-top-5 ${xwayland ? "txt txt-italic" : "txt"}`,
+                                className: `txt ${xwayland ? "txt-italic" : ""}`,
                                 css: `
                                     font-size: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 14.6}px;
                                     margin: 0px ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 10}px;
