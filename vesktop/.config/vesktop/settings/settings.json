@@ -3,9 +3,7 @@
     "autoUpdateNotification": true,
     "useQuickCss": true,
     "themeLinks": [],
-    "enabledThemes": [
-        "clearvisionbutbetter.theme.css"
-    ],
+    "enabledThemes": [],
     "enableReactDevtools": false,
     "frameless": false,
     "transparent": false,
@@ -258,9 +256,10 @@
             "requireModifier": false
         },
         "MessageLatency": {
-            "enabled": true,
+            "enabled": false,
             "latency": 2,
-            "detectDiscordKotlin": true
+            "detectDiscordKotlin": true,
+            "showMillis": false
         },
         "MessageLinkEmbeds": {
             "enabled": false
@@ -505,7 +504,9 @@
             "enabled": false
         },
         "Translate": {
-            "enabled": false
+            "enabled": false,
+            "autoTranslate": false,
+            "showChatBarButton": true
         },
         "TypingIndicator": {
             "enabled": false,
@@ -618,13 +619,24 @@
             "enabled": false
         },
         "CopyEmojiMarkdown": {
-            "enabled": false
+            "enabled": false,
+            "copyUnicode": true
         },
         "DontRoundMyTimestamps": {
             "enabled": false
         },
         "MaskedLinkPaste": {
             "enabled": false
+        },
+        "NoOnboardingDelay": {
+            "enabled": false
+        },
+        "Summaries": {
+            "enabled": false,
+            "summaryExpiryThresholdDays": 3
+        },
+        "WatchTogetherAdblock": {
+            "enabled": true
         }
     },
     "notifications": {
@@ -637,6 +649,6 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1717826474140
+        "settingsSyncVersion": 1718890314737
     }
 }

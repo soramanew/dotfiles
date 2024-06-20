@@ -146,13 +146,20 @@ export default () => {
                 const player = Mpris.getPlayer("");
                 if (player) {
                     const title = trimTrackTitle(player.trackTitle);
-                    self.label = `${title} • ${player.trackArtists.join(", ")}`;
                     const artists = player.trackArtists;
-                    const artistsNice =
-                        artists.length > 2
-                            ? `${artists.slice(0, -1).join(", ")} and ${artists.at(-1)}`
-                            : artists.join(", ");
-                    self.tooltipText = `${title} by ${artistsNice}`;
+                    // Filter to get rid of empty artist names
+                    const hasArtists = artists.filter(a => a).length;
+                    if (!hasArtists) {
+                        self.label = title;
+                        self.tooltipText = title;
+                    } else {
+                        self.label = `${title} • ${artists.join(", ")}`;
+                        const artistsNice =
+                            artists.length > 2
+                                ? `${artists.slice(0, -1).join(", ")} and ${artists.at(-1)}`
+                                : artists.join(", ");
+                        self.tooltipText = `${title} by ${artistsNice}`;
+                    }
                 } else {
                     self.label = "No media";
                     self.tooltipText = "";

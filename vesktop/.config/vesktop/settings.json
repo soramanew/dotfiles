@@ -1,7 +1,7 @@
 {
     "discordBranch": "stable",
     "arRPC": "on",
-    "splashColor": "rgb(220, 221, 222)",
+    "splashColor": "oklab(0.899401 -0.00192499 -0.00481987)",
     "splashBackground": "oklab(0.321088 -0.000220731 -0.00934622)",
     "minimizeToTray": false,
     "clickTrayToShowHide": true,
