@@ -1,7 +1,6 @@
-const { Box, FlowBox, Button, Label, Entry, Icon, Stack } = Widget;
+const { Box, FlowBox, Button, Label, Entry, Icon, Stack, Scrollable } = Widget;
 const Applications = await Service.import("applications");
 import { SCREEN_HEIGHT } from "../../constants.js";
-import { RoundedScrollable } from "../.commonwidgets/cairo_roundedscrollable.js";
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 
 const MAX_HEIGHT = SCREEN_HEIGHT * 0.8;
@@ -18,6 +17,7 @@ export default () => {
     const AppItem = app =>
         Button({
             className: "applauncher-app",
+            attribute: { app },
             onClicked: () => {
                 close(widget);
                 app.launch();
@@ -38,11 +38,10 @@ export default () => {
                 .map(AppItem)
                 .forEach(app => self.add(app)),
     });
-    const appListScrollable = RoundedScrollable({
+    const appListScrollable = Scrollable({
         hscroll: "never",
         vscroll: "automatic",
         className: "applauncher-applist",
-        overlayClass: "applauncher-scrollcorner",
         child: appList,
         setup: self => {
             const vScrollbar = self.get_vscrollbar();
@@ -53,7 +52,12 @@ export default () => {
         transition: "crossfade",
         transitionDuration: 150,
         children: {
-            list: appListScrollable,
+            list: Box({
+                vpack: "start",
+                vertical: true,
+                css: `min-height: ${MAX_HEIGHT}px;`,
+                child: appListScrollable,
+            }),
             empty: Box({
                 vpack: "center",
                 vertical: true,
@@ -77,19 +81,14 @@ export default () => {
                 placeholderText: "Search for apps",
                 attribute: {
                     update: text => {
-                        const apps = Applications.query(text).map(AppItem);
-                        appList.get_children().forEach(child => child.destroy());
-                        apps.forEach(app => appList.add(app));
-                        appList.show_all();
-
-                        let height = appList.get_preferred_height_for_width(appList.get_allocated_width())[0];
-                        if (height > MAX_HEIGHT) height = MAX_HEIGHT;
-                        appListScrollable.child.css = `min-height: ${height}px;`;
-
-                        if (apps.length === 0) {
-                            appListScrollable.child.css = `min-height: ${MAX_HEIGHT}px;`;
-                            appListStack.shown = "empty";
-                        } else appListStack.shown = "list";
+                        const apps = Applications.query(text);
+                        if (apps.length > 0) {
+                            appList.set_filter_func(child => apps.includes(child.child.attribute.app));
+                            appListStack.shown = "list";
+                            let height = appList.get_preferred_height_for_width(appList.get_allocated_width())[0];
+                            if (height > MAX_HEIGHT) height = MAX_HEIGHT;
+                            appListScrollable.css = `min-height: ${height}px;`;
+                        } else appListStack.shown = "empty";
                     },
                 },
                 onChange: self => self.attribute.update(self.text),

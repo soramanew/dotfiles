@@ -1,9 +1,5 @@
 .session-bg {
-    @if $transparent == True {
-        background-color: $layer0;
-    } @else {
-        background-color: transparentize($layer0, 0.2);
-    }
+    background-color: to-root-transparency($layer0, $override: True);
 }
 
 .session-button {
