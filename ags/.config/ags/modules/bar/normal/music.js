@@ -48,7 +48,7 @@ const BarResource = (
         className: `spacing-h-4 ${textClassName}`,
         children: [resourceProgress, resourceLabel],
         setup: self =>
-            self.poll(5000, () =>
+            self.poll(5000, self =>
                 execAsync(["bash", "-c", command])
                     .then(output => {
                         output = parseFloat(output);

@@ -9,6 +9,9 @@ generated.*
 /hypr/.config/hypr/hyprlock.conf
 /ags/.config/ags/scss/_musicmaterial.scss
 /ags/.config/ags/scss/_musicwal.scss
+
+# Unnecessary configs
+/thunar/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
 /thunar/.config/Thunar/accels.scm
 
 # Byte-compiled / optimized / DLL files

@@ -17,15 +17,18 @@ export class ColorPickerSelection extends Service {
     get hue() {
         return this._hue;
     }
+
     set hue(value) {
         this._hue = clamp(value, 0, 360);
         this.emit("hue");
         this.emit("picked");
         this.emit("changed");
     }
+
     get xAxis() {
         return this._xAxis;
     }
+
     set xAxis(value) {
         this._xAxis = clamp(value, 0, 100);
         this.emit("sl");
@@ -35,12 +38,14 @@ export class ColorPickerSelection extends Service {
     get yAxis() {
         return this._yAxis;
     }
+
     set yAxis(value) {
         this._yAxis = clamp(value, 0, 100);
         this.emit("sl");
         this.emit("picked");
         this.emit("changed");
     }
+
     setColorFromHex(hexString, id) {
         const hsl = hexToHSL(hexString);
         this._hue = hsl.hue;

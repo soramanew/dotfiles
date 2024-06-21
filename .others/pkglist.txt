@@ -10,7 +10,6 @@ bluez-utils
 brightnessctl
 btop
 cliphist
-cmake
 cowfortune
 cpupower
 dart-sass
@@ -68,9 +67,8 @@ libvdpau-va-gl
 linux
 linux-firmware
 man-db
-meson
 mkinitcpio-firmware
-namcap
+mpv
 nano
 neofetch
 networkmanager
