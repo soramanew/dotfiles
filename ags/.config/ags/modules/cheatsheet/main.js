@@ -24,8 +24,8 @@ const Header = () =>
                         }),
                         Label({
                             vpack: "center",
-                            className: "cheatsheet-key txt-small",
-                            label: "",
+                            className: "cheatsheet-key cheatsheet-key-super txt-small",
+                            label: "󰖳",
                         }),
                         Label({
                             vpack: "center",

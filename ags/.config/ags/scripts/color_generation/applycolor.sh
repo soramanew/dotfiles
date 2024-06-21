@@ -146,9 +146,8 @@ apply_gtk() { # Using gradience-cli
 }
 
 apply_ags() {
-    sass "$HOME"/.config/ags/scss/main.scss "$HOME"/.cache/ags/user/generated/style.css
+    ags run-js 'reloadCss()'
     ags run-js 'openColorScheme.value = true; Utils.timeout(2000, () => openColorScheme.value = false);'
-    ags run-js "App.resetCss(); App.applyCss('${HOME}/.cache/ags/user/generated/style.css');"
 }
 
 apply_slurp() {

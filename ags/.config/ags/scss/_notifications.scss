@@ -59,7 +59,7 @@
 }
 
 .notif-clicked-normal {
-    background-color: $surfaceContainerHigh;
+    background-color: $surfaceContainerHighest;
 }
 
 .notif-clicked-critical {
@@ -69,11 +69,7 @@
 .popup-notif-low {
     @include notif-rounding;
     min-width: 30.682rem;
-    background-color: $layer1;
-
-    @if $transparent ==True {
-        background-color: $layer0;
-    }
+    background-color: to-root-transparency(mix($layer1, $surfaceContainerLow, 80%));
 
     border: 0.034rem solid $outlineVariant;
     color: $onLayer1;
@@ -86,7 +82,7 @@
     min-width: 30.682rem;
     background-color: $layer2;
 
-    @if $transparent ==True {
+    @if $transparent == True {
         background-color: $layer0;
     }
 
@@ -107,11 +103,11 @@
 }
 
 .popup-notif-clicked-low {
-    background-color: $surfaceContainerLow;
+    background-color: to-root-transparency(mix($secondaryContainer, $surfaceContainerLow, 10%));
 }
 
 .popup-notif-clicked-normal {
-    background-color: $surfaceContainerLow;
+    background-color: to-root-transparency($surfaceContainerLow);
 }
 
 .popup-notif-clicked-critical {

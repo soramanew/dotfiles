@@ -69,7 +69,7 @@ export default () =>
                                                 // Binds
                                                 xalign: 0,
                                                 label: action,
-                                                className: "txt cheatsheet-action txt-small",
+                                                className: "txt txt-small",
                                             })
                                         ),
                                     }),

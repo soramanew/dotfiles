@@ -3,6 +3,7 @@ const { Box, CenterBox, Label, Button } = Widget;
 import Gestures from "./gestures.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import PopupWindow from "../.widgethacks/popupwindow.js";
+import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
 
 const Header = () =>
     CenterBox({
@@ -19,7 +20,7 @@ const Header = () =>
                             hpack: "center",
                             css: "margin-right: 0.682rem;",
                             className: "txt-title txt",
-                            label: "Cheat sheet",
+                            label: "Gestures cheat sheet",
                         }),
                         Label({
                             vpack: "center",
@@ -46,7 +47,7 @@ const Header = () =>
             vpack: "start",
             hpack: "end",
             className: "cheatsheet-closebtn icon-material txt txt-hugeass",
-            onClicked: () => closeWindowOnAllMonitors("gcheatsheet"),
+            onClicked: () => App.closeWindow("gcheatsheet"),
             child: Label({
                 className: "icon-material txt txt-hugeass",
                 label: "close",
@@ -55,20 +56,32 @@ const Header = () =>
         }),
     });
 
-export default id =>
+const C2C = () => Click2CloseRegion({ name: "gcheatsheet" });
+
+export default () =>
     PopupWindow({
-        name: `gcheatsheet${id}`,
+        name: "gcheatsheet",
         layer: "overlay",
-        keymode: "exclusive",
+        keymode: "on-demand",
         visible: false,
+        anchor: ["top", "bottom", "left", "right"],
         child: Box({
             vertical: true,
             children: [
+                C2C(),
                 Box({
-                    vertical: true,
-                    className: "cheatsheet-bg spacing-v-15",
-                    children: [Header(), Gestures()],
+                    vexpand: false,
+                    children: [
+                        C2C(),
+                        Box({
+                            vertical: true,
+                            className: "cheatsheet-bg spacing-v-15",
+                            children: [Header(), Gestures()],
+                        }),
+                        C2C(),
+                    ],
                 }),
+                C2C(),
             ],
         }),
     });

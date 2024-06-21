@@ -25,7 +25,8 @@
 }
 
 .cheatsheet-key-super {
-    padding-left: 0;
+    padding-left: 0.103rem;
+    padding-right: 0.308rem;
 }
 
 .cheatsheet-key-notkey {
@@ -41,9 +42,6 @@
         border-color: nth($cheatsheetColors, $i);
         box-shadow: 0rem 0.136rem 0rem nth($cheatsheetColors, $i);
     }
-}
-
-.cheatsheet-action {
 }
 
 .cheatsheet-closebtn {

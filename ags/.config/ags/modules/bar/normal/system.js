@@ -5,7 +5,6 @@ const { execAsync, exec } = Utils;
 const Battery = await Service.import("battery");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
-import { WWO_CODE, WEATHER_SYMBOL } from "../../.commondata/weather.js";
 import { BarGroup } from "./main.js";
 import { BATTERY_LOW, CACHE_DIR } from "../../../constants.js";
 import { showClock } from "../../../variables.js";

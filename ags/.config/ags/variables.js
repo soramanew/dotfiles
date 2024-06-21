@@ -25,6 +25,7 @@ globalThis.openWindowOnAllMonitors = name => forMonitors(id => App.openWindow(na
 
 globalThis.closeEverything = () => {
     App.closeWindow("cheatsheet");
+    App.closeWindow("gcheatsheet");
     App.closeWindow("session");
     App.closeWindow("todoscreen");
     App.closeWindow("sideleft");

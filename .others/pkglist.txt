@@ -11,6 +11,7 @@ brightnessctl
 btop
 cliphist
 cmake
+cowfortune
 cpupower
 dart-sass
 dmidecode
@@ -20,6 +21,7 @@ fastfetch
 featherpad
 feishin-bin
 ffmpegthumbnailer
+figlet
 file-roller
 firefox
 fish
