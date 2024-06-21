@@ -5,7 +5,6 @@ const Hyprland = await Service.import("hyprland");
 const Applications = await Service.import("applications");
 import Todo from "../../services/todo.js";
 import { darkMode } from "../.miscutils/system.js";
-import { CACHE_DIR } from "../../constants.js";
 
 // Use a regular expression to match a trailing odd number of backslashes
 export const hasUnterminatedBackslash = inputString => /\\+$/.test(inputString);

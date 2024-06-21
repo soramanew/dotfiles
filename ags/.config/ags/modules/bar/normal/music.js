@@ -1,5 +1,4 @@
-import GLib from "gi://GLib";
-const { Box, Button, EventBox, Label, Overlay, Revealer } = Widget;
+const { Box, EventBox, Label, Overlay, Revealer } = Widget;
 const { execAsync } = Utils;
 const Mpris = await Service.import("mpris");
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
@@ -45,23 +44,20 @@ const BarResource = (
         }),
     });
     const resourceLabel = Label({ className: `txt-smallie ${textClassName}` });
-    return Button({
-        onClicked: () => execAsync(`${GLib.get_user_home_dir()}/.config/hypr/scripts/toggle-sysmon.sh`).catch(print),
-        child: Box({
-            className: `spacing-h-4 ${textClassName}`,
-            children: [resourceProgress, resourceLabel],
-            setup: self =>
-                self.poll(5000, () =>
-                    execAsync(["bash", "-c", command])
-                        .then(output => {
-                            output = parseFloat(output);
-                            resourceCircProg.css = `font-size: ${output}px;`;
-                            resourceLabel.label = `${Math.round(output)}%`;
-                            self.tooltipText = `${name}: ${output}%`;
-                        })
-                        .catch(print)
-                ),
-        }),
+    return Box({
+        className: `spacing-h-4 ${textClassName}`,
+        children: [resourceProgress, resourceLabel],
+        setup: self =>
+            self.poll(5000, () =>
+                execAsync(["bash", "-c", command])
+                    .then(output => {
+                        output = parseFloat(output);
+                        resourceCircProg.css = `font-size: ${output}px;`;
+                        resourceLabel.label = `${Math.round(output)}%`;
+                        self.tooltipText = `${name}: ${output}%`;
+                    })
+                    .catch(print)
+            ),
     });
 };
 
@@ -116,13 +112,20 @@ export default () => {
                 const player = Mpris.getPlayer("");
                 if (player) {
                     const title = trimTrackTitle(player.trackTitle);
-                    self.label = `${title} • ${player.trackArtists.join(", ")}`;
                     const artists = player.trackArtists;
-                    const artistsNice =
-                        artists.length > 2
-                            ? `${artists.slice(0, -1).join(", ")} and ${artists.at(-1)}`
-                            : artists.join(", ");
-                    self.tooltipText = `${title} by ${artistsNice}`;
+                    // Filter to get rid of empty artist names
+                    const hasArtists = artists.filter(a => a).length;
+                    if (!hasArtists) {
+                        self.label = title;
+                        self.tooltipText = title;
+                    } else {
+                        self.label = `${title} • ${artists.join(", ")}`;
+                        const artistsNice =
+                            artists.length > 2
+                                ? `${artists.slice(0, -1).join(", ")} and ${artists.at(-1)}`
+                                : artists.join(", ");
+                        self.tooltipText = `${title} by ${artistsNice}`;
+                    }
                 } else {
                     self.label = "No media";
                     self.tooltipText = "";
@@ -201,9 +204,8 @@ export default () => {
                     ]).catch(print),
                 setup: self =>
                     self.on("button-press-event", (_, event) => {
-                        if (event.get_button()[1] === 8)
-                            // Side button
-                            execAsync("playerctl previous").catch(print);
+                        // Side button
+                        if (event.get_button()[1] === 8) execAsync("playerctl previous").catch(print);
                     }),
             }),
         ],

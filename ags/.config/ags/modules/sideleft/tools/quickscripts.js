@@ -22,25 +22,25 @@ const scripts = [
     {
         icon: "ubuntu-symbolic",
         name: "Update packages",
-        command: `sudo apt update && sudo apt upgrade -y`,
+        command: "sudo apt update && sudo apt upgrade -y",
         enabled: isDebianDistro,
     },
     {
         icon: "fedora-symbolic",
         name: "Update packages",
-        command: `sudo dnf upgrade -y`,
+        command: "sudo dnf upgrade -y",
         enabled: distroID == "fedora",
     },
     {
         icon: "arch-symbolic",
         name: "Update packages",
-        command: `yay`,
+        command: "yay",
         enabled: isArchDistro,
     },
     {
         icon: "flatpak-symbolic",
         name: "Uninstall unused flatpak packages",
-        command: `flatpak uninstall --unused`,
+        command: "flatpak uninstall --unused",
         enabled: hasFlatpak,
     },
     {

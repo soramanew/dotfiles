@@ -58,13 +58,13 @@ export const AnimatedSlider = ({
             });
 
             extraSetup(self);
-            if (initFrom != initTo) Utils.timeout(10, () => updateProgress(initTo, initAnimTime), self);
+            if (initFrom != initTo) Utils.timeout(10, () => updateProgress(initTo, initAnimTime));
         },
     });
     return EventBox({
         aboveChild: true,
         visibleWindow: false,
-        attribute: { updateProgress, clicked: false, value: initFrom },
+        attribute: { updateProgress, clicked: false },
         child: drawingArea,
         onPrimaryClick: (self, event) => {
             self.attribute.clicked = true;

@@ -62,9 +62,6 @@ const schemeOptionsArr = [
         { name: "Vibrant", value: "vibrant" },
     ],
     [{ name: "Vibrant+", value: "morevibrant" }],
-    //[
-    //  { name: 'Content', value: 'content' },
-    //]
 ];
 
 const LIGHTDARK_FILE_LOCATION = `${CACHE_DIR}/user/colormode.txt`;
@@ -115,11 +112,11 @@ const ColorSchemeSettings = () =>
                         initIndex: initSchemeIndex,
                         onChange: value => {
                             execAsync([
-                                `bash`,
-                                `-c`,
+                                "bash",
+                                "-c",
                                 `mkdir -p ${CACHE_DIR}/user && sed -i "3s/.*/${value}/" ${CACHE_DIR}/user/colormode.txt`,
                             ])
-                                .then(
+                                .then(() =>
                                     execAsync([
                                         "bash",
                                         "-c",

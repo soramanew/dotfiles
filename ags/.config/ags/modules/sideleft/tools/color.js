@@ -112,50 +112,6 @@ export function hslToHex(h, s, l) {
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-// export function hexToHSL(hex) {
-//     // Remove the '#' if present
-//     hex = hex.replace(/^#/, '');
-//     // Parse the hex value into RGB components
-//     const bigint = parseInt(hex, 16);
-//     const r = (bigint >> 16) & 255;
-//     const g = (bigint >> 8) & 255;
-//     const b = bigint & 255;
-//     // Normalize RGB values to range [0, 1]
-//     const normalizedR = r / 255;
-//     const normalizedG = g / 255;
-//     const normalizedB = b / 255;
-//     // Find the maximum and minimum values
-//     const max = Math.max(normalizedR, normalizedG, normalizedB);
-//     const min = Math.min(normalizedR, normalizedG, normalizedB);
-//     // Calculate the lightness
-//     const lightness = (max + min) / 2;
-//     // If the color is grayscale, set saturation to 0
-//     if (max === min) {
-//         return {
-//             hue: 0,
-//             saturation: 0,
-//             lightness: lightness * 100 // Convert to percentage
-//         };
-//     }
-//     // Calculate the saturation
-//     const d = max - min;
-//     const saturation = lightness > 0.5 ? d / (2 - max - min) : d / (max + min);
-//     // Calculate the hue
-//     let hue;
-//     if (max === normalizedR) {
-//         hue = ((normalizedG - normalizedB) / d + (normalizedG < normalizedB ? 6 : 0)) * 60;
-//     } else if (max === normalizedG) {
-//         hue = ((normalizedB - normalizedR) / d + 2) * 60;
-//     } else {
-//         hue = ((normalizedR - normalizedG) / d + 4) * 60;
-//     }
-//     return {
-//         hue: Math.round(hue),
-//         saturation: Math.round(saturation * 100), // Convert to percentage
-//         lightness: Math.round(lightness * 100) // Convert to percentage
-//     };
-// }
-
 export function hexToHSL(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 

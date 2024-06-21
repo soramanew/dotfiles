@@ -64,14 +64,9 @@ export const HyprToggleIcon = (icon, name, hyprlandConfigValue, values = [0, 1],
         onClicked: button =>
             Hyprland.messageAsync(`j/getoption ${hyprlandConfigValue}`)
                 .then(option => {
-                    const currentOption = JSON.parse(option).int;
-                    if (currentOption == 1) {
-                        Hyprland.messageAsync(`keyword ${hyprlandConfigValue} ${values[1]}`).catch(print);
-                        button.toggleClassName("sidebar-button-active", true);
-                    } else {
-                        Hyprland.messageAsync(`keyword ${hyprlandConfigValue} ${values[0]}`).catch(print);
-                        button.toggleClassName("sidebar-button-active", false);
-                    }
+                    const isEnabled = JSON.parse(option).int == values[1];
+                    Hyprland.messageAsync(`keyword ${hyprlandConfigValue} ${values[isEnabled ? 0 : 1]}`).catch(print);
+                    button.toggleClassName("sidebar-button-active", !isEnabled);
                 })
                 .catch(print),
         child: MaterialIcon(icon, "norm", { hpack: "center" }),

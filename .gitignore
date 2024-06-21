@@ -9,6 +9,8 @@ generated.*
 /hypr/.config/hypr/hyprlock.conf
 /ags/.config/ags/scss/_musicmaterial.scss
 /ags/.config/ags/scss/_musicwal.scss
+/thunar/.config/Thunar/accels.scm
 
-# Unnecessary configs
-/featherpad/.config/featherpad/fp_last_cursor_pos.conf
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]

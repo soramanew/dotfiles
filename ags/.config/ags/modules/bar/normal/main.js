@@ -7,7 +7,6 @@ import Indicators from "./spaceright.js";
 import Music from "./music.js";
 import System from "./system.js";
 import Brightness from "../../../services/brightness.js";
-import Indicator from "../../../services/indicator.js";
 
 export const BarGroup = (child, module) =>
     Box({
@@ -21,14 +20,8 @@ export const BarGroup = (child, module) =>
 const SpaceLeft = () =>
     EventBox({
         hexpand: true,
-        onScrollUp: () => {
-            Indicator.popup(1);
-            Brightness.screen_value -= 0.01;
-        },
-        onScrollDown: () => {
-            Indicator.popup(1);
-            Brightness.screen_value += 0.01;
-        },
+        onScrollUp: () => (Brightness.screen_value -= 0.01),
+        onScrollDown: () => (Brightness.screen_value += 0.01),
         onPrimaryClick: () => App.toggleWindow("sideleft"),
         // onSecondaryClick: () => App.toggleWindow("overview"),
         child: WindowTitle(),
@@ -38,14 +31,10 @@ const SpaceRight = () =>
     EventBox({
         hexpand: true,
         onScrollUp: () => {
-            if (!Audio.speaker) return;
-            Audio.speaker.volume = Math.min(Audio.speaker.volume + 0.01, 1);
-            Indicator.popup(1);
+            if (Audio.speaker) Audio.speaker.volume = Math.min(Audio.speaker.volume + 0.01, 1);
         },
         onScrollDown: () => {
-            if (!Audio.speaker) return;
-            Audio.speaker.volume -= 0.01;
-            Indicator.popup(1);
+            if (Audio.speaker) Audio.speaker.volume -= 0.01;
         },
         onPrimaryClick: () => App.toggleWindow("sideright"),
         // onSecondaryClick: () => App.toggleWindow("overview"),
