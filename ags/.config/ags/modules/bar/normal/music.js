@@ -1,5 +1,4 @@
-import GLib from "gi://GLib";
-const { Box, Button, EventBox, Label, Overlay, Revealer } = Widget;
+const { Box, EventBox, Label, Overlay } = Widget;
 const { execAsync } = Utils;
 const Mpris = await Service.import("mpris");
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";

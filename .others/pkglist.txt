@@ -59,7 +59,6 @@ jq
 kvantum
 kvantum-qt5
 lexend-fonts-git
-libdbusmenu-gtk3
 linux
 linux-firmware
 man-db
@@ -79,6 +78,7 @@ pacman-contrib
 pavucontrol
 pipewire
 pipewire-alsa
+pipewire-jack
 pipewire-pulse
 pipewire-v4l2
 playerctl

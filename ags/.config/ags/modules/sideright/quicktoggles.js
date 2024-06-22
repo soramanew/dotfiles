@@ -1,5 +1,5 @@
 import GLib from "gi://GLib";
-const { Button, Revealer } = Widget;
+const { Button } = Widget;
 const { execAsync, exec } = Utils;
 const Hyprland = await Service.import("hyprland");
 const Bluetooth = await Service.import("bluetooth");
@@ -8,7 +8,6 @@ import { BluetoothIndicator, NetworkIndicator } from "../.commonwidgets/statusic
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { sidebarOptionsStack } from "./sideright.js";
-import { tabletMode } from "../../variables.js";
 
 export const ToggleIconWifi = (props = {}) =>
     Button({
@@ -57,26 +56,23 @@ export const ToggleIconBluetooth = (props = {}) =>
         ...props,
     });
 
-export const HyprToggleIcon = (icon, name, hyprlandConfigValue, props = {}) =>
+export const HyprToggleIcon = (icon, name, hyprlandConfigValue, values = [0, 1], props = {}) =>
     Button({
         className: "txt-small sidebar-iconbutton",
         tooltipText: name,
-        onClicked: button => {
-            // Set the value to 1 - value
+        onClicked: button =>
             Hyprland.messageAsync(`j/getoption ${hyprlandConfigValue}`)
-                .then(result => {
-                    const currentOption = JSON.parse(result).int;
-                    Hyprland.messageAsync(`keyword ${hyprlandConfigValue} ${1 - currentOption}`).catch(print);
-                    button.toggleClassName("sidebar-button-active", currentOption == 0);
+                .then(option => {
+                    const isEnabled = JSON.parse(option).int == values[1];
+                    Hyprland.messageAsync(`keyword ${hyprlandConfigValue} ${values[isEnabled ? 0 : 1]}`).catch(print);
+                    button.toggleClassName("sidebar-button-active", !isEnabled);
                 })
-                .catch(print);
-        },
+                .catch(print),
         child: MaterialIcon(icon, "norm", { hpack: "center" }),
         setup: button => {
-            button.toggleClassName(
-                "sidebar-button-active",
-                JSON.parse(Hyprland.message(`j/getoption ${hyprlandConfigValue}`)).int == 1
-            );
+            Hyprland.messageAsync(`j/getoption ${hyprlandConfigValue}`)
+                .then(opt => button.toggleClassName("sidebar-button-active", JSON.parse(opt).int == values[1]))
+                .catch(print);
             setupCursorHover(button);
         },
         ...props,
@@ -116,24 +112,25 @@ export const ModuleNightLight = (props = {}) =>
           })
         : null;
 
-export const ModuleInvertColors = (props = {}) =>
+export const ModuleInvertColour = (props = {}) =>
     Button({
         className: "txt-small sidebar-iconbutton",
-        tooltipText: "Color inversion",
+        tooltipText: "Colour inversion",
         onClicked: button => {
-            // const shaderPath = JSON.parse(exec('hyprctl -j getoption decoration:screen_shader')).str;
-            Hyprland.messageAsync("j/getoption decoration:screen_shader").then(output => {
-                const shaderPath = JSON.parse(output).str.trim();
-                if (shaderPath != "[[EMPTY]]" && shaderPath != "") {
-                    Hyprland.messageAsync("keyword decoration:screen_shader [[EMPTY]]").catch(print);
-                    button.toggleClassName("sidebar-button-active", false);
-                } else {
-                    Hyprland.messageAsync(
-                        `keyword decoration:screen_shader ${GLib.get_home_dir()}/.config/hypr/shaders/invert.frag`
-                    ).catch(print);
-                    button.toggleClassName("sidebar-button-active", true);
-                }
-            });
+            Hyprland.messageAsync("j/getoption decoration:screen_shader")
+                .then(output => {
+                    const shaderPath = JSON.parse(output).str.trim();
+                    if (shaderPath !== "[[EMPTY]]" && shaderPath !== "") {
+                        Hyprland.messageAsync("keyword decoration:screen_shader [[EMPTY]]").catch(print);
+                        button.toggleClassName("sidebar-button-active", false);
+                    } else {
+                        Hyprland.messageAsync(
+                            `keyword decoration:screen_shader ${GLib.get_home_dir()}/.config/hypr/shaders/invert.frag`
+                        ).catch(print);
+                        button.toggleClassName("sidebar-button-active", true);
+                    }
+                })
+                .catch(print);
         },
         child: MaterialIcon("invert_colors", "norm"),
         setup: setupCursorHover,
@@ -145,16 +142,18 @@ export const ModuleRawInput = (props = {}) =>
         className: "txt-small sidebar-iconbutton",
         tooltipText: "Raw input",
         onClicked: button => {
-            Hyprland.messageAsync("j/getoption input:accel_profile").then(output => {
-                const value = JSON.parse(output).str.trim();
-                if (value != "[[EMPTY]]" && value != "") {
-                    Hyprland.messageAsync("keyword input:accel_profile [[EMPTY]]").catch(print);
-                    button.toggleClassName("sidebar-button-active", false);
-                } else {
-                    Hyprland.messageAsync(`keyword input:accel_profile flat`).catch(print);
-                    button.toggleClassName("sidebar-button-active", true);
-                }
-            });
+            Hyprland.messageAsync("j/getoption input:accel_profile")
+                .then(output => {
+                    const value = JSON.parse(output).str.trim();
+                    if (value !== "[[EMPTY]]" && value !== "") {
+                        Hyprland.messageAsync("keyword input:accel_profile [[EMPTY]]").catch(print);
+                        button.toggleClassName("sidebar-button-active", false);
+                    } else {
+                        Hyprland.messageAsync(`keyword input:accel_profile flat`).catch(print);
+                        button.toggleClassName("sidebar-button-active", true);
+                    }
+                })
+                .catch(print);
         },
         child: MaterialIcon("mouse", "norm"),
         setup: setupCursorHover,
@@ -218,7 +217,7 @@ export const ModuleSettingsIcon = (props = {}) =>
     });
 
 export const ModulePowerIcon = (props = {}) =>
-    Widget.Button({
+    Button({
         ...props,
         className: "txt-small sidebar-iconbutton",
         tooltipText: "Session",
