@@ -20,12 +20,8 @@ export const BarGroup = (child, module) =>
 const SpaceLeft = () =>
     EventBox({
         hexpand: true,
-        onScrollUp: () => {
-            Brightness.screen_value += 0.05;
-        },
-        onScrollDown: () => {
-            Brightness.screen_value -= 0.05;
-        },
+        onScrollUp: () => (Brightness.screen_value += 0.05),
+        onScrollDown: () => (Brightness.screen_value -= 0.05),
         onPrimaryClick: () => App.toggleWindow("sideleft"),
         // onSecondaryClick: () => App.toggleWindow("overview"),
         child: WindowTitle(),
@@ -35,12 +31,10 @@ const SpaceRight = () =>
     EventBox({
         hexpand: true,
         onScrollUp: () => {
-            if (!Audio.speaker) return;
-            Audio.speaker.volume = Math.min(Audio.speaker.volume + 0.05, 1);
+            if (Audio.speaker) Audio.speaker.volume = Math.min(Audio.speaker.volume + 0.05, 1);
         },
         onScrollDown: () => {
-            if (!Audio.speaker) return;
-            Audio.speaker.volume -= 0.05;
+            if (Audio.speaker) Audio.speaker.volume -= 0.05;
         },
         onPrimaryClick: () => App.toggleWindow("sideright"),
         // onSecondaryClick: () => App.toggleWindow("overview"),

@@ -12,6 +12,11 @@ generated.*
 
 # Unnecessary configs
 /thunar/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
+/thunar/.config/Thunar/accels.scm
 
 # Get separately
 /vesktop/.config/vesktop/arrpc/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]

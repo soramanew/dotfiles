@@ -14,8 +14,8 @@
 @import "./common"; // Context menu n stuff
 
 // Helper functions
-@function to-root-transparency($colour) {
-    @if $transparent == True {
+@function to-root-transparency($colour, $override: False) {
+    @if $override == True or $transparent == True {
         $colour: change-color($colour, $alpha: 1 - $rootTransparency);
     }
     @return $colour;

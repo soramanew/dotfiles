@@ -1,16 +1,16 @@
 const { Box, Icon, Label } = Widget;
-const { execAsync } = Utils;
+const { exec, execAsync } = Utils;
 import {
     ToggleIconBluetooth,
     ToggleIconWifi,
     HyprToggleIcon,
     ModuleNightLight,
-    ModuleInvertColors,
+    ModuleInvertColour,
+    ModuleRawInput,
     ModuleIdleInhibitor,
     ModuleReloadIcon,
     ModuleSettingsIcon,
     ModulePowerIcon,
-    ModuleRawInput,
 } from "./quicktoggles.js";
 import ModuleNotificationList from "./centermodules/notificationlist.js";
 import ModuleAudioControls from "./centermodules/audiocontrols.js";
@@ -84,8 +84,11 @@ const QuickToggles = () =>
             ModuleRawInput(),
             HyprToggleIcon("touchpad_mouse", "No touchpad while typing", "input:touchpad:disable_while_typing"),
             ModuleNightLight(),
-            ModuleInvertColors(),
+            ModuleInvertColour(),
             ModuleIdleInhibitor(),
+            exec("bash -c 'udevadm info --export-db | grep ID_INPUT_TOUCHSCREEN=1'").trim() !== ""
+                ? HyprToggleIcon("do_not_touch", "Disable touchscreen", "input:touchdevice:enabled", [1, 0])
+                : null,
         ],
     });
 

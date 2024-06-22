@@ -3,6 +3,61 @@ const { Box, Revealer, Button, Overlay, Label } = Widget;
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../constants.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 
+const SessionButton = ({ name, icon, command = null, colourId = 0, extraClassName = "", ...rest }) => {
+    const buttonDescription = Revealer({
+        vpack: "end",
+        transitionDuration: 150,
+        transition: "slide_down",
+        revealChild: false,
+        child: Label({
+            className: "txt-smaller session-button-desc",
+            label: name,
+        }),
+    });
+    const go = (self, yes) => {
+        buttonDescription.revealChild = yes;
+        self.toggleClassName("session-button-focused", yes);
+    };
+    return Button({
+        onClicked: () => {
+            App.closeWindow("session");
+            if (command) Utils.execAsync(command).catch(print);
+        },
+        attribute: { hovered: false, focused: false },
+        className: `session-button session-colour-${colourId} ${extraClassName}`,
+        child: Overlay({
+            className: "session-button-box",
+            child: Label({
+                vexpand: true,
+                className: "icon-material",
+                label: icon,
+            }),
+            overlays: [buttonDescription],
+        }),
+        setup: self =>
+            setupCursorHover(
+                self
+                    .on("enter-notify-event", self => {
+                        self.attribute.hovered = true;
+                        go(self, true);
+                    })
+                    .on("leave-notify-event", self => {
+                        self.attribute.hovered = false;
+                        if (!self.attribute.focused) go(self, false);
+                    })
+                    .on("focus-in-event", self => {
+                        self.attribute.focused = true;
+                        go(self, true);
+                    })
+                    .on("focus-out-event", self => {
+                        self.attribute.focused = false;
+                        if (!self.attribute.hovered) go(self, false);
+                    })
+            ),
+        ...rest,
+    });
+};
+
 const SessionButtonRow = children =>
     Box({
         hpack: "center",
@@ -10,48 +65,7 @@ const SessionButtonRow = children =>
         children: children,
     });
 
-export default (id = "") => {
-    const SessionButton = ({ name, icon, command = null, colourId = 0, extraClassName = "", ...rest }) => {
-        const buttonDescription = Revealer({
-            vpack: "end",
-            transitionDuration: 150,
-            transition: "slide_down",
-            revealChild: false,
-            child: Label({
-                className: "txt-smaller session-button-desc",
-                label: name,
-            }),
-        });
-        const go = (self, yes) => {
-            buttonDescription.revealChild = yes;
-            self.toggleClassName("session-button-focused", yes);
-        };
-        return Button({
-            onClicked: () => {
-                App.closeWindow(`session${id}`);
-                if (command) Utils.execAsync(command).catch(print);
-            },
-            className: `session-button session-colour-${colourId} ${extraClassName}`,
-            child: Overlay({
-                className: "session-button-box",
-                child: Label({
-                    vexpand: true,
-                    className: "icon-material",
-                    label: icon,
-                }),
-                overlays: [buttonDescription],
-            }),
-            setup: self =>
-                setupCursorHover(
-                    self
-                        .on("enter-notify-event", self => go(self, true))
-                        .on("leave-notify-event", self => go(self, false))
-                        .on("focus-in-event", self => go(self, true))
-                        .on("focus-out-event", self => go(self, false))
-                ),
-            ...rest,
-        });
-    };
+export default () => {
     // lock, logout, sleep
     const lockButton = SessionButton({
         name: "Lock",
