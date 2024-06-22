@@ -14,7 +14,6 @@ import Session from "./modules/session/main.js";
 import SideLeft from "./modules/sideleft/main.js";
 import SideRight from "./modules/sideright/main.js";
 import TodoScreen from "./modules/todoscreen/main.js";
-import AppLauncher from "./modules/applauncher/main.js";
 
 // SCSS compilation
 exec(`bash -c 'echo "" > ${App.configDir}/scss/_musicwal.scss'`); // reset music styles
@@ -32,7 +31,6 @@ applyStyle();
 
 const Windows = () => [
     Overview(),
-    AppLauncher(),
     Cheatsheet(),
     TodoScreen(),
     SideLeft(),
