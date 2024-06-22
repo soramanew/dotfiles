@@ -71,7 +71,6 @@ const KeyboardControls = () =>
                 tooltipText: "Toggle clipboard",
             }),
             WindowButton("overview", "overview_key"),
-            WindowButton("applauncher", "apps"),
             WindowButton("session", "power_settings_new"),
             WindowButton("todoscreen", "done_outline"),
         ],
