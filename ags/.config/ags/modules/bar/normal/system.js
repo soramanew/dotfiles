@@ -106,21 +106,29 @@ const WeatherModule = () =>
                     self.children[3].label = `UV ${uvIndex} • ${weatherDesc}`;
                     self.tooltipText = weatherDesc;
                 };
-                execAsync(`curl https://wttr.in/?format=j1`)
-                    .then(output => {
-                        const weather = JSON.parse(output).current_condition[0];
-                        writeFile(JSON.stringify(weather), WEATHER_CACHE_PATH).catch(print);
-                        updateWeather(weather);
-                    })
-                    .catch(err => {
-                        print(`Error updating weather. Stderr:\n${err}`);
-                        try {
-                            // Read from cache
-                            updateWeather(JSON.parse(readFile(WEATHER_CACHE_PATH)));
-                        } catch (err) {
-                            print(err);
-                        }
-                    });
+                const updateFromCache = () => {
+                    try {
+                        updateWeather(JSON.parse(readFile(WEATHER_CACHE_PATH)));
+                    } catch (err) {
+                        print(err);
+                    }
+                };
+                updateFromCache();
+                execAsync("curl ipinfo.io")
+                    .then(out => JSON.parse(out).city)
+                    .then(city =>
+                        execAsync(`curl wttr.in/${city.replace(/ /g, "%20")}?format=j1`)
+                            .then(out => JSON.parse(out).current_condition[0])
+                            .then(weather => {
+                                writeFile(JSON.stringify(weather), WEATHER_CACHE_PATH).catch(print);
+                                updateWeather(weather);
+                            })
+                            .catch(err => {
+                                print(`Error updating weather. Stderr:\n${err}`);
+                                updateFromCache();
+                            })
+                    )
+                    .catch(print);
             }),
     });
 
