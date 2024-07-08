@@ -225,7 +225,7 @@ export default () => {
                 Button({
                     child: MaterialIcon("content_copy", "norm"),
                     onClicked: self => {
-                        execAsync(["wl-copy", transformResult()]);
+                        execAsync(["wl-copy", "--", transformResult()]);
                         self.child.label = "done";
                         Utils.timeout(1000, () => (self.child.label = "content_copy"));
                     },

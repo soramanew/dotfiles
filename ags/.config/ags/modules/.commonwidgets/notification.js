@@ -123,7 +123,7 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
                 if (event.get_button()[1] !== 1) return; // Only want primary click
                 if (event.get_event_type() === 5) {
                     // Double click
-                    Utils.execAsync(["wl-copy", notifObject.body]).catch(print);
+                    Utils.execAsync(["wl-copy", "--", notifObject.body]).catch(print);
                     notifTextSummary.label = notifObject.summary + " (copied)";
                     safeTimeout(3000, () => (notifTextSummary.label = notifObject.summary));
                     return;

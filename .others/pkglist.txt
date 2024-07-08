@@ -15,6 +15,7 @@ dart-sass
 ddcutil
 dmidecode
 dosfstools
+electron31
 evtest
 expac
 fastfetch
@@ -29,6 +30,7 @@ foot
 fuzzel-git
 fwupd
 gammastep
+gimp
 git
 github-cli
 github-desktop-bin
@@ -76,6 +78,7 @@ ntfs-3g
 nwg-look
 pacman-contrib
 pavucontrol
+pinta
 pipewire
 pipewire-alsa
 pipewire-jack
@@ -84,7 +87,6 @@ pipewire-v4l2
 playerctl
 plymouth
 polkit-gnome
-pycharm-community-edition
 python-materialyoucolor-git
 python-psutil
 python-pywal

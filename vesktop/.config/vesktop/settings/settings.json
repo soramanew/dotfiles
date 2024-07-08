@@ -3,7 +3,9 @@
     "autoUpdateNotification": true,
     "useQuickCss": true,
     "themeLinks": [],
-    "enabledThemes": [],
+    "enabledThemes": [
+        "clearvisionbutbetter.theme.css"
+    ],
     "enableReactDevtools": false,
     "frameless": false,
     "transparent": false,
@@ -27,7 +29,7 @@
             "enabled": true
         },
         "MessageAccessoriesAPI": {
-            "enabled": false
+            "enabled": true
         },
         "MessageDecorationsAPI": {
             "enabled": true
@@ -323,7 +325,9 @@
             "enabled": false
         },
         "NoReplyMention": {
-            "enabled": false
+            "enabled": false,
+            "userList": "1234567890123445,1234567890123445",
+            "shouldPingListed": true
         },
         "NoScreensharePreview": {
             "enabled": false
@@ -637,6 +641,9 @@
         },
         "WatchTogetherAdblock": {
             "enabled": true
+        },
+        "UserSettingsAPI": {
+            "enabled": true
         }
     },
     "notifications": {
@@ -649,6 +656,6 @@
         "authenticated": false,
         "url": "https://api.vencord.dev/",
         "settingsSync": false,
-        "settingsSyncVersion": 1718890314737
+        "settingsSyncVersion": 1719575050040
     }
 }
