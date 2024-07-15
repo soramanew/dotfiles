@@ -13,6 +13,7 @@ const substitutions = {
     "gnome-tweaks": "org.gnome.tweaks",
     "pavucontrol-qt": "pavucontrol",
     "jetbrains-pycharm-ce": "pycharm-community",
+    "Spotify Free": "Spotify",
 };
 
 const regexSubs = [{ regex: /^steam_app_(\d+)$/, replace: "steam_icon_$1" }];

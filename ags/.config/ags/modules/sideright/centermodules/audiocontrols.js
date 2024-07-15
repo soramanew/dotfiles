@@ -17,7 +17,9 @@ const AppVolume = stream =>
                     [stream.bind("stream"), stream.bind("description")],
                     (stream, desc) => `${stream.name} • ${desc}`
                 ),
-                icon: stream.bind("icon-name"),
+                icon: Utils.merge([stream.bind("icon-name"), stream.bind("name")], (icon, name) =>
+                    iconExists(icon) ? icon : name
+                ),
             }),
             Box({
                 hexpand: true,

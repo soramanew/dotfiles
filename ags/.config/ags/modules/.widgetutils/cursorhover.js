@@ -1,4 +1,4 @@
-const { Gdk } = imports.gi;
+import Gdk from "gi://Gdk";
 
 const display = Gdk.Display.get_default();
 const defaultCursor = Gdk.Cursor.new_from_name(display, "default");
