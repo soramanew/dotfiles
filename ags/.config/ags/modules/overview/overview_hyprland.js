@@ -2,10 +2,10 @@ import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
 const { Box, Label, Button, Icon, Menu, MenuItem, Revealer, EventBox, Overlay, CenterBox } = Widget;
 const Hyprland = await Service.import("hyprland");
+const Mpris = await Service.import("mpris");
 import { setupCursorHoverGrab } from "../.widgetutils/cursorhover.js";
 import { dumpToWorkspace, swapWorkspace } from "./actions.js";
 import { substitute } from "../.miscutils/icons.js";
-import { DoubleRevealer } from "../.widgethacks/advancedrevealers.js";
 import { range } from "../.miscutils/system.js";
 import {
     SCREEN_HEIGHT,
@@ -63,11 +63,20 @@ export default () => {
         });
 
     const Window = (
-        { address, at: [x, y], size: [w, h], workspace: { id, name }, class: c, initialClass, title, xwayland },
+        {
+            address,
+            at: [x, y],
+            size: [w, h],
+            workspace: { id, name },
+            class: c,
+            initialClass,
+            title,
+            initialTitle,
+            xwayland,
+        },
         screenCoords,
         onClicked = () => dispatchAndClose(`focuswindow address:${address}`)
     ) => {
-        const revealInfoCondition = Math.min(w, h) * OVERVIEW_SCALE > 70;
         if (w <= 0 || h <= 0 || (c === "" && title === "")) return null;
         // Non-primary monitors
         if (screenCoords.x !== 0) x -= screenCoords.x;
@@ -88,7 +97,26 @@ export default () => {
         if (y + h > SCREEN_HEIGHT) h = SCREEN_HEIGHT - y;
 
         if (c.length === 0) c = initialClass;
-        const appIcon = Icon({ icon: substitute(c), size: (Math.min(w, h) * OVERVIEW_SCALE) / 2.5 });
+        if (c.length === 0) c = initialTitle;
+
+        const iconSize = Math.min(w, h) * OVERVIEW_SCALE;
+        const appIcon = Icon({ icon: substitute(c), size: iconSize / 2.5 });
+        const volumeIcon = Label({
+            hpack: "end",
+            vpack: "start",
+            className: "icon-material txt overview-tasks-window-volume-icon",
+            label: "volume_up",
+            setup: self =>
+                self.hook(Mpris, () => {
+                    self.visible =
+                        Mpris.players.find(p => {
+                            const pName = p.name.toLowerCase();
+                            const cName = c.toLowerCase();
+                            return pName.includes(cName) || cName.includes(pName);
+                        })?.playBackStatus === "Playing";
+                }),
+        });
+        volumeIcon.css = `font-size: ${iconSize / 10}px;`;
 
         return Button({
             attribute: {
@@ -99,8 +127,11 @@ export default () => {
                 h,
                 ws: id,
                 wsName: name,
-                updateIconSize: self =>
-                    (appIcon.size = (Math.min(self.attribute.w, self.attribute.h) * OVERVIEW_SCALE) / 2.5),
+                updateIconSize: self => {
+                    const iconSize = Math.min(self.attribute.w, self.attribute.h) * OVERVIEW_SCALE;
+                    appIcon.size = iconSize / 2.5;
+                    volumeIcon.css = `font-size: ${iconSize / 10}px;`;
+                },
             },
             className: "overview-tasks-window",
             hpack: "start",
@@ -144,22 +175,18 @@ export default () => {
                     vpack: "center",
                     className: "spacing-v-5",
                     children: [
-                        appIcon,
-                        DoubleRevealer({
-                            transition1: "slide_right",
-                            transition2: "slide_down",
-                            revealChild: revealInfoCondition,
-                            child: Label({
-                                maxWidthChars: 1, // Min width when ellipsizing (truncated)
-                                truncate: "end",
-                                className: `txt ${xwayland ? "txt-italic" : ""}`,
-                                css: `
-                                    font-size: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 14.6}px;
-                                    margin: 0px ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 10}px;
-                                `,
-                                // If the title is too short, include the class
-                                label: title.length <= 1 ? `${c}: ${title}` : title,
-                            }),
+                        Overlay({ hpack: "center", passThrough: true, child: appIcon, overlays: [volumeIcon] }),
+                        Label({
+                            // hexpand: true,
+                            maxWidthChars: 1, // Min width when ellipsizing (truncated)
+                            truncate: "end",
+                            className: `txt ${xwayland ? "txt-italic" : ""}`,
+                            css: `
+                                font-size: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 14.6}px;
+                                margin: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 20}px;
+                            `,
+                            // If the title is too short, include the class
+                            label: title.length <= 1 ? `${c}: ${title}` : title,
                         }),
                     ],
                 }),

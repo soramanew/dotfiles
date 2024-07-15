@@ -15,7 +15,6 @@ dart-sass
 ddcutil
 dmidecode
 dosfstools
-electron31
 evtest
 expac
 fastfetch
@@ -97,12 +96,16 @@ qt5-wayland
 qt5ct
 qt6ct
 rate-mirrors
+safeeyes
 seahorse
+spotify
+spotify-adblock
 starship
 steam
 stow
 swappy
 synology-drive
+tenacity
 thunar
 thunar-archive-plugin
 thunar-media-tags-plugin

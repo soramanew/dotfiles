@@ -3,7 +3,7 @@ const { execAsync } = Utils;
 const Mpris = await Service.import("mpris");
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
-import { showMusicControls } from "../../../variables.js";
+import { lastPlayer, showMusicControls } from "../../../variables.js";
 import { BarGroup } from "./main.js";
 
 function trimTrackTitle(title) {
@@ -96,10 +96,9 @@ const BarNetworkRes = (name, icon, command, textClassName = "txt-onSurfaceVarian
 
 const TrackProgress = () => {
     const updateProgress = circprog => {
-        const player = Mpris.getPlayer("");
-        if (!player) return;
+        const player = lastPlayer.value;
         // Set circular progress value
-        circprog.attribute.updateProgress(circprog, (player.position / player.length) * 100);
+        if (player) circprog.attribute.updateProgress(circprog, (player.position / player.length) * 100);
     };
     return AnimatedCircProg({
         className: "bar-music-circprog",
@@ -126,8 +125,7 @@ export default () => {
                         justification: "center",
                         setup: self =>
                             self.hook(Mpris, label => {
-                                label.label =
-                                    Mpris.getPlayer("")?.playBackStatus === "Playing" ? "pause" : "play_arrow";
+                                label.label = lastPlayer.value?.playBackStatus === "Playing" ? "pause" : "play_arrow";
                             }),
                     }),
                 }),
@@ -142,7 +140,7 @@ export default () => {
         maxWidthChars: 1,
         setup: self =>
             self.hook(Mpris, self => {
-                const player = Mpris.getPlayer("");
+                const player = lastPlayer.value;
                 if (player) {
                     const title = trimTrackTitle(player.trackTitle);
                     const artists = player.trackArtists;

@@ -26,8 +26,6 @@ function isRealPlayer(player) {
     );
 }
 
-export const getPlayer = (name = "") => Mpris.getPlayer(name) || Mpris.players[0] || null;
-
 function lengthStr(length) {
     const min = Math.floor(length / 60);
     const sec = Math.floor(length % 60);
