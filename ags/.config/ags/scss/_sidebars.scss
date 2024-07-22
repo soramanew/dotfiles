@@ -458,6 +458,7 @@ $colorpicker_rounding: 0.341rem;
     @include normal-rounding;
     @include group-padding;
     @include element-decel;
+    color: $onLayer2;
     background-color: $layer2;
     padding: 0.543rem 0.782rem 0.543rem 0.682rem;
 
@@ -469,6 +470,14 @@ $colorpicker_rounding: 0.341rem;
     &:active {
         background-color: $layer2Active;
     }
+}
+
+.sidebar-module-loading {
+    @include normal-rounding;
+    @include group-padding;
+    color: $onLayer2;
+    background-color: $layer2;
+    padding: 0.543rem 0.782rem 0.543rem 0.682rem;
 }
 
 .sidebar-icontabswitcher {
