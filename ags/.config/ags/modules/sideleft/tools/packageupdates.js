@@ -1,13 +1,10 @@
-const { Box, CenterBox, Label, Button, Revealer } = Widget;
-const { execAsync, exec } = Utils;
+const { Box, CenterBox, Label, Button, Revealer, Stack } = Widget;
+const { exec } = Utils;
+import PackageUpdates from "../../../services/packageupdates.js";
 import SidebarModule from "./module.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 
-const repoSeparator = "########";
-
-const getUpdates = () => execAsync(["bash", "-c", `checkupdates; echo '${repoSeparator}'; yay -Qua; true`]);
-const getRepo = repo => exec(`bash -c "comm -12 <(pacman -Qq | sort) <(pacman -Slq '${repo}' | sort)"`).split("\n");
 const getDesc = pkg =>
     exec(`pacman -Qi ${pkg}`)
         .split("\n")
@@ -50,7 +47,7 @@ const Repo = (icon, name, children) => {
     return Box({ className: "sidebar-module-repo", vertical: true, children: [header, content] });
 };
 
-const Update = (pkg, update) =>
+const Update = ({ pkg, update }) =>
     Box({
         className: "spacing-h-5 txt",
         children: [
@@ -66,102 +63,60 @@ const Update = (pkg, update) =>
         ],
     });
 
-const TRANSITION_LENGTH = 180;
+const IndicatorComponent = (label, className = "") =>
+    Box({
+        className: `spacing-h-10 ${className}`,
+        children: [MaterialIcon("autorenew", "norm"), Label({ className: "txt-norm", label: label })],
+    });
+
+const Indicator = () =>
+    Stack({
+        transition: "slide_up_down",
+        transitionDuration: 120,
+        children: {
+            loading: CenterBox({ centerWidget: IndicatorComponent("Loading updates...", "sidebar-module-loading") }),
+            reload: CenterBox({
+                centerWidget: Button({
+                    className: "sidebar-module-reload",
+                    onClicked: () => PackageUpdates.getUpdates(),
+                    child: IndicatorComponent("Reload updates"),
+                    setup: setupCursorHover,
+                }),
+            }),
+        },
+        shown: PackageUpdates.bind("getting-updates").as(gettingUpdates => (gettingUpdates ? "loading" : "reload")),
+    });
 
 export default () =>
     SidebarModule({
         icon: MaterialIcon("update", "norm"),
-        name: "Package updates - Loading updates...",
-        revealChild: false,
-        child: Revealer({
-            transition: "slide_down",
-            transitionDuration: TRANSITION_LENGTH,
-            child: Box({ vertical: true, className: "spacing-v-5" }),
+        name: PackageUpdates.bind("updates").as(updates => {
+            let label =
+                updates.numUpdates > 0
+                    ? `Package updates - ${updates.numUpdates} available`
+                    : "Package updates - No updates!";
+            if (updates.cached) label += " (cached)";
+            return label;
         }),
-        attribute: {
-            update: self => {
-                const label = self.children[0].child.children[1];
-                label.label = "Package updates - Loading updates...";
-                const revealer = self.children[1].child.children[0];
-                revealer.revealChild = false;
-                const content = revealer.child;
-                Utils.timeout(TRANSITION_LENGTH, () => content.get_children().forEach(ch => ch.destroy()));
-                getUpdates()
-                    .then(updates => {
-                        const ERROR_REGEX = /^\s*->/;
-                        const updatesArr = updates.split("\n").filter(u => u !== repoSeparator && !ERROR_REGEX.test(u));
-                        const numUpdates = updatesArr.length;
-                        const numErrors = updates
-                            .split("\n")
-                            .filter(u => u !== repoSeparator && ERROR_REGEX.test(u)).length;
-                        if (numErrors > 0 && numUpdates === numErrors)
-                            label.label = "Package updates - Failed to update!!";
-                        else if (numUpdates === 0) label.label = "Package updates - No updates!";
-                        else {
-                            label.label = `Package updates - ${numUpdates} available`;
-                            const repos = [
-                                { repo: getRepo("core"), updates: [], icon: "hub", name: "Core repository" },
-                                { repo: getRepo("extra"), updates: [], icon: "add_circle", name: "Extra repository" },
-                                {
-                                    repo: getRepo("multilib"),
-                                    updates: [],
-                                    icon: "account_tree",
-                                    name: "Multilib repository",
-                                },
-                                {
-                                    repo: updates
-                                        .split(repoSeparator)[1]
-                                        .split("\n")
-                                        .map(u => u.split(" ")[0]),
-                                    updates: [],
-                                    icon: "deployed_code_account",
-                                    name: "AUR",
-                                },
-                            ];
-                            const errors = [];
-                            for (const update of updatesArr) {
-                                if (update === repoSeparator) continue;
-                                const pkg = update.split(" ")[0];
-                                if (ERROR_REGEX.test(update)) errors.push(Update(pkg, update));
-                                else
-                                    for (const repo of repos)
-                                        if (repo.repo.includes(pkg)) repo.updates.push(Update(pkg, update));
-                            }
-                            for (const repo of repos.filter(r => r.updates.length)) {
-                                content.pack_start(
-                                    Repo(repo.icon, `${repo.name} updates - ${repo.updates.length}`, repo.updates),
-                                    false,
-                                    false,
-                                    0
-                                );
-                            }
-                            if (errors.length)
-                                content.pack_start(Repo("error", `Errors - ${errors.length}`, errors), false, false, 0);
-                        }
-                        content.pack_start(
-                            CenterBox({
-                                centerWidget: Button({
-                                    className: "sidebar-module-reload",
-                                    onClicked: () => self.attribute.update(self),
-                                    setup: setupCursorHover,
-                                    child: Box({
-                                        className: "txt spacing-h-10",
-                                        children: [
-                                            MaterialIcon("autorenew", "norm"),
-                                            Label({ className: "txt-norm", label: "Reload Updates" }),
-                                        ],
-                                    }),
-                                }),
-                            }),
-                            false,
-                            false,
-                            0
+        revealChild: false,
+        child: Box({
+            vertical: true,
+            className: "spacing-v-5",
+            children: PackageUpdates.bind("updates").as(updates => {
+                const children = [];
+                if (updates.numUpdates > 0)
+                    for (const repo of updates.updates) {
+                        children.push(
+                            Repo(repo.icon, `${repo.name} updates - ${repo.updates.length}`, repo.updates.map(Update))
                         );
-                        content.show_all();
-                        revealer.revealChild = true;
-                    })
-                    .catch(print);
-            },
-        },
-        setup: self => self.attribute.update(self),
+                    }
+
+                if (updates.errors?.length)
+                    children.push(Repo("error", `Errors - ${updates.errors.length}`, updates.errors.map(Update)));
+
+                children.push(Indicator());
+
+                return children;
+            }),
+        }),
     });

@@ -4,6 +4,7 @@ const Bluetooth = await Service.import("bluetooth");
 const Network = await Service.import("network");
 const Notifications = await Service.import("notifications");
 const Hyprland = await Service.import("hyprland");
+import PackageUpdates from "../../services/packageupdates.js";
 import { MaterialIcon } from "./materialicon.js";
 import { languages } from "./statusicons_languages.js";
 import { isCapsLockOn, isNumLockOn } from "../../variables.js";
@@ -48,8 +49,34 @@ const MicMuteIndicator = () =>
         transition: "slide_left",
         transitionDuration: 120,
         revealChild: false,
-        setup: self => self.hook(Audio, self => (self.revealChild = Audio.microphone?.stream?.isMuted)),
         child: MaterialIcon("mic_off", "norm"),
+        setup: self => self.hook(Audio, self => (self.revealChild = Audio.microphone?.stream?.isMuted)),
+    });
+
+const PkgUpdateIndicator = () =>
+    Revealer({
+        transition: "slide_left",
+        transitionDuration: 120,
+        revealChild: PackageUpdates.bind("updates").as(({ numUpdates }) => numUpdates > 0),
+        tooltipText: PackageUpdates.bind("updates").as(updates => {
+            if (updates.numUpdates === 0) return "No package updates!";
+
+            const tooltip = [];
+            for (const repo of updates.updates)
+                tooltip.push(`${repo.name}: ${repo.updates.length} update${repo.updates.length > 1 ? "s" : ""}`);
+            if (updates.errors)
+                tooltip.push(`Errors: ${updates.errors.length} update${updates.errors.length > 1 ? "s" : ""}`);
+            return tooltip.join("\n");
+        }),
+        child: Box({
+            children: [
+                MaterialIcon("download", "norm"),
+                Label({
+                    className: "txt-small titlefont",
+                    label: PackageUpdates.bind("updates").as(({ numUpdates }) => String(numUpdates)),
+                }),
+            ],
+        }),
     });
 
 const NotificationIndicator = () => {
@@ -263,6 +290,7 @@ export const StatusIcons = (props = {}) =>
                 MicMuteIndicator(),
                 HyprlandXkbKeyboardLayout(),
                 NotificationIndicator(),
+                PkgUpdateIndicator(),
                 NetworkIndicator(true),
                 Box({
                     className: "spacing-h-5",
