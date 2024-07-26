@@ -167,3 +167,12 @@
 .overview-tasks-window-dragging {
     opacity: 0.2;
 }
+
+.overview-tasks-window-volume-icon {
+    @include full-rounding;
+    min-width: 2.045rem;
+    min-height: 2.045rem;
+    background-color: change-color($layer3, $alpha: 0.9);
+    color: $onLayer3;
+    border: 0.068rem solid mix($primary, $layer3, 50%);
+}

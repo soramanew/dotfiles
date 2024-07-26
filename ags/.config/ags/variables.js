@@ -1,5 +1,6 @@
 const Mpris = await Service.import("mpris");
 import { forMonitors } from "./modules/.miscutils/system.js";
+import { CACHE_DIR } from "./constants.js";
 
 // Global vars for external control (through keybinds)
 export const showMusicControls = Variable(false);
@@ -9,6 +10,30 @@ globalThis.openMusicControls = showMusicControls;
 globalThis.openColorScheme = showColorScheme;
 globalThis.openClock = showClock;
 globalThis.mpris = Mpris;
+
+// Set as last player on attribute change
+Mpris.connect("player-added", (_, busName) => {
+    const player = Mpris.getPlayer(busName);
+    for (const signal of ["play-back-status", "shuffle-status", "loop-status", "volume"])
+        player.connect(`notify::${signal}`, () => {
+            Utils.writeFile(player.name, `${CACHE_DIR}/media/last_player.txt`).catch(print);
+            lastPlayer.value = player;
+        });
+});
+Mpris.connect("player-closed", (_, busName) => {
+    // If still a player left and player closed is the last player, set last player to another player in preference of playing > paused > stopped
+    if (Mpris.getPlayer() && busName.includes(Utils.readFile(`${CACHE_DIR}/media/last_player.txt`))) {
+        const player =
+            Mpris.players.find(p => p.playBackStatus === "Playing") ||
+            Mpris.players.find(p => p.playBackStatus === "Paused") ||
+            Mpris.getPlayer();
+        Utils.writeFile(player.name, `${CACHE_DIR}/media/last_player.txt`).catch(print);
+        lastPlayer.value = player;
+    }
+});
+export const lastPlayer = Variable();
+// Set value after timeout cause Mpris needs time to load or something
+Utils.timeout(50, () => (lastPlayer.value = Mpris.getPlayer(Utils.readFile(`${CACHE_DIR}/media/last_player.txt`))));
 
 // Mode switching
 export const currentShellMode = Variable("normal"); // normal, focus

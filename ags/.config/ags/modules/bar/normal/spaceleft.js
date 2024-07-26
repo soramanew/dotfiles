@@ -1,10 +1,8 @@
 const { Box, Label } = Widget;
 const Hyprland = await Service.import("hyprland");
 
-const WindowTitleInner = (className, type, placeholder) => {
-    const label = Hyprland.bind("active").as(active =>
-        active.client[type].length ? active.client[type] : placeholder(active)
-    );
+const WindowTitleInner = (className, labelFn) => {
+    const label = Hyprland.bind("active").as(labelFn);
     return Label({
         xalign: 0,
         truncate: "end",
@@ -21,8 +19,20 @@ const WindowTitle = () =>
         vertical: true,
         className: "bar-space-button",
         children: [
-            WindowTitleInner("txt-smaller bar-wintitle-topdesc txt", "class", () => "Desktop"),
-            WindowTitleInner("txt-smallie bar-wintitle-txt", "title", active => `Workspace ${active.workspace.id}`),
+            WindowTitleInner("txt-smaller bar-wintitle-topdesc txt", active => {
+                // No active client
+                if (active.client.address && active.client.address !== "0x") {
+                    if (active.client.class) return active.client.class;
+                    const client = Hyprland.getClient(active.client.address);
+                    return client ? client.initialClass || client.initialTitle : "";
+                }
+                return "Desktop";
+            }),
+            WindowTitleInner("txt-smallie bar-wintitle-txt", active =>
+                active.client.address && active.client.address !== "0x"
+                    ? active.client.title
+                    : `Workspace ${active.workspace.id}`
+            ),
         ],
     });
 
