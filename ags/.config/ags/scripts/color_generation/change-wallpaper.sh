@@ -47,7 +47,7 @@ if mkdir -p $cache_dir
 end
 
 # Apply colours from wallpaper to ags & stuff
-~/.config/ags/scripts/color_generation/colorgen.sh $chosen_wallpaper --apply --smart || echo "Failed to switch colour scheme"
+~/.config/ags/scripts/color_generation/colorgen.sh $chosen_wallpaper --apply || echo "Failed to switch colour scheme"
 
 # Change the wallpaper and output change if success
 hyprctl hyprpaper preload $chosen_wallpaper

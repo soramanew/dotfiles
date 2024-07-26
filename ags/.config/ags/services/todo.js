@@ -1,4 +1,4 @@
-import GLib from "gi://GLib";
+import { CACHE_DIR } from "../constants.js";
 const { exec, readFile, writeFile } = Utils;
 
 class TodoService extends Service {
@@ -47,12 +47,12 @@ class TodoService extends Service {
 
     constructor() {
         super();
-        this.#todoPath = `${GLib.get_user_cache_dir()}/ags/user/todo.json`;
+        this.#todoPath = `${CACHE_DIR}/user/todo.json`;
         try {
             const fileContents = readFile(this.#todoPath);
             this.#todoJson = JSON.parse(fileContents);
         } catch {
-            exec(`bash -c 'mkdir -p ${GLib.get_user_cache_dir()}/ags/user'`);
+            exec(`bash -c 'mkdir -p ${CACHE_DIR}/user'`);
             exec(`touch ${this.#todoPath}`);
             writeFile("[]", this.#todoPath)
                 .then(() => (this.#todoJson = JSON.parse(readFile(this.#todoPath))))
