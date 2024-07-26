@@ -10,7 +10,7 @@ add_newline = false
 # $character
 # """
 format = """
-$cmd_duration$directory $git_branch
+$cmd_duration$directory $python $git_branch
 $character
 """
 
@@ -22,6 +22,10 @@ error_symbol = "[• 󰅙](bold fg:red) "
 # Disable the package module, hiding it from the prompt completely
 [package]
 disabled = true
+
+[python]
+style = "bg: green"
+format = '• [](bold fg:green)[$version \($virtualenv\)](fg:black bg:green)[ ](bold fg:green)'
 
 [git_branch]
 style = "bg: green"
