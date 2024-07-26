@@ -394,6 +394,22 @@
     margin-bottom: 0rem;
 }
 
+.spacing-h-30 > * {
+    margin-right: 1.364rem;
+}
+
+.spacing-h-30 > *:last-child {
+    margin-right: 0rem;
+}
+
+.spacing-v-30 > * {
+    margin-bottom: 1.364rem;
+}
+
+.spacing-v-30 > *:last-child {
+    margin-bottom: 0rem;
+}
+
 .anim-enter {
     @include anim-enter;
 }
@@ -406,57 +422,24 @@
     @include button-minsize;
 }
 
-.margin-right-5 {
-    margin-right: 0.341rem;
-}
+@each $spacing in (5, 8, 10, 15, 20) {
+    @each $dir in ("top", "bottom", "left", "right") {
+        .margin-#{$dir}-#{$spacing} {
+            margin-#{$dir}: 0.068rem * $spacing;
+        }
 
-.margin-left-5 {
-    margin-left: 0.341rem;
-}
+        .padding-#{$dir}-#{$spacing} {
+            padding-#{$dir}: 0.068rem * $spacing;
+        }
+    }
 
-.margin-top-5 {
-    margin-top: 0.341rem;
-}
+    .padding-#{$spacing} {
+        padding: 0.068rem * $spacing;
+    }
 
-.margin-bottom-5 {
-    margin-bottom: 0.341rem;
-}
-
-.margin-right-10 {
-    margin-right: 0.682rem;
-}
-
-.margin-left-10 {
-    margin-left: 0.682rem;
-}
-
-.margin-top-10 {
-    margin-top: 0.682rem;
-}
-
-.margin-bottom-10 {
-    margin-bottom: 0.682rem;
-}
-
-.margin-bottom-8 {
-    // wtf
-    margin-bottom: 0.545rem;
-}
-
-.margin-right-15 {
-    margin-right: 1.023rem;
-}
-
-.margin-left-15 {
-    margin-left: 1.023rem;
-}
-
-.margin-top-15 {
-    margin-top: 1.023rem;
-}
-
-.margin-bottom-15 {
-    margin-bottom: 1.023rem;
+    .margin-#{$spacing} {
+        padding: 0.068rem * $spacing;
+    }
 }
 
 .width-10 {
@@ -528,21 +511,27 @@
 .menu-decel {
     @include menu_decel;
 }
+
 .element-show {
     @include element_easeInOut;
 }
+
 .element-hide {
     @include element_easeInOut;
 }
+
 .element-move {
     @include element_easeInOut;
 }
+
 .element-decel {
     @include element_decel;
 }
+
 .element-bounceout {
     @include element_bounceOut;
 }
+
 .element-accel {
     @include element_accel;
 }

@@ -35,8 +35,7 @@ github-cli
 github-desktop-bin
 glm
 gnome-bluetooth-3.0
-gnome-control-center
-gradience-git
+gradience
 greetd
 greetd-tuigreet
 grim
