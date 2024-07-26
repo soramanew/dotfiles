@@ -21,7 +21,7 @@ export const CalculationResultButton = ({ result }) =>
         name: "Math result",
         actionName: "Copy",
         content: String(result),
-        onActivate: () => execAndClose(["wl-copy", result]),
+        onActivate: () => execAndClose(["wl-copy", "--", String(result)]),
     });
 
 export const ExecuteCommandButton = ({ command, terminal = false }) =>

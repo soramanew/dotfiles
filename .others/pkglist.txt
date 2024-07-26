@@ -1,6 +1,8 @@
 acpid
 adw-gtk3-git
 anyrun-git
+aquamarine-git
+aquamarine-git-debug
 aylurs-gtk-shell-git
 base
 base-devel
@@ -31,6 +33,7 @@ gammastep
 git
 github-cli
 github-desktop-bin
+github-desktop-bin-debug
 glm
 gnome-bluetooth-3.0
 gnome-control-center
@@ -43,7 +46,6 @@ gtksourceview3
 gtksourceviewmm
 gvfs
 gvfs-smb
-howdy
 hyprcursor-git
 hypridle-git
 hyprland-git
@@ -88,7 +90,6 @@ playerctl
 plymouth-theme-circle-git
 polkit-gnome
 powertop
-pycharm-community-edition
 python-materialyoucolor-git
 python-psutil
 python-pywal
