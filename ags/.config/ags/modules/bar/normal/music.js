@@ -94,19 +94,19 @@ const BarNetworkRes = (name, icon, command, textClassName = "txt-onSurfaceVarian
     });
 };
 
-const TrackProgress = () => {
-    const updateProgress = circprog => {
-        const player = lastPlayer.value;
-        // Set circular progress value
-        if (player) circprog.attribute.updateProgress(circprog, (player.position / player.length) * 100);
-    };
-    return AnimatedCircProg({
+const TrackProgress = () =>
+    AnimatedCircProg({
         className: "bar-music-circprog",
         vpack: "center",
         hpack: "center",
-        extraSetup: self => self.hook(Mpris, updateProgress).poll(3000, updateProgress),
+        extraSetup: self => {
+            const update = () => {
+                const player = lastPlayer.value;
+                if (player) self.attribute.updateProgress(self, (player.position / player.length) * 100);
+            };
+            self.hook(Mpris, update).hook(lastPlayer, update).poll(3000, update);
+        },
     });
-};
 
 export default () => {
     // TODO: use cairo to make button bounce smaller on click, if that's possible
@@ -123,10 +123,11 @@ export default () => {
                         vpack: "center",
                         className: "bar-music-playstate-txt",
                         justification: "center",
-                        setup: self =>
-                            self.hook(Mpris, label => {
-                                label.label = lastPlayer.value?.playBackStatus === "Playing" ? "pause" : "play_arrow";
-                            }),
+                        setup: self => {
+                            const update = () =>
+                                (self.label = lastPlayer.value?.playBackStatus === "Playing" ? "pause" : "play_arrow");
+                            self.hook(Mpris, update).hook(lastPlayer, update);
+                        },
                     }),
                 }),
                 overlays: [TrackProgress()],
@@ -161,9 +162,7 @@ export default () => {
                     self.tooltipText = "";
                 }
             };
-
-            self.hook(Mpris, update);
-            self.hook(lastPlayer, update);
+            self.hook(Mpris, update).hook(lastPlayer, update);
         },
     });
     const musicStuff = Box({

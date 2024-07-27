@@ -33,7 +33,7 @@ Mpris.connect("player-closed", (_, busName) => {
 });
 export const lastPlayer = Variable();
 // Set value after timeout cause Mpris needs time to load or something
-Utils.timeout(50, () => (lastPlayer.value = Mpris.getPlayer(Utils.readFile(`${CACHE_DIR}/media/last_player.txt`))));
+Utils.timeout(500, () => (lastPlayer.value = Mpris.getPlayer(Utils.readFile(`${CACHE_DIR}/media/last_player.txt`))));
 
 // Mode switching
 export const currentShellMode = Variable("normal"); // normal, focus
