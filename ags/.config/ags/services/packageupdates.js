@@ -51,44 +51,46 @@ class PkgUpdatesService extends Service {
                     .split("\n")
                     .filter(u => u !== this.#repoSeparator && !this.#errorRegex.test(u));
                 const numUpdates = updatesArr.length;
-                const numErrors = updates
+                const errorsArr = updates
                     .split("\n")
-                    .filter(u => u !== this.#repoSeparator && this.#errorRegex.test(u)).length;
+                    .filter(u => u !== this.#repoSeparator && this.#errorRegex.test(u));
+                const numErrors = errorsArr.length;
 
                 if (numErrors > 0 && numUpdates === 0) {
                     // Get from cache
                     this.#updateFromCache();
-                } else if (numUpdates > 0) {
-                    const repos = [
-                        { repo: this.#getRepo("core"), updates: [], icon: "hub", name: "Core repository" },
-                        { repo: this.#getRepo("extra"), updates: [], icon: "add_circle", name: "Extra repository" },
-                        {
-                            repo: this.#getRepo("multilib"),
-                            updates: [],
-                            icon: "account_tree",
-                            name: "Multilib repository",
-                        },
-                        {
-                            repo: updates
-                                .split(this.#repoSeparator)[1]
-                                .split("\n")
-                                .map(u => u.split(" ")[0]),
-                            updates: [],
-                            icon: "deployed_code_account",
-                            name: "AUR",
-                        },
-                    ];
+                } else {
+                    const out = { numUpdates };
 
-                    const errors = [];
-                    for (const update of updatesArr) {
-                        if (update === this.#repoSeparator) continue;
-                        const pkg = update.split(" ")[0];
-                        if (this.#errorRegex.test(update)) errors.push({ pkg, update });
-                        else for (const repo of repos) if (repo.repo.includes(pkg)) repo.updates.push({ pkg, update });
+                    if (numUpdates > 0) {
+                        const repos = [
+                            { repo: this.#getRepo("core"), updates: [], icon: "hub", name: "Core repository" },
+                            { repo: this.#getRepo("extra"), updates: [], icon: "add_circle", name: "Extra repository" },
+                            {
+                                repo: this.#getRepo("multilib"),
+                                updates: [],
+                                icon: "account_tree",
+                                name: "Multilib repository",
+                            },
+                            {
+                                repo: updates
+                                    .split(this.#repoSeparator)[1]
+                                    .split("\n")
+                                    .map(u => u.split(" ")[0]),
+                                updates: [],
+                                icon: "deployed_code_account",
+                                name: "AUR",
+                            },
+                        ];
+
+                        for (const update of updatesArr) {
+                            const pkg = update.split(" ")[0];
+                            for (const repo of repos) if (repo.repo.includes(pkg)) repo.updates.push({ pkg, update });
+                        }
+                        out.updates = repos.filter(r => r.updates.length);
                     }
 
-                    const out = { numUpdates, updates: repos.filter(r => r.updates.length) };
-                    if (errors.length > 0) out.errors = errors;
+                    if (numErrors > 0) out.errors = errorsArr.map(e => ({ pkg: e.split(" ")[0], update: e }));
 
                     // Cache and set
                     writeFile(JSON.stringify({ cached: true, ...out }), this.#cachePath).catch(print);

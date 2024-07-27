@@ -130,6 +130,7 @@ wf-recorder
 wireplumber
 wlogout
 wlr-randr
+wlrctl
 xdg-desktop-portal-hyprland-git
 xdg-user-dirs-gtk
 yad
