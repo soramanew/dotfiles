@@ -101,7 +101,7 @@ class PkgUpdatesService extends Service {
                 this.notify("getting-updates");
 
                 this.#timeout?.destroy();
-                this.#timeout = setTimeout(this.getUpdates, 900000);
+                this.#timeout = setTimeout(() => this.getUpdates(), 900000);
             })
             .catch(print);
     }
@@ -113,7 +113,9 @@ class PkgUpdatesService extends Service {
         } catch {
             exec(`bash -c 'mkdir -p ${this.#cacheFolder}'`);
             exec(`touch ${this.#cachePath}`);
-            writeFile(JSON.stringify(this.#updates), this.#cachePath).then(this.#updateFromCache).catch(print);
+            writeFile(JSON.stringify(this.#updates), this.#cachePath)
+                .then(() => this.#updateFromCache())
+                .catch(print);
         }
         this.getUpdates();
     }
