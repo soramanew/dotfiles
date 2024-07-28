@@ -9,9 +9,6 @@ class PkgUpdatesService extends Service {
     #cacheFolder = `${CACHE_DIR}/pkg_updates`;
     #cachePath = `${this.#cacheFolder}/updates.txt`;
 
-    #repoSeparator = "########";
-    #errorRegex = /^\s*->/;
-
     #timeout;
     #gettingUpdates = false;
     #updates = { cached: true, numUpdates: 0 };
@@ -45,56 +42,52 @@ class PkgUpdatesService extends Service {
         this.notify("getting-updates");
 
         // Get new updates
-        execAsync(["bash", "-c", `checkupdates; echo '${this.#repoSeparator}'; yay -Qua; true`])
-            .then(updates => {
-                const updatesArr = updates
-                    .split("\n")
-                    .filter(u => u !== this.#repoSeparator && !this.#errorRegex.test(u));
-                const numUpdates = updatesArr.length;
-                const errorsArr = updates
-                    .split("\n")
-                    .filter(u => u !== this.#repoSeparator && this.#errorRegex.test(u));
-                const numErrors = errorsArr.length;
+        Promise.allSettled([execAsync("checkupdates"), execAsync("yay -Qua")])
+            .then(([pacman, yay]) => {
+                const updates = { updates: [], errors: [] };
 
-                if (numErrors > 0 && numUpdates === 0) {
-                    // Get from cache
-                    this.#updateFromCache();
-                } else {
-                    const out = { numUpdates };
+                // Pacman updates (checkupdates)
+                if (pacman.value) {
+                    const repos = [
+                        { repo: this.#getRepo("core"), updates: [], icon: "hub", name: "Core repository" },
+                        { repo: this.#getRepo("extra"), updates: [], icon: "add_circle", name: "Extra repository" },
+                        {
+                            repo: this.#getRepo("multilib"),
+                            updates: [],
+                            icon: "account_tree",
+                            name: "Multilib repository",
+                        },
+                    ];
 
-                    if (numUpdates > 0) {
-                        const repos = [
-                            { repo: this.#getRepo("core"), updates: [], icon: "hub", name: "Core repository" },
-                            { repo: this.#getRepo("extra"), updates: [], icon: "add_circle", name: "Extra repository" },
-                            {
-                                repo: this.#getRepo("multilib"),
-                                updates: [],
-                                icon: "account_tree",
-                                name: "Multilib repository",
-                            },
-                            {
-                                repo: updates
-                                    .split(this.#repoSeparator)[1]
-                                    .split("\n")
-                                    .map(u => u.split(" ")[0]),
-                                updates: [],
-                                icon: "deployed_code_account",
-                                name: "AUR",
-                            },
-                        ];
-
-                        for (const update of updatesArr) {
-                            const pkg = update.split(" ")[0];
-                            for (const repo of repos) if (repo.repo.includes(pkg)) repo.updates.push({ pkg, update });
-                        }
-                        out.updates = repos.filter(r => r.updates.length);
+                    for (const update of pacman.value.split("\n")) {
+                        const pkg = update.split(" ")[0];
+                        for (const repo of repos) if (repo.repo.includes(pkg)) repo.updates.push({ pkg, update });
                     }
 
-                    if (numErrors > 0) out.errors = errorsArr.map(e => ({ pkg: e.split(" ")[0], update: e }));
+                    updates.updates.push(...repos.filter(r => r.updates.length));
+                }
 
+                // AUR and devel updates (yay -Qua)
+                if (yay.value) {
+                    const aur = { updates: [], icon: "deployed_code_account", name: "AUR" };
+                    const errors = [];
+
+                    for (const update of yay.value.split("\n")) {
+                        const pkg = update.split(" ")[0];
+                        if (/^\s*->/.test(update)) errors.push({ pkg, update }); // Error
+                        else aur.updates.push({ pkg, update });
+                    }
+
+                    updates.updates.push(aur);
+                    updates.errors.push(...errors);
+                }
+
+                if (updates.errors.length > 0 && updates.updates.length === 0) {
+                    this.#updateFromCache();
+                } else {
                     // Cache and set
-                    writeFile(JSON.stringify({ cached: true, ...out }), this.#cachePath).catch(print);
-                    this.#setUpdates(out);
+                    writeFile(JSON.stringify({ cached: true, ...updates }), this.#cachePath).catch(print);
+                    this.#setUpdates(updates);
                 }
 
                 this.#gettingUpdates = false;
