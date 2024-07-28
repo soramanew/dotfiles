@@ -1,10 +1,11 @@
-const { Box, EventBox, Label, Overlay, Revealer } = Widget;
+const { Box, EventBox, Label, Overlay } = Widget;
 const { execAsync } = Utils;
 const Mpris = await Service.import("mpris");
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { lastPlayer, showMusicControls } from "../../../variables.js";
 import { BarGroup } from "./main.js";
+import { EXTENDED_BAR } from "../../../constants.js";
 
 function trimTrackTitle(title) {
     if (!title) return "";
@@ -61,19 +62,52 @@ const BarResource = (
     });
 };
 
-const TrackProgress = () => {
-    const updateProgress = circprog => {
-        const player = lastPlayer.value;
-        // Set circular progress value
-        if (player) circprog.attribute.updateProgress(circprog, (player.position / player.length) * 100);
-    };
-    return AnimatedCircProg({
+const BarNetworkRes = (name, icon, command, textClassName = "txt-onSurfaceVariant", iconClassName = "bar-batt") => {
+    const resourceProgress = Box({
+        vpack: "center",
+        className: iconClassName,
+        homogeneous: true,
+        children: [MaterialIcon(icon, "small")],
+    });
+    const resourceLabel = Label({ className: `txt-smallie ${textClassName}` });
+    return Box({
+        className: `spacing-h-4 ${textClassName}`,
+        children: [resourceProgress, resourceLabel],
+        setup: self =>
+            self.poll(5000, self =>
+                execAsync(["bash", "-c", command])
+                    .then(output => {
+                        output = parseInt(output, 10);
+                        let unit = "B";
+                        if (output > 1048576) {
+                            output /= 1048576;
+                            unit = "MiB";
+                        } else if (output > 1024) {
+                            output /= 1024;
+                            unit = "kiB";
+                        }
+                        if (unit !== "B") output = output.toFixed(2);
+                        resourceLabel.label = `${output}${unit}/s`;
+                        self.tooltipText = `${name}: ${output}${unit}/s`;
+                    })
+                    .catch(print)
+            ),
+    });
+};
+
+const TrackProgress = () =>
+    AnimatedCircProg({
         className: "bar-music-circprog",
         vpack: "center",
         hpack: "center",
-        extraSetup: self => self.hook(Mpris, updateProgress).poll(3000, updateProgress),
+        extraSetup: self => {
+            const update = () => {
+                const player = lastPlayer.value;
+                if (player) self.attribute.updateProgress(self, (player.position / player.length) * 100);
+            };
+            self.hook(Mpris, update).hook(lastPlayer, update).poll(3000, update);
+        },
     });
-};
 
 export default () => {
     // TODO: use cairo to make button bounce smaller on click, if that's possible
@@ -90,10 +124,11 @@ export default () => {
                         vpack: "center",
                         className: "bar-music-playstate-txt",
                         justification: "center",
-                        setup: self =>
-                            self.hook(Mpris, label => {
-                                label.label = lastPlayer.value?.playBackStatus === "Playing" ? "pause" : "play_arrow";
-                            }),
+                        setup: self => {
+                            const update = () =>
+                                (self.label = lastPlayer.value?.playBackStatus === "Playing" ? "pause" : "play_arrow");
+                            self.hook(Mpris, update).hook(lastPlayer, update);
+                        },
                     }),
                 }),
                 overlays: [TrackProgress()],
@@ -105,93 +140,115 @@ export default () => {
         className: "txt-smallie bar-music-txt",
         truncate: "end",
         maxWidthChars: 1,
-        setup: self =>
-            self.hook(Mpris, self => {
+        setup: self => {
+            const update = () => {
                 const player = lastPlayer.value;
                 if (player) {
                     const title = trimTrackTitle(player.trackTitle);
-                    const artists = player.trackArtists;
                     // Filter to get rid of empty artist names
-                    const hasArtists = artists.filter(a => a).length;
-                    if (!hasArtists) {
-                        self.label = title;
-                        self.tooltipText = title;
-                    } else {
+                    const artists = player.trackArtists.filter(a => a);
+                    if (artists.length > 0) {
                         self.label = `${title} • ${artists.join(", ")}`;
                         const artistsNice =
-                            artists.length > 2
+                            artists.length > 1
                                 ? `${artists.slice(0, -1).join(", ")} and ${artists.at(-1)}`
                                 : artists.join(", ");
                         self.tooltipText = `${title} by ${artistsNice}`;
+                    } else {
+                        self.label = title;
+                        self.tooltipText = title;
                     }
                 } else {
                     self.label = "No media";
                     self.tooltipText = "";
                 }
-            }),
+            };
+            self.hook(Mpris, update).hook(lastPlayer, update);
+        },
     });
-    const revealChild = Variable(!Mpris.players.length);
     const musicStuff = Box({
         className: "spacing-h-10",
         hexpand: true,
         children: [playingState, trackTitle],
     });
-    const systemResources = EventBox({
-        aboveChild: true,
-        visibleWindow: false,
-        child: BarGroupMusic(
-            Box({
-                children: [
-                    BarResource(
-                        "RAM Usage",
-                        "memory",
-                        `LANG=C free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
-                        "bar-ram-circprog",
-                        "bar-ram-txt",
-                        "bar-ram-icon"
-                    ),
-                    Revealer({
-                        revealChild: Utils.merge(
-                            [revealChild.bind(), Mpris.bind("players")],
-                            (reveal, players) => reveal || !players.length
+    const systemResources = Box({
+        children: [
+            EXTENDED_BAR
+                ? BarGroupMusic(
+                      Box({
+                          className: "spacing-h-5",
+                          children: [
+                              BarNetworkRes(
+                                  "Upload",
+                                  "upload",
+                                  "awk '{if(l1){print $10-l1} else{l1=$10;}}' <(grep wlp0s20f3 /proc/net/dev) <(sleep 1; grep wlp0s20f3 /proc/net/dev)",
+                                  "bar-upload-txt",
+                                  "bar-upload-icon"
+                              ),
+                              BarNetworkRes(
+                                  "Download",
+                                  "download",
+                                  "awk '{if(l1){print $2-l1} else{l1=$2;}}' <(grep wlp0s20f3 /proc/net/dev) <(sleep 1; grep wlp0s20f3 /proc/net/dev)",
+                                  "bar-download-txt",
+                                  "bar-download-icon"
+                              ),
+                          ],
+                      })
+                  )
+                : null,
+            BarGroupMusic(
+                Box({
+                    className: "spacing-h-5",
+                    children: [
+                        BarResource(
+                            "RAM Usage",
+                            "memory",
+                            `LANG=C free | awk '/^Mem/ {printf("%.2f\\n", ($3/$2) * 100)}'`,
+                            "bar-ram-circprog",
+                            "bar-ram-txt",
+                            "bar-ram-icon"
                         ),
-                        transition: "slide_left",
-                        transitionDuration: 200,
-                        child: Box({
-                            className: "spacing-h-10 margin-left-10",
-                            children: [
-                                BarResource(
-                                    "Swap Usage",
-                                    "swap_horiz",
-                                    `LANG=C free | awk '/^Swap/ {if ($2 > 0) printf("%.2f\\n", ($3/$2) * 100); else print "0";}'`,
-                                    "bar-swap-circprog",
-                                    "bar-swap-txt",
-                                    "bar-swap-icon"
-                                ),
-                                BarResource(
-                                    "CPU Usage",
-                                    "settings_motion_mode",
-                                    `LANG=C top -bn1 | grep Cpu | sed 's/\\,/\\./g' | awk '{print $2}'`,
-                                    "bar-cpu-circprog",
-                                    "bar-cpu-txt",
-                                    "bar-cpu-icon"
-                                ),
-                            ],
-                        }),
-                    }),
-                ],
-            })
-        ),
-    })
-        .on("enter-notify-event", () => (revealChild.value = true))
-        .on("leave-notify-event", () => (revealChild.value = false));
+                        BarResource(
+                            "Swap Usage",
+                            "swap_horiz",
+                            `LANG=C free | awk '/^Swap/ {if ($2 > 0) printf("%.2f\\n", ($3/$2) * 100); else print "0";}'`,
+                            "bar-swap-circprog",
+                            "bar-swap-txt",
+                            "bar-swap-icon"
+                        ),
+                        BarResource(
+                            "CPU Usage",
+                            "settings_motion_mode",
+                            `LANG=C top -bn1 | grep Cpu | sed 's/\\,/\\./g' | awk '{print $2}'`,
+                            "bar-cpu-circprog",
+                            "bar-cpu-txt",
+                            "bar-cpu-icon"
+                        ),
+                        // Extended bar and has/can monitor gpu
+                        EXTENDED_BAR &&
+                        exec("bash -c '[ -f /sys/class/drm/card1/device/gpu_busy_percent ] && echo yes'").includes(
+                            "yes"
+                        )
+                            ? BarResource(
+                                  "GPU Usage",
+                                  "memory_alt",
+                                  `cat /sys/class/drm/card1/device/gpu_busy_percent`,
+                                  "bar-gpu-circprog",
+                                  "bar-gpu-txt",
+                                  "bar-gpu-icon"
+                              )
+                            : null,
+                    ],
+                })
+            ),
+        ],
+    });
     return Box({
         className: "bar-sidemodule",
         children: [
             systemResources,
             EventBox({
                 child: BarGroupMusic(musicStuff),
-                onHover: () => (revealChild.value = false),
                 onPrimaryClick: () => (showMusicControls.value = !showMusicControls.value),
                 onSecondaryClick: () => execAsync("playerctl play-pause").catch(print),
                 onMiddleClick: () =>
