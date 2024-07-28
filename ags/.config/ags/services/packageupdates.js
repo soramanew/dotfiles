@@ -1,4 +1,5 @@
-import { CACHE_DIR } from "../constants.js";
+import { CACHE_DIR, GIT_PATHS } from "../constants.js";
+import { expandTilde } from "../modules/.miscutils/files.js";
 const { exec, execAsync, readFile, writeFile } = Utils;
 
 class PkgUpdatesService extends Service {
@@ -11,7 +12,7 @@ class PkgUpdatesService extends Service {
 
     #timeout;
     #gettingUpdates = false;
-    #updates = { cached: true, numUpdates: 0 };
+    #updates = { cached: true, updates: [], errors: [], git: [] };
 
     get updates() {
         return this.#updates;
@@ -42,9 +43,15 @@ class PkgUpdatesService extends Service {
         this.notify("getting-updates");
 
         // Get new updates
-        Promise.allSettled([execAsync("checkupdates"), execAsync("yay -Qua")])
-            .then(([pacman, yay]) => {
-                const updates = { updates: [], errors: [] };
+        Promise.allSettled([
+            execAsync("checkupdates"),
+            execAsync("yay -Qua"),
+            Promise.allSettled(
+                GIT_PATHS.map(p => execAsync([`${App.configDir}/scripts/get-remote-diffs.sh`, expandTilde(p)]))
+            ),
+        ])
+            .then(([pacman, yay, git]) => {
+                const updates = { updates: [], errors: [], git: [] };
 
                 // Pacman updates (checkupdates)
                 if (pacman.value) {
@@ -64,25 +71,40 @@ class PkgUpdatesService extends Service {
                         for (const repo of repos) if (repo.repo.includes(pkg)) repo.updates.push({ pkg, update });
                     }
 
-                    updates.updates.push(...repos.filter(r => r.updates.length));
+                    for (const repo of repos) if (repo.updates.length > 0) updates.updates.push(repo);
                 }
 
                 // AUR and devel updates (yay -Qua)
                 if (yay.value) {
                     const aur = { updates: [], icon: "deployed_code_account", name: "AUR" };
-                    const errors = [];
 
                     for (const update of yay.value.split("\n")) {
-                        const pkg = update.split(" ")[0];
-                        if (/^\s*->/.test(update)) errors.push({ pkg, update }); // Error
-                        else aur.updates.push({ pkg, update });
+                        if (/^\s*->/.test(update)) updates.errors.push(update); // Error
+                        else aur.updates.push({ pkg: update.split(" ")[0], update });
                     }
 
-                    updates.updates.push(aur);
-                    updates.errors.push(...errors);
+                    if (aur.updates.length > 0) updates.updates.push(aur);
                 }
 
-                if (updates.errors.length > 0 && updates.updates.length === 0) {
+                // Local git repos
+                for (let i = 0; i < git.value.length; i++) {
+                    const repoOut = git.value[i];
+                    const path = GIT_PATHS[i];
+                    if (repoOut.value) {
+                        const repo = { path, branches: [] };
+                        for (const branch of repoOut.value.split("\n")) {
+                            let [name, behind, ahead] = branch.split(" ");
+                            behind = parseInt(behind, 10);
+                            ahead = parseInt(ahead, 10);
+                            if (behind > 0 || ahead > 0) repo.branches.push({ name, behind, ahead });
+                        }
+                        if (repo.branches.length > 0) updates.git.push(repo);
+                    } else if (repoOut.reason) {
+                        updates.errors.push(`${path}: ${repoOut.reason}`);
+                    }
+                }
+
+                if (updates.errors.length > 0 && updates.updates.length === 0 && updates.git.length === 0) {
                     this.#updateFromCache();
                 } else {
                     // Cache and set

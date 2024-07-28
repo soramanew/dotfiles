@@ -57,15 +57,15 @@ const PkgUpdateIndicator = () =>
     Revealer({
         transition: "slide_left",
         transitionDuration: 120,
-        revealChild: PackageUpdates.bind("updates").as(({ numUpdates }) => numUpdates > 0),
-        tooltipText: PackageUpdates.bind("updates").as(updates => {
-            if (updates.numUpdates === 0) return "No package updates!";
+        revealChild: PackageUpdates.bind("updates").as(({ updates, git }) => updates.length + git.length > 0),
+        tooltipText: PackageUpdates.bind("updates").as(({ updates, errors, git }) => {
+            if (updates.length + git.length + errors.length === 0) return "No package updates!";
 
             const tooltip = [];
-            for (const repo of updates.updates)
+            for (const repo of updates)
                 tooltip.push(`${repo.name}: ${repo.updates.length} update${repo.updates.length > 1 ? "s" : ""}`);
-            if (updates.errors)
-                tooltip.push(`Errors: ${updates.errors.length} update${updates.errors.length > 1 ? "s" : ""}`);
+            if (git.length > 0) tooltip.push(`Git: ${git.length} repo${git.length > 1 ? "s" : ""} not synced`);
+            if (errors.length > 0) tooltip.push(`Errors: ${errors.length} error${errors.length > 1 ? "s" : ""}`);
             return tooltip.join("\n");
         }),
         child: Box({
@@ -73,7 +73,7 @@ const PkgUpdateIndicator = () =>
                 MaterialIcon("download", "norm"),
                 Label({
                     className: "txt-small titlefont",
-                    label: PackageUpdates.bind("updates").as(({ numUpdates }) => String(numUpdates)),
+                    label: PackageUpdates.bind("updates").as(({ updates, git }) => String(updates.length + git.length)),
                 }),
             ],
         }),
@@ -155,12 +155,10 @@ const BluetoothDevices = () =>
                     tooltipText: device.name,
                     children: [
                         Icon(`${device.iconName}-symbolic`),
-                        device.batteryPercentage
-                            ? Label({
-                                  className: "txt-smallie",
-                                  label: device.bind("battery-percentage").as(String),
-                              })
-                            : null,
+                        Label({
+                            className: "txt-smallie",
+                            label: device.bind("battery-percentage").as(p => `${p}%`),
+                        }),
                     ],
                 })
             )
