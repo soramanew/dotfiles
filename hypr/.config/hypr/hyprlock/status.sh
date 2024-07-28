@@ -17,6 +17,7 @@ if [[ $enable_battery == true ]]; then
     echo -n "(+) "
   fi 
   echo -n "$(cat /sys/class/power_supply/*/capacity | head -1)"% remaining
+  echo ''
+else
+  exit 1
 fi
-
-echo ''
