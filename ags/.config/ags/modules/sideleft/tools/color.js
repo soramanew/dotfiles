@@ -35,6 +35,7 @@ export class ColorPickerSelection extends Service {
         this.emit("picked");
         this.emit("changed");
     }
+
     get yAxis() {
         return this._yAxis;
     }
@@ -88,6 +89,7 @@ export function hslToRgbValues(h, s, l) {
     const to255 = x => Math.round(x * 255);
     return `${to255(r)}, ${to255(g)}, ${to255(b)}`;
 }
+
 export function hslToHex(h, s, l) {
     h /= 360;
     s /= 100;

@@ -77,3 +77,5 @@ export const forMonitors = fn =>
         .flat(1);
 
 export const isUsingHeadphones = () => /head(phone|set)/i.test(Audio.speaker?.stream?.port);
+
+export const hasTouchscreen = exec("bash -c 'udevadm info --export-db | grep ID_INPUT_TOUCHSCREEN=1'").trim() !== "";

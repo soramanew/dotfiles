@@ -8,6 +8,7 @@ import QuickScripts from "./tools/quickscripts.js";
 import ColourPicker from "./tools/colorpicker.js";
 import PerfToggles from "./tools/perftoggles.js";
 import PackageUpdates from "./tools/packageupdates.js";
+import Timer from "./tools/timer.js";
 
 export default () => {
     const click2Close = Click2CloseRegion({ name: "sideleft", fill: "h" });
@@ -59,7 +60,7 @@ export default () => {
                             child: Box({
                                 vertical: true,
                                 className: "spacing-v-10",
-                                children: [QuickScripts(), PerfToggles(), ColourPicker(), PackageUpdates()],
+                                children: [QuickScripts(), PerfToggles(), ColourPicker(), PackageUpdates(), Timer()],
                             }),
                         }),
                     }),

@@ -18,7 +18,7 @@ import ModuleAudioControls from "./centermodules/audiocontrols.js";
 import ModuleWifiNetworks from "./centermodules/wifinetworks.js";
 import ModuleBluetooth from "./centermodules/bluetooth.js";
 import { ModuleCalendar } from "./calendar.js";
-import { getDistroIcon } from "../.miscutils/system.js";
+import { getDistroIcon, hasTouchscreen } from "../.miscutils/system.js";
 import { ExpandingIconTabContainer } from "../.commonwidgets/tabcontainer.js";
 import { checkKeybind, keybinds } from "../.widgetutils/keybind.js";
 
@@ -88,7 +88,7 @@ const QuickToggles = () =>
             ModuleInvertColour(),
             ModuleIdleInhibitor(),
             ModuleAutoRotate(),
-            exec("bash -c 'udevadm info --export-db | grep ID_INPUT_TOUCHSCREEN=1'").trim() !== ""
+            hasTouchscreen
                 ? HyprToggleIcon("do_not_touch", "Disable touchscreen", "input:touchdevice:enabled", [1, 0])
                 : null,
         ],

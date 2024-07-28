@@ -25,7 +25,7 @@ disabled = true
 
 [python]
 style = "bg: green"
-format = '• [](bold fg:green)[$version \($virtualenv\)](fg:black bg:green)[ ](bold fg:green)'
+format = '• [](bold fg:green)[$version \($virtualenv\)](fg:black bg:green)[](bold fg:green)'
 
 [git_branch]
 style = "bg: green"

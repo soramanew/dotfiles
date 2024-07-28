@@ -2,7 +2,7 @@
 // Import
 const { exec, execAsync } = Utils;
 const Battery = await Service.import("battery");
-import { forMonitors } from "./modules/.miscutils/system.js";
+import { forMonitors, hasTouchscreen } from "./modules/.miscutils/system.js";
 import { COMPILED_STYLE_DIR } from "./constants.js";
 // Widgets
 import Bar, { BarCornerTopleft, BarCornerTopright } from "./modules/bar/main.js";
@@ -77,13 +77,12 @@ function batteryMessage() {
         }
     }
 }
-Battery.connect("changed", batteryMessage);
+if (Battery.available) Battery.connect("changed", batteryMessage);
 
 const Windows = () => [
     Overview(),
-    AppLauncher(),
     Cheatsheet(),
-    GCheatsheet(),
+    hasTouchscreen ? [AppLauncher(), GCheatsheet()] : [],
     TodoScreen(),
     SideLeft(),
     SideRight(),

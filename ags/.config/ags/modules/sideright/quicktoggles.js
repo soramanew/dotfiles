@@ -187,31 +187,33 @@ export const ModuleIdleInhibitor = (props = {}) =>
     });
 
 export const ModuleAutoRotate = (props = {}) =>
-    Revealer({
-        transition: "slide_right",
-        transitionDuration: 180,
-        revealChild: tabletMode.bind(),
-        child: Button({
-            attribute: {
-                enabled: false,
-                update: (self, value = !self.attribute.enabled) => {
-                    self.attribute.enabled = value;
-                    self.toggleClassName("sidebar-button-active", value);
-                    if (value) execAsync(["pkill", "-CONT", "rot8"]).catch(print);
-                    else execAsync(["pkill", "-STOP", "rot8"]).catch(print);
-                },
-            },
-            className: "txt-small sidebar-iconbutton",
-            tooltipText: "Auto rotate",
-            onClicked: self => self.attribute.update(self),
-            child: MaterialIcon("crop_rotate", "norm"),
-            setup: self => {
-                setupCursorHover(self);
-                self.hook(tabletMode, self.attribute.update);
-            },
-            ...props,
-        }),
-    });
+    exec("bash -c 'command -v rot8'")
+        ? Revealer({
+              transition: "slide_right",
+              transitionDuration: 180,
+              revealChild: tabletMode.bind(),
+              child: Button({
+                  attribute: {
+                      enabled: false,
+                      update: (self, value = !self.attribute.enabled) => {
+                          self.attribute.enabled = value;
+                          self.toggleClassName("sidebar-button-active", value);
+                          if (value) execAsync(["pkill", "-CONT", "rot8"]).catch(print);
+                          else execAsync(["pkill", "-STOP", "rot8"]).catch(print);
+                      },
+                  },
+                  className: "txt-small sidebar-iconbutton",
+                  tooltipText: "Auto rotate",
+                  onClicked: self => self.attribute.update(self),
+                  child: MaterialIcon("crop_rotate", "norm"),
+                  setup: self => {
+                      setupCursorHover(self);
+                      self.hook(tabletMode, self.attribute.update);
+                  },
+                  ...props,
+              }),
+          })
+        : null;
 
 export const ModuleReloadIcon = (props = {}) => {
     const icon = MaterialIcon("refresh", "norm");
@@ -220,12 +222,14 @@ export const ModuleReloadIcon = (props = {}) => {
         ...props,
         className: "txt-small sidebar-iconbutton",
         tooltipText: "Reload Hyprland config",
-        onClicked: () => {
-            Hyprland.messageAsync("reload").catch(print);
-            icon.label = "done";
-            timeout?.destroy();
-            timeout = setTimeout(() => (icon.label = "refresh"), 3000);
-        },
+        onClicked: () =>
+            Hyprland.messageAsync("reload")
+                .then(() => {
+                    icon.label = "done";
+                    timeout?.destroy();
+                    timeout = setTimeout(() => (icon.label = "refresh"), 3000);
+                })
+                .catch(print),
         child: icon,
         setup: setupCursorHover,
     });
@@ -245,7 +249,7 @@ export const ModuleSettingsIcon = (props = {}) =>
     });
 
 export const ModulePowerIcon = (props = {}) =>
-    Widget.Button({
+    Button({
         ...props,
         className: "txt-small sidebar-iconbutton",
         tooltipText: "Session",

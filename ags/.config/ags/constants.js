@@ -11,6 +11,7 @@ export const SCREEN_HEIGHT = Number(
         `bash -c "xrandr --current | grep '*' | uniq | awk '{print $1}' | cut -d 'x' -f2 | head -1" | awk '{print $1}'`
     )
 );
+export const EXTENDED_BAR = SCREEN_WIDTH / SCREEN_HEIGHT >= 21 / 9;
 
 export const OVERVIEW_ROWS = 2;
 export const OVERVIEW_COLS = 5;
