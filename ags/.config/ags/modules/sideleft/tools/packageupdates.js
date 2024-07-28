@@ -133,8 +133,9 @@ export default () =>
                                         `${path} - ${status.join(", ")}`,
                                         ...branches.map(({ name, ahead, behind }) => {
                                             const status = [];
-                                            if (ahead > 0) status.push(`${ahead} commits ahead`);
-                                            if (behind > 0) status.push(`${behind} commits behind`);
+                                            if (ahead > 0) status.push(`${ahead} commit${ahead > 1 ? "s" : ""} ahead`);
+                                            if (behind > 0)
+                                                status.push(`${behind} commit${behind > 1 ? "s" : ""} behind`);
                                             return `${name} - ${status.join(", ")}`;
                                         }),
                                     ].join("\n ˪ ")
