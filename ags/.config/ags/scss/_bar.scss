@@ -101,6 +101,7 @@ $bar_ws_width_focus_active: 2.045rem;
 
 .bar-date {
     color: $dateOnLayer1;
+    margin-top: 0.1rem;
 }
 
 .bar-batt {
@@ -198,6 +199,54 @@ $bar_ws_width_focus_active: 2.045rem;
 
 .bar-cpu-txt {
     color: $cpuOnLayer1;
+}
+
+.bar-gpu-icon {
+    @include full-rounding;
+    @include element_decel;
+    min-height: 1.77rem;
+    min-width: 1.77rem;
+    margin-top: 0.18rem;
+    color: $gpuOnLayer2;
+}
+
+.bar-gpu-circprog {
+    @include fluent_decel_long;
+    min-width: 0.068rem; // line width
+    min-height: 1.636rem;
+    padding: 0rem;
+    background-color: $gpuLayer2;
+    color: $gpuOnLayer2;
+}
+
+.bar-gpu-txt {
+    color: $gpuOnLayer1;
+}
+
+.bar-upload-icon {
+    @include full-rounding;
+    @include element_decel;
+    min-height: 1.77rem;
+    min-width: 1.77rem;
+    margin-right: -0.18rem;
+    color: $uploadOnLayer2;
+}
+
+.bar-upload-txt {
+    color: $uploadOnLayer1;
+}
+
+.bar-download-icon {
+    @include full-rounding;
+    @include element_decel;
+    min-height: 1.77rem;
+    min-width: 1.77rem;
+    margin-right: -0.18rem;
+    color: $downloadOnLayer2;
+}
+
+.bar-download-txt {
+    color: $downloadOnLayer1;
 }
 
 .bar-music-playstate {

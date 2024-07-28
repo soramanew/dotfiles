@@ -1,12 +1,11 @@
 const { exec, execAsync } = Utils;
 import { clamp } from "../modules/.miscutils/mathfuncs.js";
 
-class BrightnessService extends Service {
+class BrightnessCtlService extends Service {
     static {
         Service.register(this, { "screen-changed": ["float"] }, { "screen-value": ["float", "rw"] });
     }
 
-    #animPoints = [];
     #screenValue;
 
     // the getter has to be in snake_case
@@ -17,26 +16,10 @@ class BrightnessService extends Service {
     // the setter has to be in snake_case too
     set screen_value(percent) {
         percent = clamp(percent, 0, 1);
-        const originalPercent = this.#screenValue;
         this.#screenValue = percent;
-        this.emit("screen-changed", percent);
         this.notify("screen-value");
-
-        this.#animPoints.forEach(p => p.destroy());
-        this.#animPoints.length = 0;
-
-        const ANIM_TIME = 200;
-        const ANIM_POINTS = 10;
-        const timePerPoint = ANIM_TIME / ANIM_POINTS;
-        const diffPerPoint = (percent - originalPercent) / ANIM_POINTS;
-        for (let i = 0; i < ANIM_POINTS; i++)
-            this.#animPoints.push(
-                setTimeout(() => {
-                    execAsync(
-                        `brightnessctl set ${Math.round((originalPercent + diffPerPoint * (i + 1)) * 100)}% -q`
-                    ).catch(print);
-                }, i * timePerPoint)
-            );
+        this.emit("screen-changed", percent);
+        execAsync(`brightnessctl set ${Math.round(percent * 100)}% -q`).catch(print);
     }
 
     constructor() {
@@ -51,8 +34,42 @@ class BrightnessService extends Service {
     }
 }
 
+class BrightnessDdcService extends Service {
+    static {
+        Service.register(this, { "screen-changed": ["float"] }, { "screen-value": ["float", "rw"] });
+    }
+
+    #screenValue;
+
+    // the getter has to be in snake_case
+    get screen_value() {
+        return this.#screenValue;
+    }
+
+    // the setter has to be in snake_case too
+    set screen_value(percent) {
+        percent = clamp(percent, 0, 1);
+        this.#screenValue = percent;
+        this.notify("screen-value");
+        this.emit("screen-changed", percent);
+        execAsync(`ddcutil setvcp 10 ${Math.round(percent * 100)}`).catch(print);
+    }
+
+    constructor() {
+        super();
+        const info = exec("ddcutil getvcp 10 --brief").split(" ");
+        this.#screenValue = Number(info[3]) / Number(info[4]);
+    }
+
+    // overwriting connectWidget method, lets you
+    // change the default event that widgets connect to
+    connectWidget(widget, callback, event = "screen-changed") {
+        super.connectWidget(widget, callback, event);
+    }
+}
+
 // the singleton instance
-const service = new BrightnessService();
+const service = exec("bash -c 'command -v ddcutil'") ? new BrightnessDdcService() : new BrightnessCtlService();
 
 // make it global for easy use with cli
 globalThis.brightness = service;

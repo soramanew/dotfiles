@@ -2,6 +2,7 @@ import GLib from "gi://GLib";
 const { Box, Button } = Widget;
 const { execAsync } = Utils;
 import { DEFAULT_OSK_LAYOUT, oskLayouts } from "./data_keyboardlayouts.js";
+import { hasTouchscreen } from "../.miscutils/system.js";
 
 const keyboardLayout = DEFAULT_OSK_LAYOUT;
 const keyboardJson = oskLayouts[keyboardLayout];
@@ -71,7 +72,7 @@ const KeyboardControls = () =>
                 tooltipText: "Toggle clipboard",
             }),
             WindowButton("overview", "overview_key"),
-            WindowButton("applauncher", "apps"),
+            hasTouchscreen ? WindowButton("applauncher", "apps") : null,
             WindowButton("session", "power_settings_new"),
             WindowButton("todoscreen", "done_outline"),
         ],
