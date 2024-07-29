@@ -53,24 +53,6 @@ const Repo = (icon, name, children) => {
     return Box({ className: "sidebar-module-repo", vertical: true, children: [header, content] });
 };
 
-<<<<<<< HEAD
-const Update = ({ pkg, update }) =>
-    Box({
-        className: "spacing-h-5 txt",
-        children: [
-            Label({
-                xalign: 0,
-                className: "txt-small",
-                hexpand: true,
-                truncate: "end",
-                maxWidthChars: 1,
-                label: update,
-                tooltipText: addVersionChangeToDesc(update, getDesc(pkg)),
-            }),
-        ],
-    });
-
-=======
 const Text = (text, tooltip = text) =>
     Label({
         xalign: 0,
@@ -84,7 +66,6 @@ const Text = (text, tooltip = text) =>
 
 const Update = ({ pkg, update }) => Text(update, addVersionChangeToDesc(update, getDesc(pkg)));
 
->>>>>>> origin/pc
 const IndicatorComponent = (label, className = "") =>
     Box({
         className: `spacing-h-10 ${className}`,
@@ -112,14 +93,6 @@ const Indicator = () =>
 export default () =>
     SidebarModule({
         icon: MaterialIcon("update", "norm"),
-<<<<<<< HEAD
-        name: PackageUpdates.bind("updates").as(updates => {
-            let label =
-                updates.numUpdates > 0
-                    ? `Package updates - ${updates.numUpdates} available`
-                    : "Package updates - No updates!";
-            if (updates.cached) label += " (cached)";
-=======
         name: PackageUpdates.bind("updates").as(({ cached, updates, errors, git }) => {
             const numUpdates = updates.length + git.length;
             const status = [];
@@ -130,26 +103,12 @@ export default () =>
                     ? `Package updates - ${status.join(", ")}`
                     : "Package updates - No updates!";
             if (cached) label += " (cached)";
->>>>>>> origin/pc
             return label;
         }),
         revealChild: false,
         child: Box({
             vertical: true,
             className: "spacing-v-5",
-<<<<<<< HEAD
-            children: PackageUpdates.bind("updates").as(updates => {
-                const children = [];
-                if (updates.numUpdates > 0)
-                    for (const repo of updates.updates) {
-                        children.push(
-                            Repo(repo.icon, `${repo.name} updates - ${repo.updates.length}`, repo.updates.map(Update))
-                        );
-                    }
-
-                if (updates.errors?.length)
-                    children.push(Repo("error", `Errors - ${updates.errors.length}`, updates.errors.map(Update)));
-=======
             children: PackageUpdates.bind("updates").as(({ updates, errors, git }) => {
                 const children = [];
                 for (const repo of updates) {
@@ -186,7 +145,6 @@ export default () =>
                     );
 
                 if (errors.length > 0) children.push(Repo("error", `Errors - ${errors.length}`, errors.map(Text)));
->>>>>>> origin/pc
 
                 children.push(Indicator());
 
