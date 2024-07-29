@@ -180,9 +180,9 @@ export default () => {
                             // hexpand: true,
                             maxWidthChars: 1, // Min width when ellipsizing (truncated)
                             truncate: "end",
-                            className: `txt ${xwayland ? "txt-italic" : ""}`,
+                            className: `txt txt-reading ${xwayland ? "txt-italic" : ""}`,
                             css: `
-                                font-size: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 14.6}px;
+                                font-size: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 12}px;
                                 margin: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 20}px;
                             `,
                             // If the title is too short, include the class
