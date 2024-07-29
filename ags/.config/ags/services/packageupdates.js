@@ -1,4 +1,5 @@
-import { CACHE_DIR } from "../constants.js";
+import { CACHE_DIR, GIT_PATHS } from "../constants.js";
+import { expandTilde } from "../modules/.miscutils/files.js";
 const { exec, execAsync, readFile, writeFile } = Utils;
 
 class PkgUpdatesService extends Service {
@@ -9,12 +10,9 @@ class PkgUpdatesService extends Service {
     #cacheFolder = `${CACHE_DIR}/pkg_updates`;
     #cachePath = `${this.#cacheFolder}/updates.txt`;
 
-    #repoSeparator = "########";
-    #errorRegex = /^\s*->/;
-
     #timeout;
     #gettingUpdates = false;
-    #updates = { cached: true, numUpdates: 0 };
+    #updates = { cached: true, updates: [], errors: [], git: [] };
 
     get updates() {
         return this.#updates;
@@ -45,20 +43,18 @@ class PkgUpdatesService extends Service {
         this.notify("getting-updates");
 
         // Get new updates
-        execAsync(["bash", "-c", `checkupdates; echo '${this.#repoSeparator}'; yay -Qua; true`])
-            .then(updates => {
-                const updatesArr = updates
-                    .split("\n")
-                    .filter(u => u !== this.#repoSeparator && !this.#errorRegex.test(u));
-                const numUpdates = updatesArr.length;
-                const numErrors = updates
-                    .split("\n")
-                    .filter(u => u !== this.#repoSeparator && this.#errorRegex.test(u)).length;
+        Promise.allSettled([
+            execAsync("checkupdates"),
+            execAsync("yay -Qua"),
+            Promise.allSettled(
+                GIT_PATHS.map(p => execAsync([`${App.configDir}/scripts/get-remote-diffs.sh`, expandTilde(p)]))
+            ),
+        ])
+            .then(([pacman, yay, git]) => {
+                const updates = { updates: [], errors: [], git: [] };
 
-                if (numErrors > 0 && numUpdates === 0) {
-                    // Get from cache
-                    this.#updateFromCache();
-                } else if (numUpdates > 0) {
+                // Pacman updates (checkupdates)
+                if (pacman.value) {
                     const repos = [
                         { repo: this.#getRepo("core"), updates: [], icon: "hub", name: "Core repository" },
                         { repo: this.#getRepo("extra"), updates: [], icon: "add_circle", name: "Extra repository" },
@@ -68,38 +64,59 @@ class PkgUpdatesService extends Service {
                             icon: "account_tree",
                             name: "Multilib repository",
                         },
-                        {
-                            repo: updates
-                                .split(this.#repoSeparator)[1]
-                                .split("\n")
-                                .map(u => u.split(" ")[0]),
-                            updates: [],
-                            icon: "deployed_code_account",
-                            name: "AUR",
-                        },
                     ];
 
-                    const errors = [];
-                    for (const update of updatesArr) {
-                        if (update === this.#repoSeparator) continue;
+                    for (const update of pacman.value.split("\n")) {
                         const pkg = update.split(" ")[0];
-                        if (this.#errorRegex.test(update)) errors.push({ pkg, update });
-                        else for (const repo of repos) if (repo.repo.includes(pkg)) repo.updates.push({ pkg, update });
+                        for (const repo of repos) if (repo.repo.includes(pkg)) repo.updates.push({ pkg, update });
                     }
 
-                    const out = { numUpdates, updates: repos.filter(r => r.updates.length) };
-                    if (errors.length > 0) out.errors = errors;
+                    for (const repo of repos) if (repo.updates.length > 0) updates.updates.push(repo);
+                }
 
+                // AUR and devel updates (yay -Qua)
+                if (yay.value) {
+                    const aur = { updates: [], icon: "deployed_code_account", name: "AUR" };
+
+                    for (const update of yay.value.split("\n")) {
+                        if (/^\s*->/.test(update)) updates.errors.push(update); // Error
+                        else aur.updates.push({ pkg: update.split(" ")[0], update });
+                    }
+
+                    if (aur.updates.length > 0) updates.updates.push(aur);
+                }
+
+                // Local git repos
+                for (let i = 0; i < git.value.length; i++) {
+                    const repoOut = git.value[i];
+                    const path = GIT_PATHS[i];
+                    if (repoOut.value) {
+                        const repo = { path, branches: [] };
+                        for (const branch of repoOut.value.split("\n")) {
+                            let [name, behind, ahead] = branch.split(" ");
+                            behind = parseInt(behind, 10);
+                            ahead = parseInt(ahead, 10);
+                            if (behind > 0 || ahead > 0) repo.branches.push({ name, behind, ahead });
+                        }
+                        if (repo.branches.length > 0) updates.git.push(repo);
+                    } else if (repoOut.reason) {
+                        updates.errors.push(`${path}: ${repoOut.reason}`);
+                    }
+                }
+
+                if (updates.errors.length > 0 && updates.updates.length === 0 && updates.git.length === 0) {
+                    this.#updateFromCache();
+                } else {
                     // Cache and set
-                    writeFile(JSON.stringify({ cached: true, ...out }), this.#cachePath).catch(print);
-                    this.#setUpdates(out);
+                    writeFile(JSON.stringify({ cached: true, ...updates }), this.#cachePath).catch(print);
+                    this.#setUpdates(updates);
                 }
 
                 this.#gettingUpdates = false;
                 this.notify("getting-updates");
 
                 this.#timeout?.destroy();
-                this.#timeout = setTimeout(this.getUpdates, 900000);
+                this.#timeout = setTimeout(() => this.getUpdates(), 900000);
             })
             .catch(print);
     }
@@ -111,7 +128,9 @@ class PkgUpdatesService extends Service {
         } catch {
             exec(`bash -c 'mkdir -p ${this.#cacheFolder}'`);
             exec(`touch ${this.#cachePath}`);
-            writeFile(JSON.stringify(this.#updates), this.#cachePath).then(this.#updateFromCache).catch(print);
+            writeFile(JSON.stringify(this.#updates), this.#cachePath)
+                .then(() => this.#updateFromCache())
+                .catch(print);
         }
         this.getUpdates();
     }

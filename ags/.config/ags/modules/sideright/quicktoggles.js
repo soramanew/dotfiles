@@ -1,5 +1,5 @@
 import GLib from "gi://GLib";
-const { Button, Revealer } = Widget;
+const { Button } = Widget;
 const { execAsync, exec } = Utils;
 const Hyprland = await Service.import("hyprland");
 const Bluetooth = await Service.import("bluetooth");
@@ -8,7 +8,6 @@ import { BluetoothIndicator, NetworkIndicator } from "../.commonwidgets/statusic
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { sidebarOptionsStack } from "./sideright.js";
-import { tabletMode } from "../../variables.js";
 
 export const ToggleIconWifi = (props = {}) =>
     Button({
@@ -17,8 +16,11 @@ export const ToggleIconWifi = (props = {}) =>
         onClicked: Network.toggleWifi,
         onSecondaryClick: () => sidebarOptionsStack.focusName("Wifi networks"),
         onMiddleClick: () => {
-            // execAsync("foot -T nmtui fish -C nmtui").catch(print);
-            execAsync("gnome-control-center wifi").catch(print);
+            execAsync(
+                exec("bash -c 'command -v gnome-control-center'")
+                    ? "gnome-control-center wifi"
+                    : "foot -T nmtui fish -C 'set -e COLORTERM ; sleep 0.1 ; TERM=xterm-old nmtui ; exit'"
+            ).catch(print);
             closeEverything();
         },
         child: NetworkIndicator(),
@@ -236,17 +238,19 @@ export const ModuleReloadIcon = (props = {}) => {
 };
 
 export const ModuleSettingsIcon = (props = {}) =>
-    Button({
-        ...props,
-        className: "txt-small sidebar-iconbutton",
-        tooltipText: "Open Settings",
-        onClicked: () => {
-            execAsync("gnome-control-center").catch(print);
-            closeEverything();
-        },
-        child: MaterialIcon("settings", "norm"),
-        setup: setupCursorHover,
-    });
+    exec("bash -c 'command -v gnome-control-center'")
+        ? Button({
+              ...props,
+              className: "txt-small sidebar-iconbutton",
+              tooltipText: "Open Settings",
+              onClicked: () => {
+                  execAsync("gnome-control-center").catch(print);
+                  closeEverything();
+              },
+              child: MaterialIcon("settings", "norm"),
+              setup: setupCursorHover,
+          })
+        : null;
 
 export const ModulePowerIcon = (props = {}) =>
     Button({

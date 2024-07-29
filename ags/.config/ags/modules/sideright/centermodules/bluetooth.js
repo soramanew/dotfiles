@@ -6,15 +6,12 @@ import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { ConfigToggle } from "../../.commonwidgets/configwidgets.js";
 import { RoundedScrollable } from "../../.commonwidgets/cairo_roundedscrollable.js";
 
-const USE_SYMBOLIC_ICONS = true;
-
 const BluetoothDevice = device => {
     const deviceIcon = Icon({
         className: "sidebar-bluetooth-appicon",
         vpack: "center",
+        icon: `${device.iconName}-symbolic`,
         tooltipText: device.name,
-        setup: self =>
-            self.hook(device, self => (self.icon = `${device.iconName}${USE_SYMBOLIC_ICONS ? "-symbolic" : ""}`)),
     });
     const deviceStatus = Box({
         hexpand: true,
