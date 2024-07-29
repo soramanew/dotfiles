@@ -1,11 +1,12 @@
 // This is for the right pills of the bar.
 import GLib from "gi://GLib";
-const { Box, Button, Label, EventBox } = Widget;
+const { Box, Button, Label, EventBox, Revealer, Overlay, Icon } = Widget;
 const { execAsync, exec, readFile, writeFile } = Utils;
+const Battery = await Service.import("battery");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { WWO_CODE, WEATHER_SYMBOL } from "../../.commondata/weather.js";
 import { BarGroup } from "./main.js";
-import { CACHE_DIR } from "../../../constants.js";
+import { BATTERY_LOW, CACHE_DIR, EXTENDED_BAR } from "../../../constants.js";
 import { showClock } from "../../../variables.js";
 
 const WEATHER_CACHE_FOLDER = `${CACHE_DIR}/weather`;
@@ -132,8 +133,86 @@ const WeatherModule = () =>
             }),
     });
 
+const BatBatteryProgress = () =>
+    AnimatedCircProg({
+        className: "bar-batt-circprog",
+        vpack: "center",
+        hpack: "center",
+        extraSetup: self =>
+            self.hook(Battery, circprog => {
+                // Set circular progress value
+                circprog.css = `font-size: ${Math.abs(Battery.percent)}px;`;
+
+                circprog.toggleClassName("bar-batt-circprog-low", Battery.percent <= BATTERY_LOW);
+                circprog.toggleClassName("bar-batt-circprog-full", Battery.charged);
+            }),
+    });
+
+const BarBattery = () =>
+    Box({
+        className: "spacing-h-4 bar-batt-txt",
+        children: [
+            Revealer({
+                transitionDuration: 150,
+                revealChild: Utils.merge(
+                    [Battery.bind("charging"), Battery.bind("charged")],
+                    (charging, charged) => charging || charged
+                ),
+                transition: "slide_right",
+                child: MaterialIcon("bolt", "norm", { tooltipText: "Charging" }),
+            }),
+            Label({
+                className: "txt-smallie",
+                label: Battery.bind("percent").as(p => p + "%"),
+                tooltipText: Utils.merge(
+                    [Battery.bind("time_remaining"), Battery.bind("charging"), Battery.bind("charged")],
+                    (seconds, charging, charged) => {
+                        if (charged) return "Fully charged and STILL charging: INFINITE BATTERY LIFE!!";
+
+                        let timeStr = `${seconds % 60} seconds`;
+                        let and = true;
+                        const addTime = (time, unit) => {
+                            timeStr = `${time} ${unit + (time > 1 ? "s" : "")}${and ? " and" : ""} ${timeStr}`;
+                            and = false;
+                        };
+
+                        const minutes = Math.floor((seconds % 3600) / 60);
+                        if (minutes > 0) addTime(minutes, "min", true);
+
+                        const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+                        if (hours > 0) addTime(hours, "hr");
+
+                        const days = Math.floor(seconds / (3600 * 24));
+                        if (days > 0) addTime(days, "day");
+
+                        return (charging ? "Time until charged: " : "Battery life: ") + timeStr;
+                    }
+                ),
+            }),
+            Overlay({
+                child: Box({
+                    vpack: "center",
+                    className: "bar-batt",
+                    homogeneous: true,
+                    child: Icon({ className: "txt-smaller", icon: Battery.bind("icon_name") }),
+                    setup: self =>
+                        self.hook(Battery, box => {
+                            box.toggleClassName("bar-batt-low", Battery.percent <= BATTERY_LOW);
+                            box.toggleClassName("bar-batt-full", Battery.charged);
+                        }),
+                }),
+                overlays: [BatBatteryProgress()],
+            }),
+        ],
+    });
+
 export default () =>
     Box({
         className: "bar-sidemodule",
-        children: [BarGroupSystem(BarClock()), BarGroupSystem(Utilities()), BarGroupSystem(WeatherModule())],
+        children: [
+            BarGroupSystem(BarClock()),
+            BarGroupSystem(Utilities()),
+            EXTENDED_BAR ? BarGroupSystem(WeatherModule()) : null,
+            Battery.available ? BarGroupSystem(BarBattery()) : null,
+        ],
     });

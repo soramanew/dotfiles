@@ -1,6 +1,5 @@
 # Too large
 /theming/
-/pycharm/
 
 # Generated stuff
 generated.*
@@ -9,6 +8,10 @@ generated.*
 /hypr/.config/hypr/hyprlock.conf
 /ags/.config/ags/scss/_musicmaterial.scss
 /ags/.config/ags/scss/_musicwal.scss
+/hypr/.config/hypr/hyprland/perf.conf
+
+# Not tracked
+/hypr/.config/hypr/hyprland/untracked.conf
 
 # Unnecessary configs
 /thunar/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
@@ -20,3 +23,6 @@ generated.*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+
+# Systemd enabled units
+/systemd/.config/systemd/user/*.target.wants/

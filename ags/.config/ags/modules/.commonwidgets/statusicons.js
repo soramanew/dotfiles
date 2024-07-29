@@ -57,9 +57,12 @@ const PkgUpdateIndicator = () =>
     Revealer({
         transition: "slide_left",
         transitionDuration: 120,
-        revealChild: PackageUpdates.bind("updates").as(({ updates, git }) => updates.length + git.length > 0),
+        revealChild: PackageUpdates.bind("updates").as(
+            ({ updates, git }) => updates.reduce((acc, repo) => acc + repo.updates.length, 0) + git.length > 0
+        ),
         tooltipText: PackageUpdates.bind("updates").as(({ updates, errors, git }) => {
-            if (updates.length + git.length + errors.length === 0) return "No package updates!";
+            if (updates.reduce((acc, repo) => acc + repo.updates.length, 0) + git.length + errors.length === 0)
+                return "No package updates!";
 
             const tooltip = [];
             for (const repo of updates)
@@ -73,7 +76,9 @@ const PkgUpdateIndicator = () =>
                 MaterialIcon("download", "norm"),
                 Label({
                     className: "txt-small titlefont",
-                    label: PackageUpdates.bind("updates").as(({ updates, git }) => String(updates.length + git.length)),
+                    label: PackageUpdates.bind("updates").as(({ updates, git }) =>
+                        String(updates.reduce((acc, repo) => acc + repo.updates.length, 0) + git.length)
+                    ),
                 }),
             ],
         }),

@@ -23,7 +23,7 @@ const SpaceLeft = () =>
         onScrollUp: () => (Brightness.screen_value += 0.05),
         onScrollDown: () => (Brightness.screen_value -= 0.05),
         onPrimaryClick: () => App.toggleWindow("sideleft"),
-        // onSecondaryClick: () => App.toggleWindow("overview"),
+        onSecondaryClick: () => App.toggleWindow("overview"),
         child: WindowTitle(),
     });
 
@@ -37,7 +37,7 @@ const SpaceRight = () =>
             if (Audio.speaker) Audio.speaker.volume -= 0.05;
         },
         onPrimaryClick: () => App.toggleWindow("sideright"),
-        // onSecondaryClick: () => App.toggleWindow("overview"),
+        onSecondaryClick: () => App.toggleWindow("overview"),
         child: Indicators(),
     });
 
