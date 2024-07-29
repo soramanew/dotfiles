@@ -4,6 +4,7 @@ const { Box, Button, Label, EventBox, Revealer, Overlay, Icon } = Widget;
 const { execAsync, exec, readFile, writeFile } = Utils;
 const Battery = await Service.import("battery");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
+import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
 import { WWO_CODE, WEATHER_SYMBOL } from "../../.commondata/weather.js";
 import { BarGroup } from "./main.js";
 import { BATTERY_LOW, CACHE_DIR, EXTENDED_BAR } from "../../../constants.js";

@@ -24,8 +24,7 @@ class BrightnessCtlService extends Service {
 
     constructor() {
         super();
-        const info = exec("ddcutil getvcp 10 --brief").split(" ");
-        this.#screenValue = Number(info[3]) / Number(info[4]);
+        this.#screenValue = Number(exec("brightnessctl get")) / Number(exec("brightnessctl max"));
     }
 
     // overwriting connectWidget method, lets you
