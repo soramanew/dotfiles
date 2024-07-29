@@ -1,5 +1,5 @@
 const Mpris = await Service.import("mpris");
-import { forMonitors } from "./modules/.miscutils/system.js";
+import { forMonitors, hasTouchscreen } from "./modules/.miscutils/system.js";
 import { CACHE_DIR } from "./constants.js";
 
 // Global vars for external control (through keybinds)
@@ -50,7 +50,7 @@ globalThis.openWindowOnAllMonitors = name => forMonitors(id => App.openWindow(na
 
 globalThis.closeEverything = () => {
     App.closeWindow("cheatsheet");
-    App.closeWindow("gcheatsheet");
+    if (hasTouchscreen) App.closeWindow("gcheatsheet");
     App.closeWindow("session");
     App.closeWindow("todoscreen");
     App.closeWindow("sideleft");
