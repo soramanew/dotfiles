@@ -94,7 +94,7 @@ export default () =>
     SidebarModule({
         icon: MaterialIcon("update", "norm"),
         name: PackageUpdates.bind("updates").as(({ cached, updates, errors, git }) => {
-            const numUpdates = updates.length + git.length;
+            const numUpdates = updates.reduce((acc, repo) => acc + repo.updates.length, 0) + git.length;
             const status = [];
             if (numUpdates > 0) status.push(`${numUpdates} available`);
             if (errors.length > 0) status.push(`${errors.length} errors`);

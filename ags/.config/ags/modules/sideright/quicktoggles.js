@@ -1,5 +1,5 @@
 import GLib from "gi://GLib";
-const { Button, Revealer } = Widget;
+const { Button, Stack } = Widget;
 const { execAsync, exec } = Utils;
 const Hyprland = await Service.import("hyprland");
 const Bluetooth = await Service.import("bluetooth");
@@ -8,6 +8,8 @@ import { BluetoothIndicator, NetworkIndicator } from "../.commonwidgets/statusic
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { sidebarOptionsStack } from "./sideright.js";
+import { hasTouchscreen } from "../.miscutils/system.js";
+import { tabletMode } from "../../variables.js";
 
 export const ToggleIconWifi = (props = {}) =>
     Button({
@@ -188,34 +190,44 @@ export const ModuleIdleInhibitor = (props = {}) =>
         ...props,
     });
 
-export const ModuleAutoRotate = (props = {}) =>
-    exec("bash -c 'command -v rot8'")
-        ? Revealer({
-              transition: "slide_right",
-              transitionDuration: 180,
-              revealChild: tabletMode.bind(),
-              child: Button({
-                  attribute: {
-                      enabled: false,
-                      update: (self, value = !self.attribute.enabled) => {
-                          self.attribute.enabled = value;
-                          self.toggleClassName("sidebar-button-active", value);
-                          if (value) execAsync(["pkill", "-CONT", "rot8"]).catch(print);
-                          else execAsync(["pkill", "-STOP", "rot8"]).catch(print);
-                      },
-                  },
-                  className: "txt-small sidebar-iconbutton",
-                  tooltipText: "Auto rotate",
-                  onClicked: self => self.attribute.update(self),
-                  child: MaterialIcon("crop_rotate", "norm"),
-                  setup: self => {
-                      setupCursorHover(self);
-                      self.hook(tabletMode, self.attribute.update);
-                  },
-                  ...props,
-              }),
-          })
-        : null;
+const Touchscreen = () => HyprToggleIcon("do_not_touch", "Disable touchscreen", "input:touchdevice:enabled", [1, 0]);
+
+const AutoRotate = () =>
+    Button({
+        attribute: {
+            enabled: false,
+            update: (self, value = !self.attribute.enabled) => {
+                self.attribute.enabled = value;
+                self.toggleClassName("sidebar-button-active", value);
+                if (value) execAsync(["pkill", "-CONT", "rot8"]).catch(print);
+                else execAsync(["pkill", "-STOP", "rot8"]).catch(print);
+            },
+        },
+        className: "txt-small sidebar-iconbutton",
+        tooltipText: "Auto rotate",
+        onClicked: self => self.attribute.update(self),
+        child: MaterialIcon("crop_rotate", "norm"),
+        setup: self => {
+            setupCursorHover(self);
+            self.hook(tabletMode, self.attribute.update);
+        },
+    });
+
+export const ModuleTouchscreen = (props = {}) => {
+    if (!hasTouchscreen) return null;
+    if (exec("bash -c 'command -v rot8'"))
+        return Stack({
+            transition: "slide_up_down",
+            transitionDuration: 180,
+            shown: tabletMode.bind().as(tb => (tb ? "rotate" : "touch")),
+            children: {
+                touch: Touchscreen(),
+                rotate: AutoRotate(),
+            },
+            ...props,
+        });
+    return Touchscreen();
+};
 
 export const ModuleReloadIcon = (props = {}) => {
     const icon = MaterialIcon("refresh", "norm");

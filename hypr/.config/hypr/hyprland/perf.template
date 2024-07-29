@@ -6,7 +6,7 @@ windowrule = opacity 1 override, .*
 #    enabled = false
 # }
 
-## borderanim 1
+# ## borderanim 1
 # animation = borderangle, 0
 
 # ## blur 5
