@@ -11,7 +11,7 @@ import {
     ModuleReloadIcon,
     ModuleSettingsIcon,
     ModulePowerIcon,
-    ModuleAutoRotate,
+    ModuleTouchscreen,
 } from "./quicktoggles.js";
 import ModuleNotificationList from "./centermodules/notificationlist.js";
 import ModuleAudioControls from "./centermodules/audiocontrols.js";
@@ -87,10 +87,7 @@ const QuickToggles = () =>
             ModuleNightLight(),
             ModuleInvertColour(),
             ModuleIdleInhibitor(),
-            ModuleAutoRotate(),
-            hasTouchscreen
-                ? HyprToggleIcon("do_not_touch", "Disable touchscreen", "input:touchdevice:enabled", [1, 0])
-                : null,
+            ModuleTouchscreen(),
         ],
     });
 

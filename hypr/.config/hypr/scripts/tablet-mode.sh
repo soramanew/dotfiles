@@ -9,7 +9,7 @@ if [ "$1" = 'enable' ]; then
 elif [ "$1" = 'disable' ]; then
     killall rot8
     wlr-randr --output eDP-1 --transform normal
-    pgrep ags && ags -r 'App.closeWindow("osk0"); tabletMode.value = false;'
+    pgrep ags && ags -r 'App.closeWindow("osk"); tabletMode.value = false;'
 else
     logger -t "$0" "Unknown command: $1"
 fi
