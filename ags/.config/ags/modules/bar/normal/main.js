@@ -20,10 +20,10 @@ export const BarGroup = (child, module) =>
 const SpaceLeft = () =>
     EventBox({
         hexpand: true,
-        onScrollUp: () => (Brightness.screen_value -= 0.01),
-        onScrollDown: () => (Brightness.screen_value += 0.01),
+        onScrollUp: () => (Brightness.screen_value += 0.05),
+        onScrollDown: () => (Brightness.screen_value -= 0.05),
         onPrimaryClick: () => App.toggleWindow("sideleft"),
-        // onSecondaryClick: () => App.toggleWindow("overview"),
+        onSecondaryClick: () => App.toggleWindow("overview"),
         child: WindowTitle(),
     });
 
@@ -31,20 +31,20 @@ const SpaceRight = () =>
     EventBox({
         hexpand: true,
         onScrollUp: () => {
-            if (Audio.speaker) Audio.speaker.volume = Math.min(Audio.speaker.volume + 0.01, 1);
+            if (Audio.speaker) Audio.speaker.volume = Math.min(Audio.speaker.volume + 0.05, 1);
         },
         onScrollDown: () => {
-            if (Audio.speaker) Audio.speaker.volume -= 0.01;
+            if (Audio.speaker) Audio.speaker.volume -= 0.05;
         },
         onPrimaryClick: () => App.toggleWindow("sideright"),
-        // onSecondaryClick: () => App.toggleWindow("overview"),
+        onSecondaryClick: () => App.toggleWindow("overview"),
         child: Indicators(),
     });
 
 const CenterModules = () =>
     EventBox({
-        onScrollUp: () => Hyprland.messageAsync("dispatch workspace +1").catch(print),
-        onScrollDown: () => Hyprland.messageAsync("dispatch workspace -1").catch(print),
+        onScrollUp: () => Hyprland.messageAsync("dispatch workspace -1").catch(print),
+        onScrollDown: () => Hyprland.messageAsync("dispatch workspace +1").catch(print),
         child: CenterBox({
             startWidget: Music(),
             centerWidget: Workspaces(),
