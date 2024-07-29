@@ -11,6 +11,7 @@ export const SCREEN_HEIGHT = Number(
         `bash -c "xrandr --current | grep '*' | uniq | awk '{print $1}' | cut -d 'x' -f2 | head -1" | awk '{print $1}'`
     )
 );
+export const EXTENDED_BAR = SCREEN_WIDTH / SCREEN_HEIGHT >= 21 / 9;
 
 export const CACHE_DIR = `${GLib.get_user_cache_dir()}/ags`;
 export const COMPILED_STYLE_DIR = `${CACHE_DIR}/user/generated`;

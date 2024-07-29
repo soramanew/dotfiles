@@ -1,10 +1,11 @@
 const { Box, EventBox, Label, Overlay } = Widget;
-const { execAsync } = Utils;
+const { exec, execAsync } = Utils;
 const Mpris = await Service.import("mpris");
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { lastPlayer, showMusicControls } from "../../../variables.js";
 import { BarGroup } from "./main.js";
+import { EXTENDED_BAR } from "../../../constants.js";
 
 function trimTrackTitle(title) {
     if (!title) return "";
@@ -48,7 +49,7 @@ const BarResource = (
         className: `spacing-h-4 ${textClassName}`,
         children: [resourceProgress, resourceLabel],
         setup: self =>
-            self.poll(1000, self =>
+            self.poll(5000, self =>
                 execAsync(["bash", "-c", command])
                     .then(output => {
                         output = parseFloat(output);
@@ -172,27 +173,29 @@ export default () => {
     });
     const systemResources = Box({
         children: [
-            BarGroupMusic(
-                Box({
-                    className: "spacing-h-5",
-                    children: [
-                        BarNetworkRes(
-                            "Upload",
-                            "upload",
-                            "awk '{if(l1){print $10-l1} else{l1=$10;}}' <(grep wlp0s20f3 /proc/net/dev) <(sleep 1; grep wlp0s20f3 /proc/net/dev)",
-                            "bar-upload-txt",
-                            "bar-upload-icon"
-                        ),
-                        BarNetworkRes(
-                            "Download",
-                            "download",
-                            "awk '{if(l1){print $2-l1} else{l1=$2;}}' <(grep wlp0s20f3 /proc/net/dev) <(sleep 1; grep wlp0s20f3 /proc/net/dev)",
-                            "bar-download-txt",
-                            "bar-download-icon"
-                        ),
-                    ],
-                })
-            ),
+            EXTENDED_BAR
+                ? BarGroupMusic(
+                      Box({
+                          className: "spacing-h-5",
+                          children: [
+                              BarNetworkRes(
+                                  "Upload",
+                                  "upload",
+                                  "awk '{if(l1){print $10-l1} else{l1=$10;}}' <(grep wlp0s20f3 /proc/net/dev) <(sleep 1; grep wlp0s20f3 /proc/net/dev)",
+                                  "bar-upload-txt",
+                                  "bar-upload-icon"
+                              ),
+                              BarNetworkRes(
+                                  "Download",
+                                  "download",
+                                  "awk '{if(l1){print $2-l1} else{l1=$2;}}' <(grep wlp0s20f3 /proc/net/dev) <(sleep 1; grep wlp0s20f3 /proc/net/dev)",
+                                  "bar-download-txt",
+                                  "bar-download-icon"
+                              ),
+                          ],
+                      })
+                  )
+                : null,
             BarGroupMusic(
                 Box({
                     className: "spacing-h-5",
@@ -221,14 +224,20 @@ export default () => {
                             "bar-cpu-txt",
                             "bar-cpu-icon"
                         ),
-                        BarResource(
-                            "GPU Usage",
-                            "memory_alt",
-                            `cat /sys/class/drm/card1/device/gpu_busy_percent`,
-                            "bar-gpu-circprog",
-                            "bar-gpu-txt",
-                            "bar-gpu-icon"
-                        ),
+                        // Extended bar and has/can monitor gpu
+                        EXTENDED_BAR &&
+                        exec("bash -c '[ -f /sys/class/drm/card1/device/gpu_busy_percent ] && echo yes'").includes(
+                            "yes"
+                        )
+                            ? BarResource(
+                                  "GPU Usage",
+                                  "memory_alt",
+                                  `cat /sys/class/drm/card1/device/gpu_busy_percent`,
+                                  "bar-gpu-circprog",
+                                  "bar-gpu-txt",
+                                  "bar-gpu-icon"
+                              )
+                            : null,
                     ],
                 })
             ),
