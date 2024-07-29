@@ -20,3 +20,6 @@ generated.*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+
+# Systemd enabled units
+/systemd/.config/systemd/user/*.target.wants/
