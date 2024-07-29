@@ -28,8 +28,14 @@ const Repo = (icon, name, children) => {
             className: "txt spacing-h-10",
             children: [
                 MaterialIcon(icon, "norm"),
-                Label({ className: "txt-norm", label: name }),
-                Box({ hexpand: true }),
+                Label({
+                    xalign: 0,
+                    className: "txt-norm",
+                    hexpand: true,
+                    truncate: "end",
+                    maxWidthChars: 1,
+                    label: name,
+                }),
                 headerButtonIcon,
             ],
         }),
@@ -47,6 +53,7 @@ const Repo = (icon, name, children) => {
     return Box({ className: "sidebar-module-repo", vertical: true, children: [header, content] });
 };
 
+<<<<<<< HEAD
 const Update = ({ pkg, update }) =>
     Box({
         className: "spacing-h-5 txt",
@@ -63,6 +70,21 @@ const Update = ({ pkg, update }) =>
         ],
     });
 
+=======
+const Text = (text, tooltip = text) =>
+    Label({
+        xalign: 0,
+        className: "txt txt-small",
+        hexpand: true,
+        truncate: "end",
+        maxWidthChars: 1,
+        label: text,
+        tooltipText: tooltip,
+    });
+
+const Update = ({ pkg, update }) => Text(update, addVersionChangeToDesc(update, getDesc(pkg)));
+
+>>>>>>> origin/pc
 const IndicatorComponent = (label, className = "") =>
     Box({
         className: `spacing-h-10 ${className}`,
@@ -90,18 +112,32 @@ const Indicator = () =>
 export default () =>
     SidebarModule({
         icon: MaterialIcon("update", "norm"),
+<<<<<<< HEAD
         name: PackageUpdates.bind("updates").as(updates => {
             let label =
                 updates.numUpdates > 0
                     ? `Package updates - ${updates.numUpdates} available`
                     : "Package updates - No updates!";
             if (updates.cached) label += " (cached)";
+=======
+        name: PackageUpdates.bind("updates").as(({ cached, updates, errors, git }) => {
+            const numUpdates = updates.length + git.length;
+            const status = [];
+            if (numUpdates > 0) status.push(`${numUpdates} available`);
+            if (errors.length > 0) status.push(`${errors.length} errors`);
+            let label =
+                numUpdates + errors.length > 0
+                    ? `Package updates - ${status.join(", ")}`
+                    : "Package updates - No updates!";
+            if (cached) label += " (cached)";
+>>>>>>> origin/pc
             return label;
         }),
         revealChild: false,
         child: Box({
             vertical: true,
             className: "spacing-v-5",
+<<<<<<< HEAD
             children: PackageUpdates.bind("updates").as(updates => {
                 const children = [];
                 if (updates.numUpdates > 0)
@@ -113,6 +149,44 @@ export default () =>
 
                 if (updates.errors?.length)
                     children.push(Repo("error", `Errors - ${updates.errors.length}`, updates.errors.map(Update)));
+=======
+            children: PackageUpdates.bind("updates").as(({ updates, errors, git }) => {
+                const children = [];
+                for (const repo of updates) {
+                    children.push(
+                        Repo(repo.icon, `${repo.name} updates - ${repo.updates.length}`, repo.updates.map(Update))
+                    );
+                }
+
+                if (git.length > 0)
+                    children.push(
+                        Repo(
+                            "linked_services",
+                            `Git changes - ${git.length}`,
+                            git.map(({ path, branches }) => {
+                                const ahead = branches.reduce((acc, { ahead }) => acc + ahead, 0);
+                                const behind = branches.reduce((acc, { behind }) => acc + behind, 0);
+                                const status = [];
+                                if (ahead > 0) status.push(`${ahead} ahead`);
+                                if (behind > 0) status.push(`${behind} behind`);
+                                return Text(
+                                    [
+                                        `${path} - ${status.join(", ")}`,
+                                        ...branches.map(({ name, ahead, behind }) => {
+                                            const status = [];
+                                            if (ahead > 0) status.push(`${ahead} commit${ahead > 1 ? "s" : ""} ahead`);
+                                            if (behind > 0)
+                                                status.push(`${behind} commit${behind > 1 ? "s" : ""} behind`);
+                                            return `${name} - ${status.join(", ")}`;
+                                        }),
+                                    ].join("\n ˪ ")
+                                );
+                            })
+                        )
+                    );
+
+                if (errors.length > 0) children.push(Repo("error", `Errors - ${errors.length}`, errors.map(Text)));
+>>>>>>> origin/pc
 
                 children.push(Indicator());
 
