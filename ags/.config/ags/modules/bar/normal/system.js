@@ -134,7 +134,7 @@ const WeatherModule = () =>
             }),
     });
 
-const BatBatteryProgress = () =>
+const BarBatteryProgress = () =>
     AnimatedCircProg({
         className: "bar-batt-circprog",
         vpack: "center",
@@ -202,7 +202,7 @@ const BarBattery = () =>
                             box.toggleClassName("bar-batt-full", Battery.charged);
                         }),
                 }),
-                overlays: [BatBatteryProgress()],
+                overlays: [BarBatteryProgress()],
             }),
         ],
     });
