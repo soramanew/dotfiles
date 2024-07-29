@@ -1,5 +1,5 @@
 import GLib from "gi://GLib";
-const { Button } = Widget;
+const { Button, Revealer } = Widget;
 const { execAsync, exec } = Utils;
 const Hyprland = await Service.import("hyprland");
 const Bluetooth = await Service.import("bluetooth");
