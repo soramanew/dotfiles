@@ -1,8 +1,6 @@
 acpid
 adw-gtk3-git
 anyrun-git
-aquamarine-git
-aquamarine-git-debug
 aylurs-gtk-shell-git
 base
 base-devel
@@ -33,7 +31,6 @@ gammastep
 git
 github-cli
 github-desktop-bin
-github-desktop-bin-debug
 glm
 gnome-bluetooth-3.0
 gnome-control-center
@@ -115,12 +112,12 @@ tinyxml2
 ttf-gabarito-git
 ttf-jetbrains-mono-nerd
 ttf-material-symbols-variable-git
-ttf-poppins
 ttf-readex-pro
 ttf-roboto-slab
 ttf-rubik-vf
-ttf-space-mono-nerd
 tumbler
+tzupdate
+tzupdate-debug
 usbutils
 vdpauinfo
 vesktop-bin

@@ -72,6 +72,12 @@ const scripts = [
         command: "fwupdmgr refresh; fwupdmgr update",
         enabled: true,
     },
+    {
+        icon: "linux-symbolic",
+        name: "Update timezone based on geolocation",
+        command: "sudo tzupdate",
+        enabled: true,
+    },
 ];
 
 const QuickScript = ({ icon, name, command }) => {
