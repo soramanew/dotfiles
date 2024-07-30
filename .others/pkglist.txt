@@ -118,6 +118,7 @@ ttf-readex-pro
 ttf-roboto-slab
 ttf-rubik-vf
 tumbler
+tzupdate
 usbutils
 vesktop-bin
 vnstat
