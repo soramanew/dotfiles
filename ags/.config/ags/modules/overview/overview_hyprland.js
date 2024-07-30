@@ -15,6 +15,7 @@ import {
     OVERVIEW_COLS as WS_COLS,
 } from "../../constants.js";
 import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
+import { EXTENDED_BAR } from "../../constants.js";
 
 const OVERVIEW_SCALE = 0.15;
 const OVERVIEW_WS_NUM_SCALE = 0.09;
@@ -182,7 +183,10 @@ export default () => {
                             truncate: "end",
                             className: `txt txt-reading ${xwayland ? "txt-italic" : ""}`,
                             css: `
-                                font-size: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 12}px;
+                                font-size: ${
+                                    (Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) /
+                                    (EXTENDED_BAR ? 14.6 : 12)
+                                }px;
                                 margin: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 20}px;
                             `,
                             // If the title is too short, include the class

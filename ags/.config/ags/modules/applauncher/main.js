@@ -5,7 +5,7 @@ import AppLauncher, { close } from "./applauncher.js";
 export default () => {
     const launcher = AppLauncher();
     return PopupWindow({
-        name: `applauncher`,
+        name: "applauncher",
         layer: "overlay",
         keymode: "exclusive",
         anchor: ["top", "bottom", "left", "right"],

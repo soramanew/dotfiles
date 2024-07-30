@@ -22,8 +22,8 @@ const SpaceLeft = () =>
         hexpand: true,
         onScrollUp: () => (Brightness.screen_value += 0.05),
         onScrollDown: () => (Brightness.screen_value -= 0.05),
-        onPrimaryClick: () => App.toggleWindow("sideleft"),
-        onSecondaryClick: () => App.toggleWindow("overview"),
+        onPrimaryClickRelease: () => App.toggleWindow("sideleft"),
+        onMiddleClickRelease: () => App.toggleWindow("overview"),
         child: WindowTitle(),
     });
 
@@ -36,8 +36,8 @@ const SpaceRight = () =>
         onScrollDown: () => {
             if (Audio.speaker) Audio.speaker.volume -= 0.05;
         },
-        onPrimaryClick: () => App.toggleWindow("sideright"),
-        onSecondaryClick: () => App.toggleWindow("overview"),
+        onPrimaryClickRelease: () => App.toggleWindow("sideright"),
+        onMiddleClickRelease: () => App.toggleWindow("overview"),
         child: Indicators(),
     });
 
