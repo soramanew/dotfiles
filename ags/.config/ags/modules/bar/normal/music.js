@@ -1,5 +1,5 @@
 const { Box, EventBox, Label, Overlay } = Widget;
-const { execAsync } = Utils;
+const { exec, execAsync } = Utils;
 const Mpris = await Service.import("mpris");
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
