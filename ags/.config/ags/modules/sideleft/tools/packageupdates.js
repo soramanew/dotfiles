@@ -66,6 +66,16 @@ const Text = (text, tooltip = text) =>
 
 const Update = ({ pkg, update }) => Text(update, addVersionChangeToDesc(update, getDesc(pkg)));
 
+const Error = err =>
+    Label({
+        xalign: 0,
+        className: "txt txt-small",
+        hexpand: true,
+        wrap: true,
+        label: err,
+        tooltipText: err,
+    });
+
 const IndicatorComponent = (label, className = "") =>
     Box({
         className: `spacing-h-10 ${className}`,
@@ -144,7 +154,7 @@ export default () =>
                         )
                     );
 
-                if (errors.length > 0) children.push(Repo("error", `Errors - ${errors.length}`, errors.map(Text)));
+                if (errors.length > 0) children.push(Repo("error", `Errors - ${errors.length}`, errors.map(Error)));
 
                 children.push(Indicator());
 
