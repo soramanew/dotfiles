@@ -10,9 +10,6 @@ generated.*
 /ags/.config/ags/scss/_musicwal.scss
 /hypr/.config/hypr/hyprland/perf.conf
 
-# Not tracked
-/hypr/.config/hypr/hyprland/untracked.conf
-
 # Unnecessary configs
 /thunar/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
 /thunar/.config/Thunar/accels.scm

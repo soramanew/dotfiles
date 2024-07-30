@@ -3,7 +3,7 @@
 cd (dirname (status -f)) || exit
 
 # Merge without committing or fast forward
-git merge --no-commit --no-ff $argv[1] || exit
+git merge --no-commit --no-ff $argv[1]
 
 # Revert file changes
 for pathspec in \
