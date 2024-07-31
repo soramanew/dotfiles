@@ -19,8 +19,6 @@ import AppLauncher from "./modules/applauncher/main.js";
 import GCheatsheet from "./modules/gcheatsheet/main.js";
 
 // SCSS compilation
-exec(`bash -c 'echo "" > ${App.configDir}/scss/_musicwal.scss'`); // reset music styles
-exec(`bash -c 'echo "" > ${App.configDir}/scss/_musicmaterial.scss'`); // reset music styles
 export function applyStyle() {
     exec(`mkdir -p ${COMPILED_STYLE_DIR}`);
     exec(`sass ${App.configDir}/scss/main.scss ${COMPILED_STYLE_DIR}/style.css`);
