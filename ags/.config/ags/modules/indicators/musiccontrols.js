@@ -85,130 +85,26 @@ const TrackArtists = ({ player, ...rest }) =>
         label: player.bind("track_artists").as(artists => (artists.length > 0 ? artists.join(", ") : "")),
     });
 
-const CoverArt = ({ player, ...rest }) => {
-    const fallbackCoverArt = Box({
-        // Fallback
-        className: "osd-music-cover-fallback",
-        homogeneous: true,
-        child: Label({
-            className: "icon-material txt-gigantic txt-thin",
-            label: "music_note",
-        }),
-    });
-    // const coverArtDrawingArea = Widget.DrawingArea({ className: 'osd-music-cover-art' });
-    // const coverArtDrawingAreaStyleContext = coverArtDrawingArea.get_style_context();
-    const realCoverArt = Box({
+const CoverArt = ({ player, ...rest }) =>
+    Box({
+        ...rest,
         className: "osd-music-cover-art",
         homogeneous: true,
-        // children: [coverArtDrawingArea],
-        attribute: {
-            pixbuf: null,
-            // 'showImage': (self, imagePath) => {
-            //     const borderRadius = coverArtDrawingAreaStyleContext.get_property('border-radius', Gtk.StateFlags.NORMAL);
-            //     const frameHeight = coverArtDrawingAreaStyleContext.get_property('min-height', Gtk.StateFlags.NORMAL);
-            //     const frameWidth = coverArtDrawingAreaStyleContext.get_property('min-width', Gtk.StateFlags.NORMAL);
-            //     let imageHeight = frameHeight;
-            //     let imageWidth = frameWidth;
-            //     // Get image dimensions
-            //     execAsync(['identify', '-format', '{"w":%w,"h":%h}', imagePath])
-            //         .then((output) => {
-            //             const imageDimensions = JSON.parse(output);
-            //             const imageAspectRatio = imageDimensions.w / imageDimensions.h;
-            //             const displayedAspectRatio = imageWidth / imageHeight;
-            //             if (imageAspectRatio >= displayedAspectRatio) {
-            //                 imageWidth = imageHeight * imageAspectRatio;
-            //             } else {
-            //                 imageHeight = imageWidth / imageAspectRatio;
-            //             }
-            //             // Real stuff
-            //             // TODO: fix memory leak(?)
-            //             // if (self.attribute.pixbuf) {
-            //             //     self.attribute.pixbuf.unref();
-            //             //     self.attribute.pixbuf = null;
-            //             // }
-            //             self.attribute.pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(imagePath, imageWidth, imageHeight);
-
-            //             coverArtDrawingArea.set_size_request(frameWidth, frameHeight);
-            //             coverArtDrawingArea.connect("draw", (widget, cr) => {
-            //                 // Clip a rounded rectangle area
-            //                 cr.arc(borderRadius, borderRadius, borderRadius, Math.PI, 1.5 * Math.PI);
-            //                 cr.arc(frameWidth - borderRadius, borderRadius, borderRadius, 1.5 * Math.PI, 2 * Math.PI);
-            //                 cr.arc(frameWidth - borderRadius, frameHeight - borderRadius, borderRadius, 0, 0.5 * Math.PI);
-            //                 cr.arc(borderRadius, frameHeight - borderRadius, borderRadius, 0.5 * Math.PI, Math.PI);
-            //                 cr.closePath();
-            //                 cr.clip();
-            //                 // Paint image as bg, centered
-            //                 Gdk.cairo_set_source_pixbuf(cr, self.attribute.pixbuf,
-            //                     frameWidth / 2 - imageWidth / 2,
-            //                     frameHeight / 2 - imageHeight / 2
-            //                 );
-            //                 cr.paint();
-            //             });
-            //         }).catch(print)
-            // },
-            updateCover: self => {
-                // const player = Mpris.getPlayer(); // Maybe no need to re-get player.. can't remember why I had this
-                // Player closed
-                // Note that cover path still remains, so we're checking title
-                if (!player || player.trackTitle === "" || !player.coverPath) {
-                    self.css = `background-image: none;`; // CSS image
-                    App.applyCss(`${COMPILED_STYLE_DIR}/style.css`);
-                    return;
-                }
-
-                const coverPath = player.coverPath;
-                const stylePath = `${player.coverPath}${darkMode.value ? "" : "-l"}${COVER_COLORSCHEME_SUFFIX}`;
-                if (player.coverPath == lastCoverPath) {
-                    // Since 'notify::cover-path' emits on cover download complete
-                    Utils.timeout(200, () => {
-                        // self.attribute.showImage(self, coverPath);
-                        self.css = `background-image: url('${coverPath}');`; // CSS image
-                    });
-                }
-                lastCoverPath = player.coverPath;
-
-                // If a colorscheme has already been generated, skip generation
-                if (fileExists(stylePath)) {
-                    // self.attribute.showImage(self, coverPath)
-                    self.css = `background-image: url('${coverPath}');`; // CSS image
-                    App.applyCss(stylePath);
-                    return;
-                }
-
-                // Generate colors
-                execAsync([
-                    "bash",
-                    "-c",
-                    `${
-                        App.configDir
-                    }/scripts/color_generation/generate_colors_material.py --path '${coverPath}' --mode ${
-                        darkMode.value ? "dark" : "light"
-                    } > ${App.configDir}/scss/_musicmaterial.scss`,
-                ])
-                    .then(() => {
-                        exec(`wal -i "${player.coverPath}" -n -t -s -e -q ${darkMode.value ? "" : "-l"}`);
-                        exec(`cp ${GLib.get_user_cache_dir()}/wal/colors.scss ${App.configDir}/scss/_musicwal.scss`);
-                        exec(`sass ${App.configDir}/scss/_music.scss ${stylePath}`);
-                        Utils.timeout(200, () => {
-                            // self.attribute.showImage(self, coverPath)
-                            self.css = `background-image: url('${coverPath}');`; // CSS image
-                        });
-                        App.applyCss(stylePath);
-                    })
-                    .catch(print);
-            },
-        },
-        setup: self => self.hook(player, self => self.attribute.updateCover(self), "notify::cover-path"),
-    });
-    return Box({
-        ...rest,
-        className: "osd-music-cover",
-        child: Overlay({
-            child: fallbackCoverArt,
-            overlays: [realCoverArt],
+        // Fallback
+        child: Label({
+            className: "icon-material txt-gigantic txt-thin",
+            label: player.bind("cover-path").as(cp => (cp ? "" : "music_note")),
         }),
+        // CSS image
+        setup: self =>
+            self.hook(
+                player,
+                self => {
+                    if (player.coverPath) self.css = `background-image: url('${player.coverPath}');`;
+                },
+                "notify::cover-path"
+            ),
     });
-};
 
 const TrackControls = ({ player, ...rest }) => {
     const Control = ({ icon, onClicked, revealChild }) =>
@@ -310,29 +206,63 @@ const PlayState = ({ player }) =>
     });
 
 const MusicControlsWidget = player =>
-    Box({
-        className: "osd-music spacing-h-20 test",
-        children: [
-            CoverArt({ player, vpack: "center" }),
+    Overlay({
+        child: Box({
+            className: "osd-music-background",
+            // CSS image
+            setup: self =>
+                self.hook(
+                    player,
+                    self => {
+                        if (player.coverPath) {
+                            const blurCoverPath = `${player.coverPath}_blur`;
+                            if (fileExists(blurCoverPath)) self.css = `background-image: url('${blurCoverPath}');`;
+                            else {
+                                execAsync([
+                                    "magick",
+                                    player.coverPath,
+                                    "-fill",
+                                    "black",
+                                    "-colorize",
+                                    "50%",
+                                    "-blur",
+                                    "0x10",
+                                    blurCoverPath,
+                                ])
+                                    .then(() => (self.css = `background-image: url('${blurCoverPath}');`))
+                                    .catch(print);
+                            }
+                        }
+                    },
+                    "notify::cover-path"
+                ),
+        }),
+        overlays: [
             Box({
-                vertical: true,
-                className: "spacing-v-5 osd-music-info",
+                className: "osd-music spacing-h-20",
                 children: [
+                    CoverArt({ player, vpack: "center" }),
                     Box({
                         vertical: true,
-                        vpack: "center",
-                        hexpand: true,
-                        children: [TrackTitle({ player }), TrackArtists({ player })],
-                    }),
-                    Box({ vexpand: true }),
-                    Box({
-                        className: "spacing-h-10",
-                        setup: box => {
-                            box.pack_start(TrackControls({ player }), false, false, 0);
-                            box.pack_end(PlayState({ player }), false, false, 0);
-                            box.pack_end(TrackTime({ player }), false, false, 0);
-                            // box.pack_end(TrackSource({ vpack: 'center', player: player }), false, false, 0);
-                        },
+                        className: "spacing-v-5 osd-music-info",
+                        children: [
+                            Box({
+                                vertical: true,
+                                vpack: "center",
+                                hexpand: true,
+                                children: [TrackTitle({ player }), TrackArtists({ player })],
+                            }),
+                            Box({ vexpand: true }),
+                            Box({
+                                className: "spacing-h-10",
+                                setup: box => {
+                                    box.pack_start(TrackControls({ player }), false, false, 0);
+                                    box.pack_end(PlayState({ player }), false, false, 0);
+                                    box.pack_end(TrackTime({ player }), false, false, 0);
+                                    // box.pack_end(TrackSource({ vpack: 'center', player: player }), false, false, 0);
+                                },
+                            }),
+                        ],
                     }),
                 ],
             }),
