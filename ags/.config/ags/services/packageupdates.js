@@ -137,7 +137,4 @@ class PkgUpdatesService extends Service {
 }
 
 // the singleton instance
-const service = new PkgUpdatesService();
-
-// export to use in other modules
-export default service;
+export default new PkgUpdatesService();
