@@ -23,7 +23,7 @@ Mpris.connect("player-added", (_, busName) => {
 });
 Mpris.connect("player-closed", (_, busName) => {
     // If player closed is the controlled player, set last player to another player in preference of playing > paused > stopped
-    if (busName.includes(readFile(LAST_PLAYER_PATH))) {
+    if (busName === lastPlayer.value?.busName) {
         const player =
             Mpris.players.find(p => p.playBackStatus === "Playing") ||
             Mpris.players.find(p => p.playBackStatus === "Paused") ||
