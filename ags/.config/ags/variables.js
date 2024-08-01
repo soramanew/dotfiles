@@ -76,8 +76,8 @@ const showIndicatorsFn = (indicator, timeout = 1000) => {
 };
 
 export const showLockIndicators = Variable(false);
-export const isCapsLockOn = Variable(false);
-export const isNumLockOn = Variable(false);
+export const isCapsLockOn = Variable(readFile("/sys/class/leds/input7::capslock/brightness").trim() === "1");
+export const isNumLockOn = Variable(readFile("/sys/class/leds/input7::numlock/brightness").trim() === "1");
 const showLockIndicatorsFn = showIndicatorsFn(showLockIndicators);
 isCapsLockOn.connect("changed", showLockIndicatorsFn);
 isNumLockOn.connect("changed", showLockIndicatorsFn);
