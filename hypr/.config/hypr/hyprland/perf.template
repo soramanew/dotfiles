@@ -1,5 +1,10 @@
-# ## opacity 1
+# ## opacity 6
 windowrule = opacity 1 override, .*
+decoration {
+    blur {
+        ignore_opacity = false
+    }
+}
 
 # ## animations 3
 # animations {
