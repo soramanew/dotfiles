@@ -42,7 +42,7 @@ const centerWidgets = [
         name: "Wifi networks",
         materialIcon: "wifi",
         contentWidget: ModuleWifiNetworks(),
-        onFocus: () => execAsync("nmcli dev wifi list").catch(print),
+        onFocus: () => execAsync("nmcli device wifi rescan").catch(print), // Scan for connections
     },
 ];
 

@@ -21,7 +21,8 @@ export const ToggleIconWifi = (props = {}) =>
             execAsync(
                 exec("bash -c 'command -v gnome-control-center'")
                     ? "gnome-control-center wifi"
-                    : "foot -T nmtui fish -C 'set -e COLORTERM ; sleep 0.1 ; TERM=xterm-old nmtui connect ; exit'"
+                    : // Delete COLORTERM env var, rescan network connections, sleep if last command took less than 0.1s (so nmtui size and position loads properly)
+                      "foot -T nmtui fish -C 'set -e COLORTERM ; nmcli device wifi rescan ; [ $CMD_DURATION -lt 100 ] && sleep (math 0.1 - $CMD_DURATION / 1000) ; TERM=xterm-old nmtui connect ; exit'"
             ).catch(print);
             closeEverything();
         },
