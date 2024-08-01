@@ -21,7 +21,7 @@ export const ToggleIconWifi = (props = {}) =>
             execAsync(
                 exec("bash -c 'command -v gnome-control-center'")
                     ? "gnome-control-center wifi"
-                    : "foot -T nmtui fish -C 'set -e COLORTERM ; sleep 0.1 ; TERM=xterm-old nmtui ; exit'"
+                    : "foot -T nmtui fish -C 'set -e COLORTERM ; sleep 0.1 ; TERM=xterm-old nmtui connect ; exit'"
             ).catch(print);
             closeEverything();
         },
