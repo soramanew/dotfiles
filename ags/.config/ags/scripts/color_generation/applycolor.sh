@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
-term_alpha=70 #Set this to < 100 make all your terminals transparent
 # sleep 0 # idk i wanted some delay or colors dont get applied properly
 if [ ! -d "$HOME"/.cache/ags/user/generated ]; then
     mkdir -p "$HOME"/.cache/ags/user/generated
 fi
 cd "$HOME/.config/ags" || exit
+
+colormodefile="$HOME/.cache/ags/user/colormode.txt"
+if [ -f "$colormodefile" -a "$(sed -n '2p' "$colormodefile")" = 'transparent' ]; then
+    transparent=true
+fi
 
 colornames=''
 colorstrings=''
@@ -13,15 +17,19 @@ colorlist=()
 colorvalues=()
 
 transparentize() {
-  local hex="$1"
-  local alpha="$2"
-  local red green blue
+    if [ "$transparent" != true ]; then
+        echo -n "$1"
+    else
+        local hex="$1"
+        local alpha="$2"
+        local red green blue
 
-  red=$((16#${hex:1:2}))
-  green=$((16#${hex:3:2}))
-  blue=$((16#${hex:5:2}))
+        red=$((16#${hex:1:2}))
+        green=$((16#${hex:3:2}))
+        blue=$((16#${hex:5:2}))
 
-  printf 'rgba(%d, %d, %d, %.2f)' "$red" "$green" "$blue" "$alpha"
+        printf 'rgba(%d, %d, %d, %.2f)' "$red" "$green" "$blue" "$alpha"
+    fi
 }
 
 get_light_dark() {
@@ -60,14 +68,18 @@ apply_term() {
         echo "Template file not found for Terminal. Skipping that."
         return
     fi
+
     # Copy template
     mkdir -p "$HOME"/.cache/ags/user/generated/terminal
     cp "scripts/templates/terminal/sequences.txt" "$HOME"/.cache/ags/user/generated/terminal/sequences.txt
+
     # Apply colors
     for i in "${!colorlist[@]}"; do
         sed -i "s/${colorlist[$i]} #/${colorvalues[$i]#\#}/g" "$HOME"/.cache/ags/user/generated/terminal/sequences.txt
     done
 
+    # Set terminal alpha
+    [ "$transparent" = true ] && term_alpha=70 || term_alpha=100
     sed -i "s/\$alpha/$term_alpha/g" "$HOME/.cache/ags/user/generated/terminal/sequences.txt"
 
     for file in /dev/pts/*; do
@@ -83,9 +95,11 @@ apply_hyprland() {
         echo "Template file not found for Hyprland colors. Skipping that."
         return
     fi
+
     # Copy template
     mkdir -p "$HOME"/.cache/ags/user/generated/hypr/hyprland
     cp "scripts/templates/hypr/hyprland/colors.conf" "$HOME"/.cache/ags/user/generated/hypr/hyprland/colors.conf
+
     # Apply colors
     for i in "${!colorlist[@]}"; do
         sed -i "s/{{ ${colorlist[$i]} }}/${colorvalues[$i]#\#}/g" "$HOME"/.cache/ags/user/generated/hypr/hyprland/colors.conf
@@ -100,11 +114,12 @@ apply_hyprlock() {
         echo "Template file not found for hyprlock. Skipping that."
         return
     fi
+
     # Copy template
     mkdir -p "$HOME"/.cache/ags/user/generated/hypr/
     cp "scripts/templates/hypr/hyprlock.conf" "$HOME"/.cache/ags/user/generated/hypr/hyprlock.conf
+
     # Apply colors
-    # sed -i "s/{{ SWWW_WALL }}/${wallpath_png}/g" "$HOME"/.cache/ags/user/generated/hypr/hyprlock.conf
     for i in "${!colorlist[@]}"; do
         sed -i "s/{{ ${colorlist[$i]} }}/${colorvalues[$i]#\#}/g" "$HOME"/.cache/ags/user/generated/hypr/hyprlock.conf
     done
