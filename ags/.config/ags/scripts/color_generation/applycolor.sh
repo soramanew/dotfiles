@@ -12,12 +12,6 @@ colorstrings=''
 colorlist=()
 colorvalues=()
 
-# wallpath=$(swww query | head -1 | awk -F 'image: ' '{print $2}')
-# wallpath_png="$HOME"'/.cache/ags/user/generated/hypr/lockscreen.png'
-# convert "$wallpath" "$wallpath_png"
-# wallpath_png=$(echo "$wallpath_png" | sed 's/\//\\\//g')
-# wallpath_png=$(sed 's/\//\\\\\//g' <<< "$wallpath_png")
-
 transparentize() {
   local hex="$1"
   local alpha="$2"
@@ -27,7 +21,7 @@ transparentize() {
   green=$((16#${hex:3:2}))
   blue=$((16#${hex:5:2}))
 
-  printf 'rgba(%d, %d, %d, %.2f)\n' "$red" "$green" "$blue" "$alpha"
+  printf 'rgba(%d, %d, %d, %.2f)' "$red" "$green" "$blue" "$alpha"
 }
 
 get_light_dark() {
@@ -127,6 +121,12 @@ apply_gtk() { # Using gradience-cli
 
     # Apply colors
     for i in "${!colorlist[@]}"; do
+        # Match all transparentize and get alpha, uniq so only unique values cause sed replace all
+        sed -nE 's/.*\{\{ transparentize \'"${colorlist[$i]}"' ((0?\.[0-9]+)|[01]) }}.*/\1/p' "$HOME"/.cache/ags/user/generated/gradience/preset.json | uniq | while read -r alpha; do
+            # Transparentize colour
+            sed -i "s/{{ transparentize ${colorlist[$i]} $alpha }}/$(transparentize ${colorvalues[$i]} $alpha)/g" "$HOME"/.cache/ags/user/generated/gradience/preset.json
+        done
+        # Replace all instances of colour
         sed -i "s/{{ ${colorlist[$i]} }}/${colorvalues[$i]}/g" "$HOME"/.cache/ags/user/generated/gradience/preset.json
     done
 
