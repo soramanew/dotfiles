@@ -1,6 +1,6 @@
 #!/bin/bash
 
-feishin=$(hyprctl -j clients | jq '[.[]] | map(select(.class == "feishin"))')
+feishin=$(hyprctl -j clients | jq '[.[] | select(.class == "feishin")]')
 if echo "$feishin" | jq -e '. == []'; then
     # No feishin client
     feishin &
