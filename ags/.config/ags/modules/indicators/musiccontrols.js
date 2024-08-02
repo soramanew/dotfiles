@@ -1,17 +1,11 @@
-import GLib from "gi://GLib";
-const Mpris = await Service.import("mpris");
-const { exec, execAsync } = Utils;
 const { Box, EventBox, Label, Button, Revealer, Overlay } = Widget;
-
+const { execAsync } = Utils;
+const Mpris = await Service.import("mpris");
 import { fileExists } from "../.miscutils/files.js";
 import { AnimatedCircProg } from "../.commonwidgets/cairo_circularprogress.js";
 import { showMusicControls } from "../../variables.js";
-import { darkMode, hasPlasmaIntegration } from "../.miscutils/system.js";
+import { hasPlasmaIntegration } from "../.miscutils/system.js";
 import { clamp } from "../.miscutils/mathfuncs.js";
-import { COMPILED_STYLE_DIR } from "../../constants.js";
-
-const COVER_COLORSCHEME_SUFFIX = "_colorscheme.css";
-let lastCoverPath = "";
 
 function isRealPlayer(player) {
     return (

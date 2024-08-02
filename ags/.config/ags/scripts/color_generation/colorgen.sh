@@ -6,45 +6,44 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-colormodefile="$HOME/.cache/ags/user/colormode.txt"
+colourmodefile="$HOME/.cache/ags/user/colormode.txt"
 lightdark="dark"
 transparency="opaque"
 materialscheme="vibrant"
 terminalscheme="$HOME/.config/ags/scripts/templates/terminal/scheme-base.json"
-# terminalscheme="$HOME/.config/ags/scripts/templates/terminal/scheme-catppuccin.json"
-# terminalscheme="$HOME/.config/ags/scripts/templates/terminal/scheme-vscode.json"
+backend="material"  # Colour generator backend
 
-if [ ! -f $colormodefile ]; then
-    echo "dark" > $colormodefile
-    echo "opaque" >> $colormodefile
-    echo "vibrant" >> $colormodefile
-elif [[ $(wc -l < $colormodefile) -ne 3 || $(wc -w < $colormodefile) -ne 3 ]]; then
-    echo "dark" > $colormodefile
-    echo "opaque" >> $colormodefile
-    echo "vibrant" >> $colormodefile
+if [ ! -f $colourmodefile ]; then
+    echo "dark" > $colourmodefile
+    echo "opaque" >> $colourmodefile
+    echo "vibrant" >> $colourmodefile
+elif [[ $(wc -l < $colourmodefile) -ne 3 || $(wc -w < $colourmodefile) -ne 3 ]]; then
+    echo "dark" > $colourmodefile
+    echo "opaque" >> $colourmodefile
+    echo "vibrant" >> $colourmodefile
 else
-    lightdark=$(sed -n '1p' $colormodefile)
-    transparency=$(sed -n '2p' $colormodefile)
-    materialscheme=$(sed -n '3p' $colormodefile)
+    lightdark=$(sed -n '1p' $colourmodefile)
+    transparency=$(sed -n '2p' $colourmodefile)
+    materialscheme=$(sed -n '3p' $colourmodefile)
     if [ "$materialscheme" = "monochrome" ]; then
       terminalscheme="$HOME/.config/ags/scripts/templates/terminal/scheme-monochrome.json"
     fi
 fi
-backend="material" # color generator backend
+
 if [ ! -f "$HOME/.cache/ags/user/colorbackend.txt" ]; then
     echo "material" > "$HOME/.cache/ags/user/colorbackend.txt"
 else
-    backend=$(cat "$HOME/.cache/ags/user/colorbackend.txt") # either "" or "-l"
+    backend=$(cat "$HOME/.cache/ags/user/colorbackend.txt")
 fi
 
 cd "$HOME/.config/ags/scripts/" || exit
-if [[ "$1" = "#"* ]]; then # this is a color
+if [[ "$1" = "#"* ]]; then  # Argument is a colour
     color_generation/generate_colors_material.py --color "$1" \
     --mode "$lightdark" --scheme "$materialscheme" --transparency "$transparency" \
     --termscheme $terminalscheme --blend_bg_fg \
     > "$HOME"/.cache/ags/user/generated/material_colors.scss
     if [ "$2" = "--apply" ]; then
-        cp "$HOME"/.cache/ags/user/generated/material_colors.scss "$HOME/.config/ags/scss/colour/generated.scss"
+        cp "$HOME"/.cache/ags/user/generated/material_colors.scss "$HOME/.config/ags/scss/_material.scss"
         color_generation/applycolor.sh
     fi
 elif [ "$backend" = "material" ]; then
@@ -58,7 +57,7 @@ elif [ "$backend" = "material" ]; then
     --cache "$HOME/.cache/ags/user/color.txt" $smartflag \
     > "$HOME"/.cache/ags/user/generated/material_colors.scss
     if [ "$2" = "--apply" ]; then
-        cp "$HOME"/.cache/ags/user/generated/material_colors.scss "$HOME/.config/ags/scss/colour/generated.scss"
+        cp "$HOME"/.cache/ags/user/generated/material_colors.scss "$HOME/.config/ags/scss/_material.scss"
         color_generation/applycolor.sh
     fi
 elif [ "$backend" = "pywal" ]; then
@@ -80,8 +79,7 @@ elif [ "$backend" = "pywal" ]; then
             printf "\n""\$darkmode: true;""\n" >> "$HOME"/.cache/ags/user/generated/colors_classes.scss
         fi
 
-        cp "$HOME"/.cache/ags/user/generated/colors_classes.scss "$HOME/.config/ags/scss/colour/generated.scss"
-
+        cp "$HOME"/.cache/ags/user/generated/colors_classes.scss "$HOME/.config/ags/scss/_material.scss"
         color_generation/applycolor.sh
     fi
 fi
