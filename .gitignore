@@ -8,6 +8,7 @@
 /hypr/.config/hypr/hyprlock.conf
 /hypr/.config/hypr/hyprland/colours.conf
 /hypr/.config/hypr/hyprland/perf.conf
+/fuzzel/.config/fuzzel/fuzzel.ini
 
 # Unnecessary configs
 /thunar/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
