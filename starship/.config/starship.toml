@@ -6,11 +6,11 @@ add_newline = false
 # Random noise 🬖🬥🬔🬗
 
 # format = """
-# $cmd_duration$username$hostname $directory $git_branch
+# 
 # $character
 # """
 format = """
-$cmd_duration$directory $python $git_branch
+$cmd_duration$directory$python$git_branch$git_status
 $character
 """
 
@@ -19,60 +19,15 @@ $character
 success_symbol = "[• ](bold fg:green) "
 error_symbol = "[• 󰅙](bold fg:red) "
 
-# Disable the package module, hiding it from the prompt completely
-[package]
-disabled = true
-
-[python]
-style = "bg: green"
-format = '• [](bold fg:green)[$version \($virtualenv\)](fg:black bg:green)[](bold fg:green)'
-
-[git_branch]
-style = "bg: green"
-symbol = "󰘬"
-truncation_length = 4
-truncation_symbol = ""
-format = "• [](bold fg:green)[$symbol $branch(:$remote_branch)](fg:black bg:green)[ ](bold fg:green)"
-
-[git_commit]
-commit_hash_length = 4
-tag_symbol = " "
-
-[git_state]
-format = '[\($state( $progress_current of $progress_total)\)]($style) '
-cherry_pick = "[🍒 PICKING](bold red)"
-
-[git_status]
-conflicted = " 🏳 "
-ahead = " 🏎💨 "
-behind = " 😰 "
-diverged = " 😵 "
-untracked = " 🤷 ‍"
-stashed = " 📦 "
-modified = " 📝 "
-staged = '[++\($count\)](green)'
-renamed = " ✍️ "
-deleted = " 🗑 "
+[cmd_duration]
+min_time = 0
+format = '[](bold fg:yellow)[ $duration](bold bg:yellow fg:black)[](bold fg:yellow) •• '
 
 [hostname]
 ssh_only = false
-format =  "[•$hostname](bg:cyan bold fg:black)[](bold fg:cyan )"
+format =  "[•$hostname](bg:cyan bold fg:black)[](bold fg:cyan ) • "
 trim_at = ".companyname.com"
 disabled = false
-
-[line_break]
-disabled = false
-
-[memory_usage]
-disabled = true
-threshold = -1
-symbol = " "
-style = "bold dimmed green"
-
-[time]
-disabled = true
-format = '🕙[\[ $time \]]($style) '
-time_format = "%T"
 
 [username]
 style_user = "bold bg:cyan fg:black"
@@ -98,6 +53,19 @@ format = '[](bold fg:green)[$path ]($style)[](bold fg:green)'
 "Pictures" = "  "
 "Videos" = "  "
 
-[cmd_duration]
-min_time = 0
-format = '[](bold fg:yellow)[ $duration](bold bg:yellow fg:black)[](bold fg:yellow) •• '
+[python]
+style = "bg: green"
+format = ' • [](bold fg:green)[$version \($virtualenv\)](fg:black bg:green)[](bold fg:green)'
+
+[git_branch]
+style = "bg: green"
+symbol = "󰘬"
+truncation_length = 7
+truncation_symbol = ""
+format = " • [](bold fg:green)[$symbol $branch(:$remote_branch)](fg:black bg:green)"
+
+[git_status]
+format = "[$ahead_behind](fg:black bg:green)[](bold fg:green)"
+ahead = " ↑$count"
+behind = " ↓$count"
+diverged = " ↑$ahead_count ↓$behind_count"

@@ -1,4 +1,4 @@
-const { Gdk } = imports.gi;
+import Gdk from "gi://Gdk";
 
 export const keybinds = {
     overview: {
