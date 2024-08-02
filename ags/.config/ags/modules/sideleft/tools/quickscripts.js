@@ -44,7 +44,7 @@ const scripts = [
         enabled: hasFlatpak,
     },
     {
-        icon: "wallpaper-symbolic",
+        icon: "wallpaper",
         name: Utils.merge(
             [Wallpaper.bind("time-until-exec"), Wallpaper.bind("paused")],
             (time, paused) =>
@@ -52,6 +52,7 @@ const scripts = [
         ),
         command: () => Wallpaper.oneshot(),
         enabled: true,
+        material: true,
     },
     {
         icon: "arch-symbolic",
@@ -68,19 +69,20 @@ const scripts = [
     },
     {
         icon: "linux-symbolic",
-        name: "Update firmware", // - " + (exec("fwupdmgr get-updates").split("\n").at(-1) === "No updates available" ? "No updates!" : "Updates available"),
+        name: "Update firmware",
         command: "fwupdmgr refresh; fwupdmgr update",
         enabled: true,
     },
     {
-        icon: "linux-symbolic",
+        icon: "language",
         name: "Update timezone based on geolocation",
         command: "sudo tzupdate",
         enabled: true,
+        material: true,
     },
 ];
 
-const QuickScript = ({ icon, name, command }) => {
+const QuickScript = ({ icon, name, command, material = false }) => {
     const stateIcon = Variable("not_started");
     let timeout;
     stateIcon.connect("changed", self => {
@@ -90,16 +92,13 @@ const QuickScript = ({ icon, name, command }) => {
     return Box({
         className: "spacing-h-5 txt",
         children: [
-            Icon({
-                className: "sidebar-module-btn-icon txt-large",
-                icon: icon,
-            }),
+            material ? MaterialIcon(icon, "large") : Icon({ className: "txt-large", icon: icon }),
             Label({
                 className: "txt-small",
                 hpack: "start",
                 hexpand: true,
                 label: name,
-                tooltipText: typeof command === "function" ? command.name : command,
+                tooltipText: typeof command === "function" ? command.toString() : command,
             }),
             Button({
                 className: "sidebar-module-scripts-button",

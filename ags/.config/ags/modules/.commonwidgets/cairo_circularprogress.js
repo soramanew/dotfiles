@@ -61,12 +61,12 @@ export const AnimatedCircProg = ({
                 const end_y = center_y + Math.sin(end_angle) * radius;
 
                 // Draw background
-                const background_color = styleContext.get_property("background-color", Gtk.StateFlags.NORMAL);
+                const backgroundColour = styleContext.get_property("background-color", Gtk.StateFlags.NORMAL);
                 cr.setSourceRGBA(
-                    background_color.red,
-                    background_color.green,
-                    background_color.blue,
-                    background_color.alpha
+                    backgroundColour.red,
+                    backgroundColour.green,
+                    backgroundColour.blue,
+                    backgroundColour.alpha
                 );
                 cr.arc(center_x, center_y, radius, 0, 2 * Math.PI);
                 cr.setLineWidth(bg_stroke);
@@ -75,8 +75,8 @@ export const AnimatedCircProg = ({
                 if (progressValue == 0) return;
 
                 // Draw progress
-                const color = styleContext.get_property("color", Gtk.StateFlags.NORMAL);
-                cr.setSourceRGBA(color.red, color.green, color.blue, color.alpha);
+                const colour = styleContext.get_property("color", Gtk.StateFlags.NORMAL);
+                cr.setSourceRGBA(colour.red, colour.green, colour.blue, colour.alpha);
                 cr.arc(center_x, center_y, radius, start_angle, end_angle);
                 cr.setLineWidth(fg_stroke);
                 cr.stroke();

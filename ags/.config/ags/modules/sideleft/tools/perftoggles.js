@@ -1,5 +1,5 @@
 import GLib from "gi://GLib";
-const { execAsync, readFile, writeFile } = Utils;
+const { exec, execAsync, readFile, writeFile } = Utils;
 const { Box, Button } = Widget;
 import Wallpaper from "../../../services/wallpaper.js";
 import SidebarModule from "./module.js";
@@ -10,7 +10,7 @@ import { CACHE_DIR } from "../../../constants.js";
 const confDir = `${GLib.get_home_dir()}/.config`;
 const perfConfPath = `${confDir}/hypr/hyprland/perf.conf`;
 
-const ToggleButton = ({ icon, onClicked, enabled = false, extraSetup = () => {}, ...rest }) =>
+const ToggleButton = ({ icon, onClicked, enabled = false, ...rest }) =>
     Button({
         ...rest,
         className: "txt-small sidebar-iconbutton",
@@ -27,11 +27,10 @@ const ToggleButton = ({ icon, onClicked, enabled = false, extraSetup = () => {},
         setup: self => {
             self.toggleClassName("sidebar-button-active", enabled);
             setupCursorHover(self);
-            extraSetup(self);
         },
     });
 
-const ToggleSetting = ({ setting, icon, inverted = false, extraFn = () => {}, ...rest }) => {
+const ToggleSetting = ({ setting, icon, inverted = false, ...rest }) => {
     // Commented when enabled
     const isEnabled = () => {
         const perfFileContent = readFile(perfConfPath).split("\n");
@@ -48,7 +47,7 @@ const ToggleSetting = ({ setting, icon, inverted = false, extraFn = () => {}, ..
         ...rest,
         icon,
         enabled: isEnabled(),
-        onClicked: (self, toggled) => {
+        onClicked: (_, toggled) => {
             const perfFileContent = readFile(perfConfPath).split("\n");
             const settingIndex = perfFileContent.findIndex(line => line.includes(`# ## ${setting}`));
             const settingLines = parseInt(perfFileContent[settingIndex].split(" ").at(-1), 10);
@@ -58,7 +57,6 @@ const ToggleSetting = ({ setting, icon, inverted = false, extraFn = () => {}, ..
                 } else if (inverted ? !toggled : toggled) perfFileContent[i] = `#${perfFileContent[i]}`;
             }
             writeFile(perfFileContent.join("\n"), perfConfPath).catch(print);
-            extraFn(self, toggled);
         },
     });
 };
@@ -76,11 +74,11 @@ export default () =>
                     tooltipText: "Blur windows and layers",
                     icon: "deblur",
                 }),
-                ToggleSetting({
-                    setting: "opacity",
-                    tooltipText: "Transparent windows and layers",
+                ToggleButton({
                     icon: "opacity",
-                    extraFn: (_, toggled) =>
+                    tooltipText: "Transparent shell, GTK and terminal",
+                    enabled: exec(`sed -n 2p '${CACHE_DIR}/user/colormode.txt'`) === "transparent",
+                    onClicked: (_, toggled) =>
                         execAsync([
                             "bash",
                             "-c",
@@ -98,14 +96,14 @@ export default () =>
                             .catch(print),
                 }),
                 ToggleSetting({
+                    setting: "opacity",
+                    tooltipText: "Transparent windows",
+                    icon: "select_window_2",
+                }),
+                ToggleSetting({
                     setting: "animations",
                     tooltipText: "Hyprland animations",
                     icon: "animation",
-                }),
-                ToggleSetting({
-                    setting: "borderanim",
-                    tooltipText: "Window border gradient animation",
-                    icon: "border_color",
                 }),
                 ToggleButton({
                     icon: "wallpaper_slideshow",

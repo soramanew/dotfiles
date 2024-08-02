@@ -1,5 +1,5 @@
 const { Box, Icon, Label } = Widget;
-const { exec, execAsync } = Utils;
+const { execAsync } = Utils;
 import {
     ToggleIconBluetooth,
     ToggleIconWifi,
@@ -18,7 +18,7 @@ import ModuleAudioControls from "./centermodules/audiocontrols.js";
 import ModuleWifiNetworks from "./centermodules/wifinetworks.js";
 import ModuleBluetooth from "./centermodules/bluetooth.js";
 import { ModuleCalendar } from "./calendar.js";
-import { getDistroIcon, hasTouchscreen } from "../.miscutils/system.js";
+import { getDistroIcon } from "../.miscutils/system.js";
 import { ExpandingIconTabContainer } from "../.commonwidgets/tabcontainer.js";
 import { checkKeybind, keybinds } from "../.widgetutils/keybind.js";
 
@@ -42,7 +42,7 @@ const centerWidgets = [
         name: "Wifi networks",
         materialIcon: "wifi",
         contentWidget: ModuleWifiNetworks(),
-        onFocus: () => execAsync("nmcli dev wifi list").catch(print),
+        onFocus: () => execAsync("nmcli device wifi rescan").catch(print), // Scan for connections
     },
 ];
 

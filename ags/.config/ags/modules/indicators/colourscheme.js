@@ -25,7 +25,7 @@ const ColourSchemeSettingsRevealer = () => {
         revealChild: false,
         transition: "slide_down",
         transitionDuration: 200,
-        child: ColorSchemeSettings(),
+        child: ColourSchemeSettings(),
         setup: self =>
             self.hook(isHoveredColourschemeSettings, self => {
                 if (isHoveredColourschemeSettings.value == false) {
@@ -68,7 +68,7 @@ const LIGHTDARK_FILE_LOCATION = `${CACHE_DIR}/user/colormode.txt`;
 const initScheme = exec(`bash -c "sed -n \'3p\' ${LIGHTDARK_FILE_LOCATION}"`);
 const initSchemeIndex = calculateSchemeInitIndex(schemeOptionsArr, initScheme);
 
-const ColorSchemeSettings = () =>
+const ColourSchemeSettings = () =>
     Box({
         className: "osd-colorscheme-settings spacing-v-5",
         vertical: true,
