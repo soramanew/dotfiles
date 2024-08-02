@@ -2,6 +2,13 @@
 
 cd (dirname (status -f)) || exit
 
+if [ (git status --porcelain) ]
+    read -l -P ':: You have unstashed changes. Proceed with merge? [y/N] ' confirm
+    if [ "$confirm" != 'y' -a "$confirm" != 'Y' ]
+        exit
+    end
+end
+
 # Merge without committing or fast forward
 git merge --no-commit --no-ff $argv[1]
 
