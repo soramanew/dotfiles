@@ -99,29 +99,29 @@
         "warning_fg_color": "rgba(0, 0, 0, 0.87)",
         "error_bg_color": "{{ $error }}",
         "error_fg_color": "{{ $onError }}",
-        "window_bg_color": "{{ transparentize $background 0.5 }}",
+        "window_bg_color": "{{ $background }}",
         "window_fg_color": "{{ $onBackground }}",
-        "view_bg_color": "{{ transparentize $surface 0.3 }}",
+        "view_bg_color": "{{ $surface }}",
         "view_fg_color": "{{ $onSurface }}",
         "headerbar_bg_color": "mix(@dialog_bg_color, @window_bg_color, 0.5)",
         "headerbar_fg_color": "{{ $onSecondaryContainer }}",
         "headerbar_border_color": "{{ $secondaryContainer }}",
         "headerbar_backdrop_color": "@headerbar_bg_color",
         "headerbar_shade_color": "rgba(0, 0, 0, 0.09)",
-        "card_bg_color": "{{ transparentize $background 0.7 }}",
+        "card_bg_color": "{{ $background }}",
         "card_fg_color": "{{ $onSecondaryContainer }}",
         "card_shade_color": "rgba(0, 0, 0, 0.09)",
-        "dialog_bg_color": "{{ transparentize $secondaryContainer 0.8 }}",
+        "dialog_bg_color": "{{ $secondaryContainer }}",
         "dialog_fg_color": "{{ $onSecondaryContainer }}",
-        "popover_bg_color": "{{ transparentize $secondaryContainer 0.8 }}",
+        "popover_bg_color": "{{ $secondaryContainer }}",
         "popover_fg_color": "{{ $onSecondaryContainer }}",
         "thumbnail_bg_color": "#1a1b26",
         "thumbnail_fg_color": "#AEE5FA",
         "shade_color": "rgba(0, 0, 0, 0.36)",
         "scrollbar_outline_color": "rgba(0, 0, 0, 0.5)",
 
-        "sidebar_bg_color": "@view_bg_color",
-        "sidebar_fg_color": "@view_fg_color",
+        "sidebar_bg_color": "@window_bg_color",
+        "sidebar_fg_color": "@window_fg_color",
         "sidebar_border_color": "@sidebar_bg_color",
         "sidebar_backdrop_color": "@sidebar_bg_color"
     },
@@ -138,7 +138,7 @@
     },
     "custom_css": {
         "gtk4": "",
-        "gtk3": ".thunar .standard-view .view :not(:selected) { background-color: rgba(0, 0, 0, 0); }"
+        "gtk3": ""
     },
     "plugins": {}
 }
