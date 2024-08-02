@@ -18,4 +18,5 @@
     "window.menuBarVisibility": "toggle",
     "javascript.preferences.importModuleSpecifierEnding": "js",
     "typescript.preferences.importModuleSpecifierEnding": "js",
+    "diffEditor.hideUnchangedRegions.enabled": true
 }
