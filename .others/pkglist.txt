@@ -99,8 +99,11 @@ qt5ct
 qt6ct
 rate-mirrors
 rot8-git
+safeeyes
 seahorse
 sof-firmware
+spotify
+spotify-adblock
 starship
 stow
 swappy
@@ -110,6 +113,7 @@ thunar-archive-plugin
 thunar-media-tags-plugin
 thunar-volman
 tinyxml2
+translate-shell
 ttf-gabarito-git
 ttf-jetbrains-mono-nerd
 ttf-material-symbols-variable-git
@@ -119,7 +123,6 @@ ttf-rubik-vf
 tumbler
 tzupdate
 usbutils
-vdpauinfo
 vesktop-bin
 vnstat
 vscodium-bin
@@ -130,6 +133,7 @@ wf-recorder
 wireplumber
 wlogout
 wlr-randr
+wlrctl
 xdg-desktop-portal-hyprland-git
 xdg-user-dirs-gtk
 yad
