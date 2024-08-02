@@ -33,8 +33,7 @@ github-cli
 github-desktop-bin
 glm
 gnome-bluetooth-3.0
-gnome-control-center
-gradience-git
+gradience
 greetd
 greetd-tuigreet
 grim
@@ -69,6 +68,7 @@ man-db
 mkinitcpio-firmware
 mpv
 nano
+nemo
 neofetch
 networkmanager
 noto-fonts
@@ -78,13 +78,14 @@ ntfs-3g
 nwg-look
 pacman-contrib
 pavucontrol
+pinta
 pipewire
 pipewire-alsa
 pipewire-jack
 pipewire-pulse
 pipewire-v4l2
 playerctl
-plymouth-theme-circle-git
+plymouth
 polkit-gnome
 powertop
 python-materialyoucolor-git
@@ -117,7 +118,6 @@ ttf-roboto-slab
 ttf-rubik-vf
 tumbler
 tzupdate
-tzupdate-debug
 usbutils
 vdpauinfo
 vesktop-bin
