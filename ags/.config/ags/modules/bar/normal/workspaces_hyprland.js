@@ -86,9 +86,7 @@ const WorkspaceContents = () =>
                     const activefg = activeWorkspaceStyleContext.get_property("color", Gtk.StateFlags.NORMAL);
                     area.set_size_request(workspaceDiameter * WS_SHOWN, -1);
                     const widgetStyleContext = area.get_style_context();
-                    const activeWs = widgetStyleContext.get_property("font-size", Gtk.StateFlags.NORMAL);
 
-                    const activeWsCenterX = -(workspaceDiameter / 2) + workspaceDiameter * activeWs;
                     const activeWsCenterY = height / 2;
 
                     // Font
@@ -137,7 +135,7 @@ const WorkspaceContents = () =>
                                 cr.fill();
                             }
 
-                            // Set color for text
+                            // Set colour for text
                             cr.setSourceRGBA(occupiedfg.red, occupiedfg.green, occupiedfg.blue, occupiedfg.alpha);
                         } else cr.setSourceRGBA(wsfg.red, wsfg.green, wsfg.blue, wsfg.alpha);
 

@@ -6,9 +6,8 @@
     all: unset;
 }
 
-// Colors
-@import "./colour/material"; // Material colors
-@import "./colors"; // Global color definitions. Uses material colors as base.
+@import "./material"; // Material colours
+@import "./colours"; // Global colour definitions. Uses material colours as base.
 @import "./lib_mixins";
 @import "./lib_classes";
 @import "./common"; // Context menu n stuff

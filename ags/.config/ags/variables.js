@@ -3,12 +3,27 @@ const Mpris = await Service.import("mpris");
 import { forMonitors, hasTouchscreen } from "./modules/.miscutils/system.js";
 import { LAST_PLAYER_PATH } from "./constants.js";
 
+const showIndicatorsFn = (indicator, timeout = 1000) => {
+    let currentIndicatorTimeout;
+    return () => {
+        indicator.value = true;
+        if (currentIndicatorTimeout) currentIndicatorTimeout.destroy();
+        currentIndicatorTimeout = setTimeout(() => {
+            indicator.value = false;
+        }, timeout);
+    };
+};
+
 // Global vars for external control (through keybinds)
 export const showMusicControls = Variable(false);
-export const showColorScheme = Variable(false);
-export const showClock = Variable(false);
 globalThis.openMusicControls = showMusicControls;
-globalThis.openColorScheme = showColorScheme;
+export const showColorScheme = Variable(false);
+const showColourSchemeFn = showIndicatorsFn(showColorScheme, 3000);
+showColorScheme.connect("changed", () => {
+    if (showColorScheme.value) showColourSchemeFn();
+});
+globalThis.openColourScheme = () => showColorScheme.setValue(true); // setValue to force changed signal
+export const showClock = Variable(false);
 globalThis.openClock = showClock;
 globalThis.mpris = Mpris;
 
@@ -45,6 +60,20 @@ globalThis.cycleMode = () => {
     else currentShellMode.value = "normal";
 };
 
+// Tablet mode (triggered via acpi events, need external script to trigger)
+export const tabletMode = Variable(false);
+globalThis.tabletMode = tabletMode;
+
+// For lock indicators (isCapsLockOn and isNumLockOn global for external script control)
+export const showLockIndicators = Variable(false);
+export const isCapsLockOn = Variable(readFile("/sys/class/leds/input7::capslock/brightness").trim() === "1");
+export const isNumLockOn = Variable(readFile("/sys/class/leds/input7::numlock/brightness").trim() === "1");
+const showLockIndicatorsFn = showIndicatorsFn(showLockIndicators);
+isCapsLockOn.connect("changed", showLockIndicatorsFn);
+isNumLockOn.connect("changed", showLockIndicatorsFn);
+globalThis.isCapsLockOn = isCapsLockOn;
+globalThis.isNumLockOn = isNumLockOn;
+
 // Window controls
 globalThis.toggleWindowOnAllMonitors = name => forMonitors(id => App.toggleWindow(name + id));
 globalThis.closeWindowOnAllMonitors = name => forMonitors(id => App.closeWindow(name + id));
@@ -59,27 +88,3 @@ globalThis.closeEverything = () => {
     App.closeWindow("sideright");
     App.closeWindow("overview");
 };
-
-export const tabletMode = Variable(false);
-globalThis.tabletMode = tabletMode;
-
-// For lock indicators (isCapsLockOn and isNumLockOn global for external script control)
-const showIndicatorsFn = (indicator, timeout = 1000) => {
-    let currentIndicatorTimeout;
-    return () => {
-        indicator.value = true;
-        if (currentIndicatorTimeout) currentIndicatorTimeout.destroy();
-        currentIndicatorTimeout = setTimeout(() => {
-            indicator.value = false;
-        }, timeout);
-    };
-};
-
-export const showLockIndicators = Variable(false);
-export const isCapsLockOn = Variable(readFile("/sys/class/leds/input7::capslock/brightness").trim() === "1");
-export const isNumLockOn = Variable(readFile("/sys/class/leds/input7::numlock/brightness").trim() === "1");
-const showLockIndicatorsFn = showIndicatorsFn(showLockIndicators);
-isCapsLockOn.connect("changed", showLockIndicatorsFn);
-isNumLockOn.connect("changed", showLockIndicatorsFn);
-globalThis.isCapsLockOn = isCapsLockOn;
-globalThis.isNumLockOn = isNumLockOn;

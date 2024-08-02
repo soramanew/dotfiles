@@ -1,7 +1,7 @@
 const { Window, Box } = Widget;
 import IndicatorValues from "./indicatorvalues.js";
 import MusicControls from "./musiccontrols.js";
-import ColorScheme from "./colorscheme.js";
+import ColourScheme from "./colourscheme.js";
 import NotificationPopups from "./notificationpopups.js";
 import LockIndicators from "./lockindicators.js";
 import Clock from "./clock.js";
@@ -22,7 +22,7 @@ export default (monitor = 0) =>
             children: [
                 MusicControls(),
                 Clock(),
-                ColorScheme(),
+                ColourScheme(),
                 IndicatorValues(),
                 LockIndicators(),
                 NotificationPopups(),

@@ -85,7 +85,6 @@ const WorkspaceContents = () =>
 
                     const widgetStyleContext = area.get_style_context();
                     const activeWs = widgetStyleContext.get_property("font-size", Gtk.StateFlags.NORMAL);
-                    const lastImmediateActiveWs = area.attribute.lastImmediateActiveWs;
                     const immediateActiveWs = area.attribute.immediateActiveWs;
 
                     // Draw
@@ -95,22 +94,8 @@ const WorkspaceContents = () =>
                     );
                     for (let i = 1; i <= WS_SHOWN; i++) {
                         if (i == immediateActiveWs) continue;
-                        let colors = {};
-                        if (area.attribute.workspaceMask & (1 << i)) colors = occupiedbg;
-                        else colors = wsbg;
-
-                        // if ((i == immediateActiveWs + 1 && immediateActiveWs < activeWs) ||
-                        //     (i == immediateActiveWs + 1 && immediateActiveWs < activeWs)) {
-                        //     const widthPercentage = (i == immediateActiveWs - 1) ?
-                        //         1 - (immediateActiveWs - activeWs) :
-                        //         activeWs - immediateActiveWs;
-                        //     cr.setSourceRGBA(colors.red * widthPercentage + activebg.red * (1 - widthPercentage),
-                        //         colors.green * widthPercentage + activebg.green * (1 - widthPercentage),
-                        //         colors.blue * widthPercentage + activebg.blue * (1 - widthPercentage),
-                        //         colors.alpha);
-                        // }
-                        // else
-                        cr.setSourceRGBA(colors.red, colors.green, colors.blue, colors.alpha);
+                        const colours = area.attribute.workspaceMask & (1 << i) ? occupiedbg : wsbg;
+                        cr.setSourceRGBA(colours.red, colours.green, colours.blue, colours.alpha);
 
                         const centerX =
                             i <= activeWs
