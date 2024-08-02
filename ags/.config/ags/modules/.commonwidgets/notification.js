@@ -192,7 +192,7 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
             justify: Gtk.Justification.LEFT,
             maxWidthChars: 1,
             truncate: "end",
-            label: notifObject.body.split("\n")[0],
+            label: notifObject.body.split("\n").find(v => v), // First non-empty string
         }),
     });
     const notifTextExpanded = Revealer({

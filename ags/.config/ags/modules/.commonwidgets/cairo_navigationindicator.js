@@ -45,21 +45,21 @@ export const NavigationIndicator = ({ count, vertical, setup = () => {}, ...prop
                 const indicatorWidth = cellWidth - paddingLeft - paddingRight;
                 const indicatorHeight = cellHeight - paddingTop - paddingBottom;
 
-                const background_color = styleContext.get_property("background-color", Gtk.StateFlags.NORMAL);
-                const color = styleContext.get_property("color", Gtk.StateFlags.NORMAL);
+                const backgroundColour = styleContext.get_property("background-color", Gtk.StateFlags.NORMAL);
+                const colour = styleContext.get_property("color", Gtk.StateFlags.NORMAL);
                 cr.setLineWidth(2);
                 // Background
                 cr.setSourceRGBA(
-                    background_color.red,
-                    background_color.green,
-                    background_color.blue,
-                    background_color.alpha
+                    backgroundColour.red,
+                    backgroundColour.green,
+                    backgroundColour.blue,
+                    backgroundColour.alpha
                 );
                 cr.rectangle(0, 0, width, height);
                 cr.fill();
 
                 // The indicator line
-                cr.setSourceRGBA(color.red, color.green, color.blue, color.alpha);
+                cr.setSourceRGBA(colour.red, colour.green, colour.blue, colour.alpha);
                 if (vertical) {
                     cr.rectangle(
                         paddingLeft,

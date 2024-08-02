@@ -6,9 +6,8 @@
     all: unset;
 }
 
-// Colors
-@import "./colour/material"; // Material colors
-@import "./colors"; // Global color definitions. Uses material colors as base.
+@import "./material"; // Material colours
+@import "./colours"; // Global colour definitions. Uses material colours as base.
 @import "./lib_mixins";
 @import "./lib_classes";
 @import "./common"; // Context menu n stuff
@@ -17,6 +16,13 @@
 @function to-root-transparency($colour, $override: False) {
     @if $override == True or $transparent == True {
         $colour: change-color($colour, $alpha: 1 - $rootTransparency);
+    }
+    @return $colour;
+}
+
+@function to-dark-mode($colour, $override: False) {
+    @if $override == True or $darkmode == False {
+        $colour: complement(invert($colour));
     }
     @return $colour;
 }
@@ -32,9 +38,7 @@
 @import "./notifications";
 @import "./todoscreen";
 @import "./applauncher";
-
-// Music is put last as it might mess stuff up with pywal
-@import "./music"; // Everything related to music is here
+@import "./music";
 
 // Classes for interaction
 .growingRadial {
@@ -42,10 +46,4 @@
 }
 .fadingRadial {
     transition: 50ms cubic-bezier(0.2, 0, 0, 1);
-}
-.sidebar-pinned {
-    margin: 0rem;
-    border-radius: 0rem;
-    border-bottom-right-radius: $rounding_large;
-    border: 0rem solid;
 }

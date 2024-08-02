@@ -119,9 +119,9 @@
         "thumbnail_fg_color": "#AEE5FA",
         "shade_color": "rgba(0, 0, 0, 0.36)",
         "scrollbar_outline_color": "rgba(0, 0, 0, 0.5)",
-        
+
         "sidebar_bg_color": "@window_bg_color",
-        "sidebar_fg_color":"@window_fg_color",
+        "sidebar_fg_color": "@window_fg_color",
         "sidebar_border_color": "@sidebar_bg_color",
         "sidebar_backdrop_color": "@sidebar_bg_color"
     },

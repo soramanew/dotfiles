@@ -383,6 +383,7 @@ export default () => {
                         if (currentGroup !== previousGroup) {
                             box.attribute.update(box);
                             box.attribute.workspaceGroup = currentGroup;
+                            overviewTick.setValue(!overviewTick.value);
                         }
                     })
                     .hook(App, (box, name, visible) => {

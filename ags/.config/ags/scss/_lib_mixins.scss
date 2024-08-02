@@ -89,20 +89,7 @@ $rounding_large: 1.705rem;
 $elevation_margin: 0.476rem;
 
 @mixin elevation2 {
-    box-shadow: 0px 2px 3px transparentize($shadow, 0.55);
-    margin: $elevation_margin;
-}
-
-@mixin elevation2-margin {
-    margin: $elevation_margin;
-}
-
-@mixin elevation2-padding {
-    padding: $elevation_margin;
-}
-
-@mixin elevation3 {
-    box-shadow: 0px 2px 5px $shadow;
+    box-shadow: 0px 2px 3px change-color($shadow, $alpha: 0.3);
     margin: $elevation_margin;
 }
 
@@ -189,10 +176,7 @@ $elevation_margin: 0.476rem;
 }
 
 @mixin elevation-border {
-    border-top: 1px solid $surfaceContainer;
-    border-left: 1px solid $surfaceContainer;
-    border-right: 1px solid $surfaceContainer;
-    border-bottom: 1px solid $surfaceContainer;
+    border: 1px solid mix($surfaceContainer, $outline, 90%);
 }
 
 @mixin button-minsize {
