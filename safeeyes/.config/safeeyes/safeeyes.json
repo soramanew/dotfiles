@@ -108,7 +108,7 @@
             "version": "0.0.1"
         }
     ],
-    "postpone_duration": 5,
+    "postpone_duration": 1,
     "pre_break_warning_time": 10,
     "random_order": true,
     "rpc_port": 7200,
