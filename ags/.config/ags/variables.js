@@ -1,4 +1,4 @@
-const { execAsync, readFile, writeFile } = Utils;
+const { exec, execAsync, readFile, writeFile } = Utils;
 const Mpris = await Service.import("mpris");
 import { forMonitors, hasTouchscreen } from "./modules/.miscutils/system.js";
 import { LAST_PLAYER_PATH } from "./constants.js";
@@ -66,8 +66,8 @@ globalThis.tabletMode = tabletMode;
 
 // For lock indicators (isCapsLockOn and isNumLockOn global for external script control)
 export const showLockIndicators = Variable(false);
-export const isCapsLockOn = Variable(readFile("/sys/class/leds/input7::capslock/brightness").trim() === "1");
-export const isNumLockOn = Variable(readFile("/sys/class/leds/input7::numlock/brightness").trim() === "1");
+export const isCapsLockOn = Variable(exec("bash -c 'cat /sys/class/leds/input*::capslock/brightness'").includes("1"));
+export const isNumLockOn = Variable(exec("bash -c 'cat /sys/class/leds/input*::numlock/brightness'").includes("1"));
 const showLockIndicatorsFn = showIndicatorsFn(showLockIndicators);
 isCapsLockOn.connect("changed", showLockIndicatorsFn);
 isNumLockOn.connect("changed", showLockIndicatorsFn);
