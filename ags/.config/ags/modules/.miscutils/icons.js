@@ -14,6 +14,7 @@ const substitutions = {
     "pavucontrol-qt": "pavucontrol",
     "jetbrains-pycharm-ce": "pycharm-community",
     "Spotify Free": "Spotify",
+    safeeyes: "io.github.slgobinath.SafeEyes",
 };
 
 const regexSubs = [{ regex: /^steam_app_(\d+)$/, replace: "steam_icon_$1" }];
@@ -29,7 +30,7 @@ export const substitute = str => {
     }
 
     // Guess icon name: turn into kebab case
-    if (!iconExists(str)) str = str.toLowerCase().replace(/\s+/g, "-");
+    if (!iconExists(str)) return str.toLowerCase().replace(/\s+/g, "-");
 
     // Not changed
     return str;
