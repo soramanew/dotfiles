@@ -1,3 +1,5 @@
+import { actions, actionsList } from "../overview/miscfunctions.js";
+
 export const keybindList = [
     [
         {
@@ -85,11 +87,9 @@ export const keybindList = [
             name: "Apps",
             binds: [
                 { keys: ["󰖳", "+", "T"], action: "Launch terminal: foot" },
-                { keys: ["󰖳", "+", "W"], action: "Launch browser: Waterfox" },
+                { keys: ["󰖳", "+", "W"], action: "Launch browser: Firefox" },
                 { keys: ["󰖳", "+", "C"], action: "Launch editor: VSCodium" },
-                { keys: ["󰖳", "Alt", "+", "C"], action: "Launch editor: PyCharm" },
                 { keys: ["󰖳", "+", "G"], action: "Launch git GUI: Github Desktop" },
-                // { keys: ["󰖳", "+", "X"], action: "Launch editor: FeatherPad" },
                 { keys: ["󰖳", "+", "M"], action: "Launch music player: Feishin" },
                 { keys: ["󰖳", "+", "D"], action: "Launch Discord client: Vesktop" },
                 { keys: ["Ctrl", "Shift", "+", "Esc"], action: "Launch system monitor: btop" },
@@ -109,14 +109,7 @@ export const keybindList = [
         {
             icon: "terminal",
             name: "Launcher actions",
-            binds: [
-                { keys: [">raw"], action: "Toggle mouse acceleration" },
-                { keys: [">img"], action: "Select wallpaper and generate colourscheme" },
-                { keys: [">light"], action: "Switch to light theme" },
-                { keys: [">dark"], action: "Switch to dark theme" },
-                { keys: [">colour"], action: "Pick accent colour" },
-                { keys: [">todo"], action: "Type something after that to add a Todo item" },
-            ],
+            binds: actionsList.map(action => ({ keys: [`>${action}`], action: actions[action].desc })),
             id: 8,
         },
     ],

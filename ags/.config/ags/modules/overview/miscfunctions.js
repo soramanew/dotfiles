@@ -12,10 +12,6 @@ export const hasUnterminatedBackslash = inputString => /\\+$/.test(inputString);
 export const expandTilde = path => (path.startsWith("~") ? GLib.get_home_dir() + path.slice(1) : path);
 
 export const actions = {
-    img: {
-        desc: "Change wallpaper",
-        go: () => execAsync(`${App.configDir}/scripts/color_generation/switchwall.sh`).catch(print),
-    },
     colour: {
         desc: "Generate colourscheme from colour picker",
         go: () =>
