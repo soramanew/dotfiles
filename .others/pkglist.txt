@@ -103,6 +103,8 @@ spotify-adblock
 starship
 stow
 swappy
+sway-audio-idle-inhibit-git
+sway-audio-idle-inhibit-git-debug
 synology-drive
 thunar
 thunar-archive-plugin
