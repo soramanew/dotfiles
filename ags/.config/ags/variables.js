@@ -71,8 +71,10 @@ export const isNumLockOn = Variable(exec("bash -c 'cat /sys/class/leds/input*::n
 const showLockIndicatorsFn = showIndicatorsFn(showLockIndicators);
 isCapsLockOn.connect("changed", showLockIndicatorsFn);
 isNumLockOn.connect("changed", showLockIndicatorsFn);
-globalThis.isCapsLockOn = isCapsLockOn;
-globalThis.isNumLockOn = isNumLockOn;
+const updateLockIndicatorFn = (indicator, name) => () =>
+    indicator.setValue(exec(`bash -c 'cat /sys/class/leds/input*::${name}lock/brightness'`).includes("1"));
+globalThis.updateCapsLock = updateLockIndicatorFn(isCapsLockOn, "caps");
+globalThis.updateNumLock = updateLockIndicatorFn(isNumLockOn, "num");
 
 // Window controls
 globalThis.toggleWindowOnAllMonitors = name => forMonitors(id => App.toggleWindow(name + id));
