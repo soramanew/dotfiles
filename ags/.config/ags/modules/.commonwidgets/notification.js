@@ -87,15 +87,20 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
         setTimeout(() => {
             if (!destroying) callback();
         }, delay);
-    const destroyNoSlide = () => {
+    const destroyImmediately = () => {
         if (destroying) return;
         destroying = true;
 
         if (isPopup) notifObject.dismiss();
         else notifObject.close();
 
+        wholeThing.destroy();
+    };
+    const destroyNoSlide = () => {
+        if (destroying) return;
+
         wholeThing.revealChild = false;
-        Utils.timeout(120, () => wholeThing.destroy());
+        Utils.timeout(120, destroyImmediately);
     };
     const destroyWithAnims = () => {
         if (destroying) return;
@@ -157,6 +162,7 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
     });
     const wholeThing = Revealer({
         attribute: {
+            destroyImmediately,
             destroyNoSlide,
             destroyWithAnims,
             dragging: false,
