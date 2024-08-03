@@ -7,29 +7,41 @@ import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 
 export default (category, categoriesOpen) => {
     let destroying = false;
-    const destroyNoSlide = () => {
+    const safeTimeout = (delay, callback) =>
+        setTimeout(() => {
+            if (!destroying) callback();
+        }, delay);
+    const destroy = () => {
+        // Close animation (slide up)
+        wholeThing.revealChild = false;
+        Utils.timeout(120, () => wholeThing.destroy());
+    };
+    const destroyNoSlide = (delay = 30) => {
         if (destroying) return;
         destroying = true;
 
-        wholeThing.revealChild = false;
-        Utils.timeout(200, () => wholeThing.destroy());
+        // Delete ref to this
+        delete categoriesOpen[category];
+
+        const children = notifs.child.children;
+        if (notifs.revealChild && children.length > 0) {
+            // Destroy when final child is destroyed
+            children.at(-1).connect("destroy", destroy);
+            for (let i = 0; i < children.length; i++) Utils.timeout(delay * i, children[i].attribute.destroyWithAnims);
+        } else {
+            // Don't play animation if no children or not revealed
+            for (const ch of children) ch.attribute.destroyImmediately();
+            destroy();
+        }
     };
-    const destroyWithAnims = (slide = true) => {
+    const destroyWithAnims = () => {
         if (destroying) return;
 
         widget.sensitive = false;
         categoryBox.setCss(middleClickClose);
-        Utils.timeout(50, () => {
-            delete categoriesOpen[category];
-            const children = notifs.child.children;
-            if (slide && notifs.revealChild && notifs.child.children.length) {
-                for (let i = 0; i < children.length; i++) Utils.timeout(50 * i, children[i].attribute.destroyWithAnims);
-                Utils.timeout(50 * (notifs.child.children.length - 1), destroyNoSlide);
-            } else {
-                for (const ch of children) ch.attribute.destroyNoSlide();
-                destroyNoSlide();
-            }
-        });
+
+        // If children revealed, small delay otherwise wait for slide anim to finish
+        Utils.timeout(notifs.revealChild && notifs.child.children.length > 0 ? 30 : 200, destroyNoSlide);
     };
     const setCss = css => {
         categoryBox.setCss(css);
@@ -59,9 +71,7 @@ export default (category, categoriesOpen) => {
                 expanded = true; // For gesture stuff
             }
         },
-        child: MaterialIcon("expand_less", "norm", {
-            vpack: "center",
-        }),
+        child: MaterialIcon("expand_less", "norm", { vpack: "center" }),
         setup: setupCursorHover,
     });
     const header = Box({
@@ -77,9 +87,7 @@ export default (category, categoriesOpen) => {
                 label: category,
                 setup: self => {
                     const callback = delay =>
-                        Utils.timeout(delay, () => {
-                            if (!destroying) self.label = `${category} - ${notifs.child.children.length}`;
-                        });
+                        safeTimeout(delay, () => (self.label = `${category} - ${notifs.child.children.length}`));
                     self.hook(Notifications, () => callback(10), "notified").hook(
                         Notifications,
                         () => callback(250),
@@ -136,7 +144,7 @@ export default (category, categoriesOpen) => {
         },
         revealChild: false,
         transition: "slide_down",
-        transitionDuration: 200,
+        transitionDuration: 120,
         child: Box({
             // Box to make sure css-based spacing works
             vertical: true,
@@ -145,8 +153,8 @@ export default (category, categoriesOpen) => {
             self.hook(
                 Notifications,
                 () =>
-                    Utils.timeout(250, () => {
-                        if (!destroying && notifs.child.children.length <= 0) destroyWithAnims();
+                    safeTimeout(250, () => {
+                        if (notifs.child.children.length === 0) destroyWithAnims();
                     }),
                 "closed"
             ),
@@ -248,7 +256,7 @@ export default (category, categoriesOpen) => {
                                 setCss(leftAnim1);
                                 widget.sensitive = false;
                             }
-                            Utils.timeout(200, () => destroyWithAnims(false));
+                            safeTimeout(200, () => destroyNoSlide(0));
                         } else {
                             setCss(`transition: margin 200ms cubic-bezier(0.05, 0.7, 0.1, 1), opacity 200ms cubic-bezier(0.05, 0.7, 0.1, 1);
                                     margin-left: ${startMargin}px; margin-right: ${startMargin}px;
