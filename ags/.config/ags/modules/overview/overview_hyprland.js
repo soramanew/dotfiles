@@ -6,7 +6,7 @@ const Mpris = await Service.import("mpris");
 import { setupCursorHoverGrab } from "../.widgetutils/cursorhover.js";
 import { dumpToWorkspace, swapWorkspace } from "./actions.js";
 import { substitute } from "../.miscutils/icons.js";
-import { range } from "../.miscutils/system.js";
+import { dispatch, range } from "../.miscutils/system.js";
 import {
     SCREEN_HEIGHT,
     SCREEN_WIDTH,
@@ -24,7 +24,6 @@ const TARGET = [Gtk.TargetEntry.new("text/plain", Gtk.TargetFlags.SAME_APP, 0)];
 
 const overviewTick = Variable(false);
 
-const dispatch = dispatcher => Hyprland.messageAsync(`dispatch ${dispatcher}`).catch(print);
 const dispatchAndClose = dispatcher => {
     App.closeWindow("overview");
     return dispatch(dispatcher);
