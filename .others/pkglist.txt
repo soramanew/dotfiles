@@ -58,10 +58,6 @@ jq
 kvantum
 kvantum-qt5
 lexend-fonts-git
-lib32-mesa
-lib32-vulkan-intel
-libva-utils
-libvdpau-va-gl
 linux
 linux-firmware
 man-db
