@@ -65,7 +65,6 @@ const TrackTitle = ({ player, ...rest }) =>
         label: player.bind("track_title").as(title => (title.length > 0 ? trimTrackTitle(title) : "No music playing")),
         xalign: 0,
         truncate: "end",
-        // wrap: true,
         className: "osd-music-title",
         css: player.bind("track_title").as(() => `font-family: ${getTrackfont(player)}, ${DEFAULT_MUSIC_FONT}`),
     });
