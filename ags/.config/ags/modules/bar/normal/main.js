@@ -7,6 +7,7 @@ import Indicators from "./spaceright.js";
 import Music from "./music.js";
 import System from "./system.js";
 import Brightness from "../../../services/brightness.js";
+import { dispatch } from "../../.miscutils/system.js";
 
 export const BarGroup = (child, module) =>
     Box({
@@ -43,8 +44,13 @@ const SpaceRight = () =>
 
 const CenterModules = () =>
     EventBox({
-        onScrollUp: () => Hyprland.messageAsync("dispatch workspace -1").catch(print),
-        onScrollDown: () => Hyprland.messageAsync("dispatch workspace +1").catch(print),
+        onScrollUp: () => dispatch("workspace -1"),
+        onScrollDown: () => {
+            const activeWs = JSON.parse(Hyprland.message("j/activewindow")).workspace?.name;
+            if (activeWs?.startsWith("special:"))
+                dispatch(`togglespecialworkspace ${activeWs.replace("special:", "")}`);
+            else dispatch("workspace +1");
+        },
         child: CenterBox({
             startWidget: Music(),
             centerWidget: Workspaces(),

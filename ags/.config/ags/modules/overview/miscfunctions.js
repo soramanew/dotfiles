@@ -1,10 +1,9 @@
 import Gio from "gi://Gio";
 import GLib from "gi://GLib";
 const { execAsync } = Utils;
-const Hyprland = await Service.import("hyprland");
 const Applications = await Service.import("applications");
 import Todo from "../../services/todo.js";
-import { darkMode } from "../.miscutils/system.js";
+import { darkMode, dispatch } from "../.miscutils/system.js";
 
 // Use a regular expression to match a trailing odd number of backslashes
 export const hasUnterminatedBackslash = inputString => /\\+$/.test(inputString);
@@ -47,7 +46,7 @@ export const actions = {
     },
     logout: {
         desc: "Logout",
-        go: () => Hyprland.messageAsync("dispatch exit").catch(print),
+        go: () => dispatch("exit"),
     },
     reload: {
         desc: "Reload AGS desktop file cache (applications list)",
