@@ -1,3 +1,4 @@
+import Pango from "gi://Pango";
 const { Box, CenterBox, Label, Button, Revealer, Stack } = Widget;
 const { exec } = Utils;
 import PackageUpdates from "../../../services/packageupdates.js";
@@ -72,6 +73,7 @@ const Error = err =>
         className: "txt txt-small",
         hexpand: true,
         wrap: true,
+        wrapMode: Pango.WrapMode.WORD_CHAR,
         label: err,
         tooltipText: err,
     });

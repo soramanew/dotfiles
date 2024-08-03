@@ -2,6 +2,7 @@
 import GLib from "gi://GLib";
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
+import Pango from "gi://Pango";
 const { Box, EventBox, Icon, Overlay, Label, Button, Revealer } = Widget;
 import { MaterialIcon } from "./materialicon.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
@@ -194,10 +195,12 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
             xalign: 0,
             className: `txt-smallie notif-body-${notifObject.urgency}`,
             useMarkup: true,
-            xalign: 0,
             justify: Gtk.Justification.LEFT,
             maxWidthChars: 1,
             truncate: "end",
+            lines: 1,
+            wrap: true,
+            wrapMode: Pango.WrapMode.CHAR,
             label: notifObject.body.split("\n").find(v => v), // First non-empty string
         }),
     });
@@ -216,6 +219,7 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
                     justify: Gtk.Justification.LEFT,
                     maxWidthChars: 1,
                     wrap: true,
+                    wrapMode: Pango.WrapMode.WORD_CHAR,
                     label: notifObject.body,
                 }),
                 Box({

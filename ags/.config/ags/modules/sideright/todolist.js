@@ -1,3 +1,4 @@
+import Pango from "gi://Pango";
 const { Box, Button, Label, Revealer, Entry } = Widget;
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { TabContainer } from "../.commonwidgets/tabcontainer.js";
@@ -16,6 +17,7 @@ const TodoListItem = (task, id, isDone) => {
                 hexpand: true,
                 xalign: 0,
                 wrap: true,
+                wrapMode: Pango.WrapMode.WORD_CHAR,
                 className: "txt txt-small sidebar-todo-txt",
                 label: task.content,
                 selectable: true,
