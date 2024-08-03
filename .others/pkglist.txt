@@ -103,6 +103,8 @@ starship
 steam
 stow
 swappy
+sway-audio-idle-inhibit-git
+sway-audio-idle-inhibit-git-debug
 synology-drive
 tenacity
 thunar
