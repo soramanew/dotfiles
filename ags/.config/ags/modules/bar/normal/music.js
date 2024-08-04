@@ -3,9 +3,10 @@ const { exec, execAsync } = Utils;
 const Mpris = await Service.import("mpris");
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
-import { lastPlayer, showMusicControls } from "../../../variables.js";
+import { showMusicControls } from "../../../variables.js";
 import { BarGroup } from "./main.js";
 import { EXTENDED_BAR } from "../../../constants.js";
+import Players from "../../../services/players.js";
 
 function trimTrackTitle(title) {
     if (!title) return "";
@@ -102,10 +103,10 @@ const TrackProgress = () =>
         hpack: "center",
         extraSetup: self => {
             const update = () => {
-                const player = lastPlayer.value;
+                const player = Players.last_player;
                 if (player) self.attribute.updateProgress(self, (player.position / player.length) * 100);
             };
-            self.hook(Mpris, update).hook(lastPlayer, update).poll(3000, update);
+            self.hook(Mpris, update).hook(Players, update, "notify::last-player").poll(3000, update);
         },
     });
 
@@ -126,8 +127,9 @@ export default () => {
                         justification: "center",
                         setup: self => {
                             const update = () =>
-                                (self.label = lastPlayer.value?.playBackStatus === "Playing" ? "pause" : "play_arrow");
-                            self.hook(Mpris, update).hook(lastPlayer, update);
+                                (self.label =
+                                    Players.last_player?.playBackStatus === "Playing" ? "pause" : "play_arrow");
+                            self.hook(Mpris, update).hook(Players, update, "notify::last-player");
                         },
                     }),
                 }),
@@ -142,7 +144,7 @@ export default () => {
         maxWidthChars: 1,
         setup: self => {
             const update = () => {
-                const player = lastPlayer.value;
+                const player = Players.last_player;
                 if (player) {
                     const title = trimTrackTitle(player.trackTitle);
                     // Filter to get rid of empty artist names
@@ -163,7 +165,7 @@ export default () => {
                     self.tooltipText = "";
                 }
             };
-            self.hook(Mpris, update).hook(lastPlayer, update);
+            self.hook(Mpris, update).hook(Players, update, "notify::last-player");
         },
     });
     const musicStuff = Box({

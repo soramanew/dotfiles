@@ -25,6 +25,7 @@
     color: $onSecondaryContainer;
     background-size: cover;
     background-position: center;
+    box-shadow: 0px 0px 5px mix($primary, $layer0, 20%);
 }
 
 .osd-music-info {
