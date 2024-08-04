@@ -23,7 +23,6 @@ function guessMessageType(summary) {
 }
 
 const NotificationIcon = notifObject => {
-    // { appEntry, appIcon, image }, urgency = 'normal'
     if (notifObject.image) {
         return Box({
             valign: Gtk.Align.CENTER,

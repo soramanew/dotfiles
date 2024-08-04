@@ -22,8 +22,5 @@ export default (props = {}) => {
         transitionDuration: 180,
         child: trayContent,
     });
-    return Box({
-        ...props,
-        children: [trayRevealer],
-    });
+    return Box({ ...props, child: trayRevealer });
 };
