@@ -42,15 +42,16 @@ const SpaceRight = () =>
         child: Indicators(),
     });
 
+const scrollWs = prefix => {
+    const activeWs = JSON.parse(Hyprland.message("j/activewindow")).workspace?.name;
+    if (activeWs?.startsWith("special:")) dispatch(`togglespecialworkspace ${activeWs.replace("special:", "")}`);
+    else dispatch(`workspace ${prefix}1`);
+};
+
 const CenterModules = () =>
     EventBox({
-        onScrollUp: () => dispatch("workspace -1"),
-        onScrollDown: () => {
-            const activeWs = JSON.parse(Hyprland.message("j/activewindow")).workspace?.name;
-            if (activeWs?.startsWith("special:"))
-                dispatch(`togglespecialworkspace ${activeWs.replace("special:", "")}`);
-            else dispatch("workspace +1");
-        },
+        onScrollUp: () => scrollWs("-"),
+        onScrollDown: () => scrollWs("+"),
         child: CenterBox({
             startWidget: Music(),
             centerWidget: Workspaces(),
