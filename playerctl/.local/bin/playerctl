@@ -8,15 +8,15 @@ end
 # No players
 /bin/playerctl status &> /dev/null || exit
 
-set last_player_path ~/.cache/ags/media/last_player.txt
-if [ -f $last_player_path ]
-    set last_player (cat $last_player_path)
+set players_path ~/.cache/ags/media/players.txt
+if [ -f $players_path -a -n $players_path ]
+    set last_player (head -1 $players_path)
 else
     set players (/bin/playerctl -l)
     set statuses (/bin/playerctl -a status)
     # Playing > paused > stopped
     set last_player $players[(contains -i 'Playing' $statuses || contains -i 'Paused' $statuses || echo 1)]
-    echo $last_player > $last_player_path
+    echo $last_player > $players_path
 end
 
 /bin/playerctl -p $last_player $argv
