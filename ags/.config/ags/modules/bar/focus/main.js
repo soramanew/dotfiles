@@ -4,6 +4,12 @@ import Workspaces from "./workspaces_hyprland.js";
 import { BATTERY_LOW } from "../../../constants.js";
 import { dispatch } from "../../.miscutils/system.js";
 
+const scrollWs = prefix => {
+    const activeWs = JSON.parse(Hyprland.message("j/activewindow")).workspace?.name;
+    if (activeWs?.startsWith("special:")) dispatch(`togglespecialworkspace ${activeWs.replace("special:", "")}`);
+    else dispatch(`workspace ${prefix}1`);
+};
+
 export default () => {
     const contents = Widget.CenterBox({
         className: "bar-bg-focus",
@@ -16,13 +22,8 @@ export default () => {
             "notify::percent"
         );
     return Widget.EventBox({
-        onScrollUp: () => dispatch("workspace -1"),
-        onScrollDown: () => {
-            const activeWs = JSON.parse(Hyprland.message("j/activewindow")).workspace?.name;
-            if (activeWs?.startsWith("special:"))
-                dispatch(`togglespecialworkspace ${activeWs.replace("special:", "")}`);
-            else dispatch("workspace +1");
-        },
+        onScrollUp: () => scrollWs("-"),
+        onScrollDown: () => scrollWs("+"),
         onSecondaryClickRelease: cycleMode,
         onMiddleClickRelease: () => App.toggleWindow("overview"),
         child: contents,
