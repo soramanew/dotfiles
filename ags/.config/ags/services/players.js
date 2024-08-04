@@ -1,4 +1,4 @@
-const { exec, readFile, writeFile } = Utils;
+const { exec, readFile, writeFileSync } = Utils;
 const Mpris = await Service.import("mpris");
 import { CACHE_DIR } from "../constants.js";
 import { fileExists } from "../modules/.miscutils/files.js";
@@ -16,7 +16,8 @@ class PlayersService extends Service {
     }
 
     #save() {
-        writeFile(this.#players.map(p => p.name).join("\n"), this.#path).catch(print);
+        // Async doesn't write sometimes or something
+        writeFileSync(this.#players.map(p => p.name).join("\n"), this.#path);
     }
 
     #connectPlayerSignals(player) {
@@ -67,7 +68,41 @@ class PlayersService extends Service {
 
             // Connect update signals
             for (const player of Mpris.players) this.#connectPlayerSignals(player);
-            Mpris.connect("player-added", (_, busName) => this.#connectPlayerSignals(Mpris.getPlayer(busName)));
+            Mpris.connect("player-added", (_, busName) => {
+                const player = Mpris.getPlayer(busName);
+                // Connect signals
+                this.#connectPlayerSignals(player);
+
+                // Remove if present
+                const index = this.#players.indexOf(player);
+                if (index >= 0) {
+                    this.#players.splice(index, 1);
+                    if (index === 0) this.notify("last-player");
+                }
+
+                // Set position based on playback status
+                const statuses = ["Playing", "Paused", "Stopped"];
+                let added = false;
+                for (let i = statuses.indexOf(player.playBackStatus); i < statuses.length; i++) {
+                    const index = this.#players.findIndex(p => p.playBackStatus === statuses[i]);
+                    if (index >= 0) {
+                        // Insert before (i.e. becomes) the first player with that status
+                        this.#players.splice(index, 0, player);
+                        if (index === 0) this.notify("last-player");
+                        added = true;
+                        break;
+                    }
+                }
+                // If no other players or all other players are playing, add to end
+                if (!added) {
+                    this.#players.push(player);
+                    // Notify if no other players
+                    if (this.#players.length === 1) this.notify("last-player");
+                }
+
+                // Save to file
+                this.#save();
+            });
 
             // Remove when closed
             Mpris.connect("player-closed", (_, busName) => {
