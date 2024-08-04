@@ -8,6 +8,8 @@ bc
 blueman
 bluez-utils
 btop
+cava
+cava-debug
 cliphist
 cowfortune
 cpupower
@@ -77,6 +79,7 @@ nwg-look
 pacman-contrib
 pavucontrol
 pinta
+pipes.js-git
 pipewire
 pipewire-alsa
 pipewire-jack
@@ -104,7 +107,6 @@ steam
 stow
 swappy
 sway-audio-idle-inhibit-git
-sway-audio-idle-inhibit-git-debug
 synology-drive
 tenacity
 thunar
