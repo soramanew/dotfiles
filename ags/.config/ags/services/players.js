@@ -19,23 +19,18 @@ class PlayersService extends Service {
         writeFile(this.#players.map(p => p.name).join("\n"), this.#path).catch(print);
     }
 
-    #removeIfPresent(player) {
-        const index = this.#players.indexOf(player);
-        if (index >= 0) {
-            this.#players.splice(index, 1);
-            if (index === 0) this.notify("last-player");
-        }
-    }
-
     #connectPlayerSignals(player) {
         // Change order on attribute change
         for (const signal of ["play-back-status", "shuffle-status", "loop-status", "volume"])
             player.connect(`notify::${signal}`, () => {
-                this.#removeIfPresent(player);
+                // Remove if present
+                const index = this.#players.indexOf(player);
+                if (index >= 0) this.#players.splice(index, 1);
 
                 // Add to front
                 this.#players.unshift(player);
                 this.notify("last-player");
+
                 // Save to file
                 this.#save();
             });
@@ -49,26 +44,19 @@ class PlayersService extends Service {
             if (fileExists(this.#path)) {
                 this.#players = readFile(this.#path)
                     .split("\n")
-                    .map(p => Mpris.getPlayer(p));
+                    .map(p => Mpris.getPlayer(p))
+                    .filter(p => p);
                 this.notify("last-player");
+                this.#save();
             } else {
                 exec(`bash -c 'mkdir -p ${CACHE_DIR}/media'`);
                 exec(`touch ${this.#path}`);
                 const sortOrder = ["Playing", "Paused", "Stopped"];
-                writeFile(
-                    Mpris.players
-                        .sort((a, b) => sortOrder.indexOf(a.playBackStatus) - sortOrder.indexOf(b.playBackStatus))
-                        .map(p => p.name)
-                        .join("\n"),
-                    this.#path
-                )
-                    .then(() => {
-                        this.#players = readFile(this.#path)
-                            .split("\n")
-                            .map(p => Mpris.getPlayer(p));
-                        this.notify("last-player");
-                    })
-                    .catch(print);
+                this.#players = Mpris.players
+                    .sort((a, b) => sortOrder.indexOf(a.playBackStatus) - sortOrder.indexOf(b.playBackStatus))
+                    .map(p => p.name);
+                this.notify("last-player");
+                this.#save();
             }
 
             // Connect update signals
