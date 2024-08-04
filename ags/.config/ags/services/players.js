@@ -21,8 +21,14 @@ class PlayersService extends Service {
 
     #connectPlayerSignals(player) {
         // Change order on attribute change
-        for (const signal of ["play-back-status", "shuffle-status", "loop-status", "volume"])
-            player.connect(`notify::${signal}`, () => {
+        for (const signal of [
+            "notify::play-back-status",
+            "notify::shuffle-status",
+            "notify::loop-status",
+            "notify::volume",
+            "position",
+        ])
+            player.connect(signal, () => {
                 // Remove if present
                 const index = this.#players.indexOf(player);
                 if (index >= 0) this.#players.splice(index, 1);
