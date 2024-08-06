@@ -9,6 +9,8 @@ blueman
 bluez-utils
 brightnessctl
 btop
+cava
+cava-debug
 cliphist
 cowfortune
 cpupower
@@ -75,6 +77,7 @@ nwg-look
 pacman-contrib
 pavucontrol
 pinta
+pipes.js-git
 pipewire
 pipewire-alsa
 pipewire-jack
@@ -104,7 +107,6 @@ starship
 stow
 swappy
 sway-audio-idle-inhibit-git
-sway-audio-idle-inhibit-git-debug
 synology-drive
 thunar
 thunar-archive-plugin
