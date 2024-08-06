@@ -6,6 +6,7 @@ import { substitute } from "../.miscutils/icons.js";
 import { CACHE_DIR, SCREEN_HEIGHT, SCREEN_WIDTH } from "../../constants.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import { dispatch } from "../.miscutils/system.js";
+import { stripInvisUnicode } from "../.miscutils/strings.js";
 
 const PREVIEW_SCALE = 0.15;
 
@@ -14,7 +15,8 @@ const monitorMap = JSON.parse(Hyprland.message("j/monitors")).reduce((acc, item)
     return acc;
 }, {});
 
-const getIconName = ({ class: c, initialClass, initialTitle }) => substitute(c || initialClass || initialTitle);
+const getIconName = ({ class: c, initialClass, initialTitle }) =>
+    substitute(c || initialClass || stripInvisUnicode(initialTitle));
 
 const getFullscreenStr = fs => {
     let state = "";
@@ -33,6 +35,7 @@ const Window = client => {
         title,
         monitor,
     } = client;
+    title = stripInvisUnicode(title);
 
     if (w <= 0 || h <= 0 || (c === "" && title === "")) return null;
 
@@ -113,7 +116,7 @@ export default () => {
         children: [
             Label({
                 className: "txt-title-small",
-                label: currentWindow.bind().as(w => w?.title || "No title"),
+                label: currentWindow.bind().as(w => stripInvisUnicode(w?.title) || "No title"),
                 justification: "center",
                 wrap: true,
                 wrapMode: Pango.WrapMode.WORD_CHAR,
@@ -137,7 +140,11 @@ Size: ${w?.size.join("x")}
 Workspace: ${w?.workspace.name} (${w?.workspace.id})
 State: ${w?.floating ? "floating" : "tiled"}${getFullscreenStr(w?.fullscreen)}${w?.pinned ? " (pinned)" : ""}${
                         w?.initialClass ? "\nInitial class: " + w.initialClass : ""
-                    }${w?.initialTitle ? "\nInitial title: " + w.initialTitle : ""}`
+                    }${
+                        stripInvisUnicode(w?.initialTitle)
+                            ? "\nInitial title: " + stripInvisUnicode(w.initialTitle)
+                            : ""
+                    }`
                 ),
             }),
         ],
@@ -186,14 +193,14 @@ State: ${w?.floating ? "floating" : "tiled"}${getFullscreenStr(w?.fullscreen)}${
                     }),
                     Label({
                         className: "switcher-list-txt txt txt-norm",
-                        label: client.title,
+                        label: stripInvisUnicode(client.title),
                         truncate: "end",
                         xalign: 0,
                     }),
                     Revealer({
                         transition: "slide_left",
                         transitionDuration: 150,
-                        revealChild: client.title.length <= 20,
+                        revealChild: stripInvisUnicode(client.title).length <= 20,
                         child: Label({
                             className: "txt-subtext txt-norm",
                             label: `@ ${client.at.join(", ")} ${client.size.join("x")}`,
