@@ -148,8 +148,8 @@ export default () => {
                 if (player) {
                     const title = trimTrackTitle(player.trackTitle);
                     // Filter to get rid of empty artist names
-                    const artists = player.trackArtists.filter(a => a);
-                    if (artists.length > 0) {
+                    const artists = player.trackArtists?.filter(a => a);
+                    if (artists?.length > 0) {
                         self.label = `${title} • ${artists.join(", ")}`;
                         const artistsNice =
                             artists.length > 1
