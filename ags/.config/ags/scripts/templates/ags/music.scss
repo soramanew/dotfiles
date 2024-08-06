@@ -1,0 +1,53 @@
+.music-bg {
+    background-color: $background;
+}
+
+.music-cover-art {
+    background-color: $surfaceContainerLow;
+    color: $onSecondaryContainer;
+    box-shadow: 0px 0px 5px mix($primary, $background, 20%);
+}
+
+.music-title {
+    color: $onSecondaryContainer;
+}
+
+.music-artists {
+    color: mix($onSecondaryContainer, $secondaryContainer, 80%);
+}
+
+.music-pill {
+    background-color: $secondaryContainer;
+    color: $onSecondaryContainer;
+}
+
+.music-controls {
+    background-color: $secondaryContainer;
+    color: $onSecondaryContainer;
+}
+
+.music-controlbtn {
+    background-color: $secondaryContainer;
+
+    &:hover,
+    &:focus {
+        background-color: mix($secondaryContainer, $onSecondaryContainer, 90%);
+    }
+
+    &:active {
+        background-color: mix($secondaryContainer, $onSecondaryContainer, 85%);
+    }
+}
+
+.music-progress {
+    color: $onSecondaryContainer;
+}
+
+.music-playstate {
+    background-color: $secondaryContainer;
+    color: $onSecondaryContainer;
+}
+
+.music-playstate-icon {
+    color: $onSecondaryContainer;
+}

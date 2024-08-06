@@ -6,6 +6,7 @@ import { AnimatedCircProg } from "../.commonwidgets/cairo_circularprogress.js";
 import { showMusicControls } from "../../variables.js";
 import { hasPlasmaIntegration } from "../.miscutils/system.js";
 import { clamp } from "../.miscutils/mathfuncs.js";
+import { CACHE_DIR, COMPILED_STYLE_DIR } from "../../constants.js";
 
 function isRealPlayer(player) {
     return (
@@ -46,9 +47,21 @@ function trimTrackTitle(title) {
     return title;
 }
 
+const getCoverClass = (coverPath, classes) => {
+    const id = coverPath?.split("/").at(-1);
+    // Fallback class + cover specific class
+    return classes
+        .split(" ")
+        .map(c => `${c} ${c}-${id}`)
+        .join(" ");
+};
+
+const bindCoverClass = (player, coverClasses, classes = "") =>
+    player.bind("cover-path").as(cp => `${classes} ${getCoverClass(cp, coverClasses)}`);
+
 const TrackProgress = player =>
     AnimatedCircProg({
-        className: "music-circprog",
+        className: bindCoverClass(player, "music-progress"),
         vpack: "center",
         extraSetup: self => {
             const updateProgress = self => self.attribute.updateProgress(self, (player.position / player.length) * 100);
@@ -61,14 +74,14 @@ const TrackTitle = player =>
         label: player.bind("track_title").as(title => (title.length > 0 ? trimTrackTitle(title) : "No music playing")),
         xalign: 0,
         truncate: "end",
-        className: "music-title",
+        className: bindCoverClass(player, "music-title"),
         css: player.bind("track_title").as(() => `font-family: ${getTrackfont(player)}, ${DEFAULT_MUSIC_FONT}`),
     });
 
 const TrackArtists = player =>
     Label({
         xalign: 0,
-        className: "music-artists",
+        className: bindCoverClass(player, "music-artists"),
         truncate: "end",
         label: player.bind("track_artists").as(artists => (artists.length > 0 ? artists.join(", ") : "")),
     });
@@ -76,7 +89,7 @@ const TrackArtists = player =>
 const CoverArt = player =>
     Box({
         vpack: "center",
-        className: "music-cover-art",
+        className: bindCoverClass(player, "music-cover-art"),
         homogeneous: true,
         // Fallback
         child: Label({
@@ -101,7 +114,7 @@ const TrackControls = player => {
             transition: "slide_right",
             transitionDuration: 180,
             child: Button({
-                className: "music-controlbtn",
+                className: bindCoverClass(player, "music-controlbtn"),
                 onClicked: onClicked,
                 child: Label({
                     className: "icon-material music-controlbtn-txt",
@@ -120,7 +133,7 @@ const TrackControls = player => {
         },
         child: Box({
             vpack: "center",
-            className: "music-controls spacing-h-3",
+            className: bindCoverClass(player, "music-controls", "spacing-h-3"),
             children: [
                 Control({
                     icon: "skip_previous",
@@ -154,7 +167,7 @@ const TrackTime = player =>
         transitionDuration: 200,
         child: Box({
             vpack: "center",
-            className: "music-pill spacing-h-5",
+            className: bindCoverClass(player, "music-pill", "spacing-h-5"),
             children: [
                 Label({
                     setup: self => {
@@ -169,23 +182,24 @@ const TrackTime = player =>
     });
 
 const PlayState = player => {
-    const background = Box({ className: "music-playstate" });
+    const hoverLayer = Box({ className: "music-playstate-hover" });
 
     return Overlay({
-        child: background,
+        child: Box({ className: bindCoverClass(player, "music-playstate") }),
         overlays: [
+            hoverLayer,
             TrackProgress(player),
             Button({
                 child: Label({
-                    className: "music-playstate-icon",
+                    className: bindCoverClass(player, "music-playstate-icon"),
                     justification: "center",
                     hpack: "fill",
                     vpack: "center",
                     label: player.bind("play_back_status").as(status => (status == "Playing" ? "pause" : "play_arrow")),
                 }),
                 onClicked: player.playPause,
-                onHover: () => background.toggleClassName("music-playstate-focused", true),
-                onHoverLost: () => background.toggleClassName("music-playstate-focused", false),
+                onHover: () => hoverLayer.toggleClassName("music-playstate-hover-on", true),
+                onHoverLost: () => hoverLayer.toggleClassName("music-playstate-hover-on", false),
             }),
         ],
     });
@@ -193,7 +207,7 @@ const PlayState = player => {
 
 const MusicControlsWidget = player =>
     Box({
-        className: "music-bg spacing-h-20",
+        className: bindCoverClass(player, "music-bg", "spacing-h-20"),
         children: [
             CoverArt(player),
             Box({
@@ -218,34 +232,68 @@ const MusicControlsWidget = player =>
                 ],
             }),
         ],
-        setup: self => {
-            // CSS image background
+        setup: self =>
             self.hook(
                 player,
                 self => {
-                    if (player.coverPath) {
-                        const blurCoverPath = `${player.coverPath}_blur`;
-                        if (fileExists(blurCoverPath)) self.css = `background-image: url('${blurCoverPath}');`;
-                        else {
-                            execAsync([
-                                "magick",
-                                player.coverPath,
-                                "-fill",
-                                "black",
-                                "-colorize",
-                                "50%",
-                                "-blur",
-                                "0x10",
-                                blurCoverPath,
-                            ])
-                                .then(() => (self.css = `background-image: url('${blurCoverPath}');`))
-                                .catch(print);
-                        }
+                    if (!player.coverPath) return;
+
+                    // CSS image background
+                    const blurCoverPath = `${player.coverPath}_blur`;
+                    if (fileExists(blurCoverPath)) self.css = `background-image: url('${blurCoverPath}');`;
+                    else {
+                        execAsync([
+                            "magick",
+                            player.coverPath,
+                            "-fill",
+                            "black",
+                            "-colorize",
+                            "50%",
+                            "-blur",
+                            "0x10",
+                            blurCoverPath,
+                        ])
+                            .then(() => (self.css = `background-image: url('${blurCoverPath}');`))
+                            .catch(print);
+                    }
+
+                    const coverId = player.coverPath.split("/").at(-1);
+                    const rawPath = `${CACHE_DIR}/media/${coverId}`;
+                    const cssPath = `${rawPath}.css`;
+                    const scssPath = `${rawPath}.scss`;
+
+                    const applyCss = () =>
+                        execAsync(`sass ${scssPath} ${cssPath}`)
+                            .then(() => App.applyCss(cssPath))
+                            .catch(print);
+
+                    // Already exists, so just apply css
+                    if (fileExists(cssPath)) App.applyCss(cssPath);
+                    // Already generated but not compiled, so compile then apply
+                    else if (fileExists(scssPath)) applyCss();
+                    // Doesn't exist, generate colours, create selectors then compile and apply
+                    else {
+                        // Generate colours
+                        execAsync([
+                            "bash",
+                            "-c",
+                            `${App.configDir}/scripts/color_generation/generate_colors_material.py --path '${player.coverPath}' > ${scssPath}`,
+                        ])
+                            .then(() => {
+                                // Add class selectors
+                                execAsync([
+                                    "bash",
+                                    "-c",
+                                    `sed -E 's/(\\.[a-z-]+)/\\1-${coverId}/g' ${App.configDir}/scripts/templates/ags/music.scss >> ${scssPath}`,
+                                ])
+                                    .then(applyCss)
+                                    .catch(print);
+                            })
+                            .catch(print);
                     }
                 },
                 "notify::cover-path"
-            );
-        },
+            ),
     });
 
 export default () =>
