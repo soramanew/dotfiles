@@ -4,3 +4,6 @@
 [submodule ".others/ShyFox"]
 	path = .others/ShyFox
 	url = https://github.com/Naezr/ShyFox.git
+[submodule "theming/.icons/candy-icons"]
+	path = theming/.icons/candy-icons
+	url = https://github.com/EliverLara/candy-icons.git
