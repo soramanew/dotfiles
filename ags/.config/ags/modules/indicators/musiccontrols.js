@@ -205,38 +205,14 @@ const PlayState = player => {
     });
 };
 
-const MusicControlsWidget = player =>
+const Background = player =>
     Box({
-        className: bindCoverClass(player, "music-bg", "spacing-h-20"),
-        children: [
-            CoverArt(player),
-            Box({
-                vertical: true,
-                className: "spacing-v-5 music-info",
-                children: [
-                    Box({
-                        vertical: true,
-                        vpack: "center",
-                        hexpand: true,
-                        children: [TrackTitle(player), TrackArtists(player)],
-                    }),
-                    Box({ vexpand: true }),
-                    Box({
-                        className: "spacing-h-10",
-                        setup: box => {
-                            box.pack_start(TrackControls(player), false, false, 0);
-                            box.pack_end(PlayState(player), false, false, 0);
-                            box.pack_end(TrackTime(player), false, false, 0);
-                        },
-                    }),
-                ],
-            }),
-        ],
+        className: bindCoverClass(player, "music-bg"),
         setup: self =>
             self.hook(
                 player,
                 self => {
-                    if (!player.coverPath) return;
+                    if (!player.coverPath || !fileExists(player.coverPath)) return;
 
                     // CSS image background
                     const blurCoverPath = `${player.coverPath}_blur`;
@@ -250,7 +226,7 @@ const MusicControlsWidget = player =>
                             "-colorize",
                             "50%",
                             "-blur",
-                            "0x10",
+                            "0x7",
                             blurCoverPath,
                         ])
                             .then(() => (self.css = `background-image: url('${blurCoverPath}');`))
@@ -294,6 +270,41 @@ const MusicControlsWidget = player =>
                 },
                 "notify::cover-path"
             ),
+    });
+
+const MusicControlsWidget = player =>
+    Overlay({
+        child: Background(player),
+        overlays: [
+            Box({ className: bindCoverClass(player, "music-gradient") }),
+            Box({
+                className: "music-inner spacing-h-20",
+                children: [
+                    CoverArt(player),
+                    Box({
+                        vertical: true,
+                        className: "spacing-v-5 music-info",
+                        children: [
+                            Box({
+                                vertical: true,
+                                vpack: "center",
+                                hexpand: true,
+                                children: [TrackTitle(player), TrackArtists(player)],
+                            }),
+                            Box({ vexpand: true }),
+                            Box({
+                                className: "spacing-h-10",
+                                setup: box => {
+                                    box.pack_start(TrackControls(player), false, false, 0);
+                                    box.pack_end(PlayState(player), false, false, 0);
+                                    box.pack_end(TrackTime(player), false, false, 0);
+                                },
+                            }),
+                        ],
+                    }),
+                ],
+            }),
+        ],
     });
 
 export default () =>
