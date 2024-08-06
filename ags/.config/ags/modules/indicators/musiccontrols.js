@@ -219,7 +219,7 @@ const MusicControlsWidget = player =>
             }),
         ],
         setup: self => {
-            // CSS iamge background
+            // CSS image background
             self.hook(
                 player,
                 self => {
