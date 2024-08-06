@@ -26,7 +26,7 @@ output 'Reverting files...'
 # Revert file changes
 for pathspec in \
         .others/pkglist.txt \
-        wallpapers/Pictures/Wallpapers \
+        theming/Pictures/Wallpapers \
         wlogout/.config/wlogout/style.css \
         ags/.config/ags/scss/_specific.scss \
         hypr/.config/hypr/hyprland/specific.conf
