@@ -1,0 +1,6 @@
+[submodule "vesktop/.config/vesktop/arrpc"]
+	path = vesktop/.config/vesktop/arrpc
+	url = https://github.com/OpenAsar/arrpc.git
+[submodule ".others/ShyFox"]
+	path = .others/ShyFox
+	url = https://github.com/Naezr/ShyFox.git
