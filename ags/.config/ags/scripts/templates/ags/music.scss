@@ -1,11 +1,22 @@
+$surfaceContainerLow: transparentize($surfaceContainerLow, 0.3);
+$secondaryContainer: transparentize($secondaryContainer, 0.3);
+
 .music-bg {
     background-color: $background;
+}
+
+.music-gradient {
+    background: radial-gradient(
+        circle at 50% -50%,
+        transparent,
+        change-color($tertiaryContainer, $alpha: 0.3) 60%,
+        change-color($tertiaryContainer, $alpha: 0.8)
+    );
 }
 
 .music-cover-art {
     background-color: $surfaceContainerLow;
     color: $onSecondaryContainer;
-    box-shadow: 0px 0px 5px mix($primary, $background, 20%);
 }
 
 .music-title {
@@ -27,8 +38,6 @@
 }
 
 .music-controlbtn {
-    background-color: $secondaryContainer;
-
     &:hover,
     &:focus {
         background-color: mix($secondaryContainer, $onSecondaryContainer, 90%);

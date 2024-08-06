@@ -3,12 +3,24 @@
     @include elevation2;
     @include normal-rounding;
     margin-top: 0.313rem;
-    padding: 0rem 1.023rem;
     min-height: 9.546rem;
     min-width: 29.659rem;
     background-color: $layer0;
     background-size: cover;
     background-position: center;
+}
+
+.music-gradient {
+    @include menu_decel;
+    @include elevation2;
+    @include normal-rounding;
+    margin-top: 0.313rem;
+    min-height: 9.546rem;
+    min-width: 29.659rem;
+}
+
+.music-inner {
+    padding: 0rem 1.023rem;
 }
 
 .music-cover-art {
@@ -22,7 +34,6 @@
     color: $onSecondaryContainer;
     background-size: cover;
     background-position: center;
-    box-shadow: 0px 0px 5px mix($primary, $layer0, 20%);
 }
 
 .music-info {
@@ -68,7 +79,6 @@
     @include menu_decel;
     min-width: 2.045rem;
     min-height: 2.045rem;
-    background-color: $secondaryContainer;
 
     &:hover,
     &:focus {
