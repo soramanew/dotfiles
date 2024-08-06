@@ -6,7 +6,7 @@ const Mpris = await Service.import("mpris");
 import { setupCursorHoverGrab } from "../.widgetutils/cursorhover.js";
 import { dumpToWorkspace, swapWorkspace } from "./actions.js";
 import { substitute } from "../.miscutils/icons.js";
-import { range } from "../.miscutils/system.js";
+import { dispatch, range } from "../.miscutils/system.js";
 import {
     SCREEN_HEIGHT,
     SCREEN_WIDTH,
@@ -16,6 +16,7 @@ import {
 } from "../../constants.js";
 import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
 import { EXTENDED_BAR } from "../../constants.js";
+import { stripInvisUnicode } from "../.miscutils/strings.js";
 
 const OVERVIEW_SCALE = 0.15;
 const OVERVIEW_WS_NUM_SCALE = 0.09;
@@ -24,7 +25,6 @@ const TARGET = [Gtk.TargetEntry.new("text/plain", Gtk.TargetFlags.SAME_APP, 0)];
 
 const overviewTick = Variable(false);
 
-const dispatch = dispatcher => Hyprland.messageAsync(`dispatch ${dispatcher}`).catch(print);
 const dispatchAndClose = dispatcher => {
     App.closeWindow("overview");
     return dispatch(dispatcher);
@@ -78,6 +78,7 @@ export default () => {
         screenCoords,
         onClicked = () => dispatchAndClose(`focuswindow address:${address}`)
     ) => {
+        title = stripInvisUnicode(title);
         if (w <= 0 || h <= 0 || (c === "" && title === "")) return null;
         // Non-primary monitors
         if (screenCoords.x !== 0) x -= screenCoords.x;
@@ -98,7 +99,7 @@ export default () => {
         if (y + h > SCREEN_HEIGHT) h = SCREEN_HEIGHT - y;
 
         if (c.length === 0) c = initialClass;
-        if (c.length === 0) c = initialTitle;
+        if (c.length === 0) c = stripInvisUnicode(initialTitle);
 
         const iconSize = Math.min(w, h) * OVERVIEW_SCALE;
         const appIcon = Icon({ icon: substitute(c), size: iconSize / 2.5 });

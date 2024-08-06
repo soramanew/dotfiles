@@ -57,6 +57,26 @@ apply_fuzzel() {
     cp "$HOME"/.cache/ags/user/generated/fuzzel/fuzzel.ini "$HOME"/.config/fuzzel/fuzzel.ini
 }
 
+apply_cava() {
+    # Check if scripts/templates/terminal/cava exists
+    if [ ! -f "scripts/templates/terminal/cava" ]; then
+        echo "Template file not found for CAVA. Skipping that."
+        return
+    fi
+
+    # Copy template
+    mkdir -p "$HOME"/.cache/ags/user/generated/terminal
+    cp "scripts/templates/terminal/cava" "$HOME"/.cache/ags/user/generated/terminal/cava
+
+    # Apply colours
+    for i in "${!colourlist[@]}"; do
+        sed -i "s/{{ ${colourlist[$i]} }}/${colourvalues[$i]#\#}/g" "$HOME"/.cache/ags/user/generated/terminal/cava
+    done
+
+    cp "$HOME"/.cache/ags/user/generated/terminal/cava "$HOME"/.config/cava/config
+    killall -USR2 cava
+}
+
 apply_term() {
     # Check if terminal escape sequence template exists
     if [ ! -f "scripts/templates/terminal/sequences.txt" ]; then
@@ -194,3 +214,4 @@ apply_gtk &
 apply_fuzzel &
 apply_term &
 apply_slurp &
+apply_cava &

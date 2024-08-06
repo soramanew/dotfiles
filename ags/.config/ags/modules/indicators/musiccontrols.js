@@ -6,6 +6,7 @@ import { AnimatedCircProg } from "../.commonwidgets/cairo_circularprogress.js";
 import { showMusicControls } from "../../variables.js";
 import { hasPlasmaIntegration } from "../.miscutils/system.js";
 import { clamp } from "../.miscutils/mathfuncs.js";
+import { CACHE_DIR, COMPILED_STYLE_DIR } from "../../constants.js";
 
 function isRealPlayer(player) {
     return (
@@ -46,43 +47,49 @@ function trimTrackTitle(title) {
     return title;
 }
 
-const TrackProgress = ({ player, ...rest }) => {
-    const updateProgress = circprog => {
-        // Set circular progress (see definition of AnimatedCircProg for explanation)
-        circprog.attribute.updateProgress(circprog, (player.position / player.length) * 100);
-    };
-    return AnimatedCircProg({
-        ...rest,
-        className: "osd-music-circprog",
-        vpack: "center",
-        extraSetup: self => self.hook(player, updateProgress, "notify::position").poll(1000, updateProgress),
-    });
+const getCoverClass = (coverPath, classes) => {
+    const id = coverPath?.split("/").at(-1);
+    // Fallback class + cover specific class
+    return classes
+        .split(" ")
+        .map(c => `${c} ${c}-${id}`)
+        .join(" ");
 };
 
-const TrackTitle = ({ player, ...rest }) =>
+const bindCoverClass = (player, coverClasses, classes = "") =>
+    player.bind("cover-path").as(cp => `${classes} ${getCoverClass(cp, coverClasses)}`);
+
+const TrackProgress = player =>
+    AnimatedCircProg({
+        className: bindCoverClass(player, "music-progress"),
+        vpack: "center",
+        extraSetup: self => {
+            const updateProgress = self => self.attribute.updateProgress(self, (player.position / player.length) * 100);
+            self.hook(player, updateProgress, "notify::position").poll(1000, updateProgress);
+        },
+    });
+
+const TrackTitle = player =>
     Label({
-        ...rest,
         label: player.bind("track_title").as(title => (title.length > 0 ? trimTrackTitle(title) : "No music playing")),
         xalign: 0,
         truncate: "end",
-        // wrap: true,
-        className: "osd-music-title",
+        className: bindCoverClass(player, "music-title"),
         css: player.bind("track_title").as(() => `font-family: ${getTrackfont(player)}, ${DEFAULT_MUSIC_FONT}`),
     });
 
-const TrackArtists = ({ player, ...rest }) =>
+const TrackArtists = player =>
     Label({
-        ...rest,
         xalign: 0,
-        className: "osd-music-artists",
+        className: bindCoverClass(player, "music-artists"),
         truncate: "end",
         label: player.bind("track_artists").as(artists => (artists.length > 0 ? artists.join(", ") : "")),
     });
 
-const CoverArt = ({ player, ...rest }) =>
+const CoverArt = player =>
     Box({
-        ...rest,
-        className: "osd-music-cover-art",
+        vpack: "center",
+        className: bindCoverClass(player, "music-cover-art"),
         homogeneous: true,
         // Fallback
         child: Label({
@@ -100,17 +107,17 @@ const CoverArt = ({ player, ...rest }) =>
             ),
     });
 
-const TrackControls = ({ player, ...rest }) => {
+const TrackControls = player => {
     const Control = ({ icon, onClicked, revealChild }) =>
         Revealer({
             revealChild: revealChild,
             transition: "slide_right",
             transitionDuration: 180,
             child: Button({
-                className: "osd-music-controlbtn",
+                className: bindCoverClass(player, "music-controlbtn"),
                 onClicked: onClicked,
                 child: Label({
-                    className: "icon-material osd-music-controlbtn-txt",
+                    className: "icon-material music-controlbtn-txt",
                     label: icon,
                 }),
             }),
@@ -125,9 +132,8 @@ const TrackControls = ({ player, ...rest }) => {
             for (const ch of [1, 2]) self.child.children[ch].revealChild = false;
         },
         child: Box({
-            ...rest,
             vpack: "center",
-            className: "osd-music-controls spacing-h-3",
+            className: bindCoverClass(player, "music-controls", "spacing-h-3"),
             children: [
                 Control({
                     icon: "skip_previous",
@@ -154,15 +160,14 @@ const TrackControls = ({ player, ...rest }) => {
     });
 };
 
-const TrackTime = ({ player, ...rest }) =>
+const TrackTime = player =>
     Revealer({
         revealChild: player.bind("length").as(l => l > 0),
         transition: "slide_left",
         transitionDuration: 200,
         child: Box({
-            ...rest,
             vpack: "center",
-            className: "osd-music-pill spacing-h-5",
+            className: bindCoverClass(player, "music-pill", "spacing-h-5"),
             children: [
                 Label({
                     setup: self => {
@@ -176,84 +181,123 @@ const TrackTime = ({ player, ...rest }) =>
         }),
     });
 
-const PlayState = ({ player }) =>
-    Button({
-        className: "osd-music-playstate",
-        child: Overlay({
-            child: TrackProgress({ player: player }),
-            overlays: [
-                Button({
-                    className: "osd-music-playstate-btn osd-music-controlbtn",
-                    onClicked: player.playPause,
-                    child: Label({
-                        justification: "center",
-                        hpack: "fill",
-                        vpack: "center",
-                        label: player
-                            .bind("play_back_status")
-                            .as(status => (status == "Playing" ? "pause" : "play_arrow")),
-                    }),
+const PlayState = player => {
+    const hoverLayer = Box({ className: "music-playstate-hover" });
+
+    return Overlay({
+        child: Box({ className: bindCoverClass(player, "music-playstate") }),
+        overlays: [
+            hoverLayer,
+            TrackProgress(player),
+            Button({
+                child: Label({
+                    className: bindCoverClass(player, "music-playstate-icon"),
+                    justification: "center",
+                    hpack: "fill",
+                    vpack: "center",
+                    label: player.bind("play_back_status").as(status => (status == "Playing" ? "pause" : "play_arrow")),
                 }),
-            ],
-            passThrough: true,
-        }),
+                onClicked: player.playPause,
+                onHover: () => hoverLayer.toggleClassName("music-playstate-hover-on", true),
+                onHoverLost: () => hoverLayer.toggleClassName("music-playstate-hover-on", false),
+            }),
+        ],
+    });
+};
+
+const Background = player =>
+    Box({
+        className: bindCoverClass(player, "music-bg"),
+        setup: self =>
+            self.hook(
+                player,
+                self => {
+                    if (!player.coverPath || !fileExists(player.coverPath)) return;
+
+                    // CSS image background
+                    const blurCoverPath = `${player.coverPath}_blur`;
+                    if (fileExists(blurCoverPath)) self.css = `background-image: url('${blurCoverPath}');`;
+                    else {
+                        execAsync([
+                            "magick",
+                            player.coverPath,
+                            "-fill",
+                            "black",
+                            "-colorize",
+                            "50%",
+                            "-blur",
+                            "0x7",
+                            blurCoverPath,
+                        ])
+                            .then(() => (self.css = `background-image: url('${blurCoverPath}');`))
+                            .catch(print);
+                    }
+
+                    const coverId = player.coverPath.split("/").at(-1);
+                    const rawPath = `${CACHE_DIR}/media/${coverId}`;
+                    const cssPath = `${rawPath}.css`;
+                    const scssPath = `${rawPath}.scss`;
+
+                    const applyCss = () =>
+                        execAsync(`sass ${scssPath} ${cssPath}`)
+                            .then(() => App.applyCss(cssPath))
+                            .catch(print);
+
+                    // Already exists, so just apply css
+                    if (fileExists(cssPath)) App.applyCss(cssPath);
+                    // Already generated but not compiled, so compile then apply
+                    else if (fileExists(scssPath)) applyCss();
+                    // Doesn't exist, generate colours, create selectors then compile and apply
+                    else {
+                        // Generate colours
+                        execAsync([
+                            "bash",
+                            "-c",
+                            `${App.configDir}/scripts/color_generation/generate_colors_material.py --path '${player.coverPath}' > ${scssPath}`,
+                        ])
+                            .then(() => {
+                                // Add class selectors
+                                execAsync([
+                                    "bash",
+                                    "-c",
+                                    `sed -E 's/(\\.[a-z-]+)/\\1-${coverId}/g' ${App.configDir}/scripts/templates/ags/music.scss >> ${scssPath}`,
+                                ])
+                                    .then(applyCss)
+                                    .catch(print);
+                            })
+                            .catch(print);
+                    }
+                },
+                "notify::cover-path"
+            ),
     });
 
 const MusicControlsWidget = player =>
     Overlay({
-        child: Box({
-            className: "osd-music-background",
-            // CSS image
-            setup: self =>
-                self.hook(
-                    player,
-                    self => {
-                        if (player.coverPath) {
-                            const blurCoverPath = `${player.coverPath}_blur`;
-                            if (fileExists(blurCoverPath)) self.css = `background-image: url('${blurCoverPath}');`;
-                            else {
-                                execAsync([
-                                    "magick",
-                                    player.coverPath,
-                                    "-fill",
-                                    "black",
-                                    "-colorize",
-                                    "50%",
-                                    "-blur",
-                                    "0x10",
-                                    blurCoverPath,
-                                ])
-                                    .then(() => (self.css = `background-image: url('${blurCoverPath}');`))
-                                    .catch(print);
-                            }
-                        }
-                    },
-                    "notify::cover-path"
-                ),
-        }),
+        child: Background(player),
         overlays: [
+            Box({ className: bindCoverClass(player, "music-gradient") }),
             Box({
-                className: "osd-music spacing-h-20",
+                className: "music-inner spacing-h-20",
                 children: [
-                    CoverArt({ player, vpack: "center" }),
+                    CoverArt(player),
                     Box({
                         vertical: true,
-                        className: "spacing-v-5 osd-music-info",
+                        className: "spacing-v-5 music-info",
                         children: [
                             Box({
                                 vertical: true,
                                 vpack: "center",
                                 hexpand: true,
-                                children: [TrackTitle({ player }), TrackArtists({ player })],
+                                children: [TrackTitle(player), TrackArtists(player)],
                             }),
                             Box({ vexpand: true }),
                             Box({
                                 className: "spacing-h-10",
                                 setup: box => {
-                                    box.pack_start(TrackControls({ player }), false, false, 0);
-                                    box.pack_end(PlayState({ player }), false, false, 0);
-                                    box.pack_end(TrackTime({ player }), false, false, 0);
-                                    // box.pack_end(TrackSource({ vpack: 'center', player: player }), false, false, 0);
+                                    box.pack_start(TrackControls(player), false, false, 0);
+                                    box.pack_end(PlayState(player), false, false, 0);
+                                    box.pack_end(TrackTime(player), false, false, 0);
                                 },
                             }),
                         ],

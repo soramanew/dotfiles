@@ -1,6 +1,3 @@
-# Too large
-/theming/
-
 # Generated stuff
 /ags/.config/ags/scss/_material.scss
 /gtk/.config/gtk-[34].0/gtk.css
@@ -13,9 +10,6 @@
 # Unnecessary configs
 /thunar/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
 /thunar/.config/Thunar/accels.scm
-
-# Get separately
-/vesktop/.config/vesktop/arrpc/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

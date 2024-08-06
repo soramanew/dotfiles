@@ -1,7 +1,7 @@
 import GLib from "gi://GLib";
-import { CACHE_DIR } from "../constants.js";
 const { exec, execAsync } = Utils;
 const Hyprland = await Service.import("hyprland");
+import { CACHE_DIR } from "../constants.js";
 
 class WallpaperService extends Service {
     static {

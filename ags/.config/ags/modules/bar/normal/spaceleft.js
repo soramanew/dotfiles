@@ -1,8 +1,9 @@
 const { Box, Label } = Widget;
 const Hyprland = await Service.import("hyprland");
+import { stripInvisUnicode } from "../../.miscutils/strings.js";
 
 const WindowTitleInner = (className, labelFn) => {
-    const label = Hyprland.bind("active").as(labelFn);
+    const label = Hyprland.bind("active").as(labelFn).as(stripInvisUnicode);
     return Label({
         xalign: 0,
         truncate: "end",
