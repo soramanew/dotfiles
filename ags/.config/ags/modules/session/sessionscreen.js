@@ -154,8 +154,8 @@ export default () => {
             }),
         ],
         setup: self =>
-            self.hook(App, (_, __, visible) => {
-                if (visible) lockButton.grab_focus(); // Lock is the default option
+            self.hook(App, (_, name, visible) => {
+                if (visible && name === "session") lockButton.grab_focus(); // Lock is the default option
             }),
     });
 };

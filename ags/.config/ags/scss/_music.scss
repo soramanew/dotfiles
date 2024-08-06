@@ -1,8 +1,4 @@
-.osd-music {
-    padding: 0rem 1.023rem;
-}
-
-.osd-music-background {
+.music-bg {
     @include menu_decel;
     @include elevation2;
     @include normal-rounding;
@@ -14,7 +10,20 @@
     background-position: center;
 }
 
-.osd-music-cover-art {
+.music-gradient {
+    @include menu_decel;
+    @include elevation2;
+    @include normal-rounding;
+    margin-top: 0.313rem;
+    min-height: 9.546rem;
+    min-width: 29.659rem;
+}
+
+.music-inner {
+    padding: 0rem 1.023rem;
+}
+
+.music-cover-art {
     @include menu_decel;
     @include small-rounding;
     margin-top: 1.023rem;
@@ -27,25 +36,25 @@
     background-position: center;
 }
 
-.osd-music-info {
+.music-info {
     margin: 1.023rem 0rem;
 }
 
-.osd-music-title {
+.music-title {
     @include element_decel;
     @include titlefont;
     font-size: 1.364rem;
     color: to-dark-mode($onSecondaryContainer);
 }
 
-.osd-music-artists {
+.music-artists {
     @include element_decel;
     @include mainfont;
     font-size: 0.955rem;
     color: to-dark-mode(mix($onSecondaryContainer, $secondaryContainer, 80%));
 }
 
-.osd-music-pill {
+.music-pill {
     @include element_decel;
     @include full-rounding;
     @include titlefont;
@@ -55,7 +64,7 @@
     color: $onSecondaryContainer;
 }
 
-.osd-music-controls {
+.music-controls {
     @include element_decel;
     @include full-rounding;
     @include titlefont;
@@ -65,11 +74,11 @@
     color: $onSecondaryContainer;
 }
 
-.osd-music-controlbtn {
+.music-controlbtn {
+    @include full-rounding;
     @include menu_decel;
     min-width: 2.045rem;
     min-height: 2.045rem;
-    @include full-rounding;
 
     &:hover,
     &:focus {
@@ -81,13 +90,13 @@
     }
 }
 
-.osd-music-controlbtn-txt {
+.music-controlbtn-txt {
     @include element_decel;
     font-size: 1.364rem;
     margin: -0.1rem 0rem;
 }
 
-.osd-music-circprog {
+.music-progress {
     @include fluent_decel_long;
     min-width: 0.409rem; // width of progress
     min-height: 3.068rem;
@@ -95,18 +104,29 @@
     color: $onSecondaryContainer;
 }
 
-.osd-music-playstate {
+.music-playstate {
     @include menu_decel;
     min-height: 3.068rem;
     min-width: 3.068rem;
     border-radius: 10rem;
     background-color: $secondaryContainer;
-    color: $onSecondaryContainer;
 }
 
-.osd-music-playstate-btn > label {
-    transition: 50ms cubic-bezier(0.05, 0.7, 0.1, 1);
+.music-playstate-hover {
+    @include full-rounding;
+    @include element_decel;
+    background-color: white;
+    opacity: 0;
+}
+
+.music-playstate-hover-on {
+    opacity: 0.1;
+}
+
+.music-playstate-icon {
     @include icon-material;
+    transition: 50ms cubic-bezier(0.05, 0.7, 0.1, 1);
     font-size: 1.364rem;
     margin: -0.1rem 0rem;
+    color: $onSecondaryContainer;
 }

@@ -1,7 +1,8 @@
 const Hyprland = await Service.import("hyprland");
+import { dispatch } from "../.miscutils/system.js";
 
 function moveClientToWorkspace(address, workspace) {
-    Hyprland.messageAsync(`dispatch movetoworkspacesilent ${workspace},address:${address}`).catch(print);
+    dispatch(`movetoworkspacesilent ${workspace},address:${address}`);
 }
 
 export function dumpToWorkspace(from, to) {

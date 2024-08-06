@@ -1,6 +1,7 @@
 import Gdk from "gi://Gdk";
 const { exec, execAsync, readFile } = Utils;
 const Audio = await Service.import("audio");
+const Hyprland = await Service.import("hyprland");
 import { CACHE_DIR } from "../../constants.js";
 
 export const distroID = exec(`bash -c 'cat /etc/os-release | grep "^ID=" | cut -d "=" -f 2 | sed "s/\\"//g"'`).trim();
@@ -79,3 +80,5 @@ export const forMonitors = fn =>
 export const isUsingHeadphones = () => /head(phone|set)/i.test(Audio.speaker?.stream?.port);
 
 export const hasTouchscreen = exec("bash -c 'udevadm info --export-db | grep ID_INPUT_TOUCHSCREEN=1'").trim() !== "";
+
+export const dispatch = dispatcher => Hyprland.messageAsync(`dispatch ${dispatcher}`).catch(print);
