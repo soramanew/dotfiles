@@ -1,4 +1,4 @@
-const { exec, readFile, writeFileSync } = Utils;
+const { exec, readFile } = Utils;
 const Mpris = await Service.import("mpris");
 import { CACHE_DIR } from "../constants.js";
 import { fileExists } from "../modules/.miscutils/files.js";
@@ -16,8 +16,8 @@ class PlayersService extends Service {
     }
 
     #save() {
-        // Async doesn't write sometimes or something
-        writeFileSync(this.#players.map(p => p.name).join("\n"), this.#path);
+        // writeFile throws errors so use exec instead
+        exec(`bash -c "echo '${this.#players.map(p => p.name).join("\n")}' > '${this.#path}'"`);
     }
 
     #connectPlayerSignals(player) {

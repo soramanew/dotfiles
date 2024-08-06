@@ -9,7 +9,6 @@ blueman
 bluez-utils
 btop
 cava
-cava-debug
 cliphist
 cowfortune
 cpupower
