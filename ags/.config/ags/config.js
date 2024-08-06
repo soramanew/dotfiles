@@ -17,6 +17,7 @@ import SideRight from "./modules/sideright/main.js";
 import TodoScreen from "./modules/todoscreen/main.js";
 import AppLauncher from "./modules/applauncher/main.js";
 import GCheatsheet from "./modules/gcheatsheet/main.js";
+import Switcher from "./modules/switcher/main.js";
 
 // SCSS compilation
 export function applyStyle() {
@@ -79,6 +80,7 @@ if (Battery.available) Battery.connect("changed", batteryMessage);
 
 const Windows = () => [
     Overview(),
+    Switcher(),
     Cheatsheet(),
     hasTouchscreen ? [AppLauncher(), GCheatsheet()] : [],
     TodoScreen(),

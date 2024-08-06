@@ -76,7 +76,7 @@ export default () =>
                 }),
                 ToggleButton({
                     icon: "opacity",
-                    tooltipText: "Transparent shell, GTK and terminal",
+                    tooltipText: "Transparent shell and terminal",
                     enabled: exec(`sed -n 2p '${CACHE_DIR}/user/colormode.txt'`) === "transparent",
                     onClicked: (_, toggled) =>
                         execAsync([
