@@ -1,13 +1,12 @@
 // This file is for the notification list on the sidebar
 // For the popup notifications, see onscreendisplay.js
 // The actual widget for each single notification is in ags/modules/.commonwidgets/notification.js
-const { Box, Button, Label, Revealer, Stack } = Widget;
+const { Box, Button, Label, Revealer, Stack, Scrollable } = Widget;
 const Notifications = await Service.import("notifications");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import Notification from "../../.commonwidgets/notification.js";
 import NotifCategory from "./notification_category.js";
-import { RoundedScrollable } from "../../.commonwidgets/cairo_roundedscrollable.js";
 
 export default props => {
     const notifEmptyContent = Box({
@@ -143,12 +142,11 @@ export default props => {
         className: "txt spacing-h-5",
         children: [notifCount, Box({ hexpand: true }), silenceButton, clearButton],
     });
-    const notifList = RoundedScrollable({
+    const notifList = Scrollable({
         hexpand: true,
         hscroll: "never",
         vscroll: "automatic",
         child: Box({ vexpand: true, child: notificationList }),
-        overlayClass: "sidebar-scrollcorner1",
         setup: self => {
             const vScrollbar = self.get_vscrollbar();
             vScrollbar.get_style_context().add_class("sidebar-scrollbar");

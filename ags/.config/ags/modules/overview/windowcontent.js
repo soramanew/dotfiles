@@ -1,5 +1,5 @@
 import Gdk from "gi://Gdk";
-const { Box, Label, Revealer, Entry } = Widget;
+const { Box, Label, Revealer, Entry, Scrollable } = Widget;
 const { exec } = Utils;
 const Applications = await Service.import("applications");
 import { hasUnterminatedBackslash, launchCustomCommand, ls, actions, actionsList } from "./miscfunctions.js";
@@ -15,7 +15,6 @@ import { checkKeybind, keybinds } from "../.widgetutils/keybind.js";
 import Overview from "./overview_hyprland.js";
 import fuzzysort from "./fuzzysort.js";
 import mathexprs from "./mathexprs.js";
-import { RoundedScrollable } from "../.commonwidgets/cairo_roundedscrollable.js";
 import { SCREEN_HEIGHT, SEARCH_MAX_RESULTS as MAX_RESULTS } from "../../constants.js";
 import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
 
@@ -75,11 +74,10 @@ export default () => {
     let appSearchResults = [];
 
     const resultsBox = Box({ vertical: true });
-    const resultsScrollable = RoundedScrollable({
+    const resultsScrollable = Scrollable({
         hscroll: "never",
         vscroll: "automatic",
         child: resultsBox,
-        overlayClass: "overview-results-scrollcorner",
         setup: self => {
             const vScrollbar = self.get_vscrollbar();
             vScrollbar.get_style_context().add_class("overview-results-scrollbar");
@@ -202,7 +200,7 @@ export default () => {
             // Resize scrollable manually cause it doesn't want to fit content
             let height = resultsBox.get_preferred_height()[0];
             if (height > MAX_HEIGHT) height = MAX_HEIGHT;
-            resultsScrollable.child.css = `min-height: ${height}px; transition: 300ms cubic-bezier(0, 0.55, 0.45, 1);`;
+            resultsScrollable.css = `min-height: ${height}px; transition: 300ms cubic-bezier(0, 0.55, 0.45, 1);`;
         },
     });
     return Box({

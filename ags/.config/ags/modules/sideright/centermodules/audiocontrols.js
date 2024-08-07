@@ -1,10 +1,8 @@
-const { Box, Button, Icon, Label, Revealer, Slider, Stack } = Widget;
+const { Box, Button, Icon, Label, Revealer, Slider, Stack, Scrollable } = Widget;
 const Audio = await Service.import("audio");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
-import { RoundedScrollable } from "../../.commonwidgets/cairo_roundedscrollable.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { iconExists } from "../../.miscutils/icons.js";
-// import { AnimatedSlider } from "../../.commonwidgets/cairo_slider.js";
 
 const AppVolume = stream =>
     Box({
@@ -56,13 +54,6 @@ const AppVolume = stream =>
                         onChange: ({ value }) => (stream.volume = value),
                         setup: setupCursorHover,
                     }),
-                    // AnimatedSlider({
-                    //     hpack: "fill",
-                    //     className: "sidebar-volmixer-stream-slider",
-                    //     initFrom: stream.volume * 100,
-                    //     onChange: value => (stream.volume = value),
-                    //     extraSetup: self => self.hook(stream, () => self.attribute.updateProgress(stream.volume * 100)),
-                    // }),
                 ],
             }),
         ],
@@ -153,9 +144,8 @@ export default (props = {}) => {
             Label({ label: "No audio source", className: "txt-small" }),
         ],
     });
-    const appList = RoundedScrollable({
+    const appList = Scrollable({
         vexpand: true,
-        overlayClass: "sidebar-scrollcorner1",
         child: Box({
             vertical: true,
             className: "spacing-v-5",

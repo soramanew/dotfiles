@@ -628,16 +628,6 @@ $colorpicker_rounding: 0.341rem;
     }
 }
 
-.sidebar-scrollcorner0 {
-    @include smallish-rounding;
-    background-color: $layer0;
-}
-
-.sidebar-scrollcorner1 {
-    @include smallish-rounding;
-    background-color: $layer1;
-}
-
 .sidebar-perftoggles {
     margin: 0.341rem;
 }
