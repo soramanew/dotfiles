@@ -216,9 +216,8 @@ const Background = player =>
                 self => {
                     if (!player.coverPath || !fileExists(player.coverPath)) return;
 
-                    // CSS image background
+                    // Blurred and darkened cover as background if imagemagick is installed
                     if (exec("which magick")) {
-                        // Blur and darken if imagemagick is installed
                         const blurCoverPath = `${player.coverPath}_blur`;
                         if (fileExists(blurCoverPath)) self.css = `background-image: url('${blurCoverPath}');`;
                         else {
@@ -236,7 +235,7 @@ const Background = player =>
                                 .then(() => (self.css = `background-image: url('${blurCoverPath}');`))
                                 .catch(print);
                         }
-                    } else self.css = `background-image: url('${player.coverPath}');`;
+                    }
 
                     const coverId = player.coverPath.split("/").at(-1);
                     const rawPath = `${CACHE_DIR}/media/${coverId}`;
