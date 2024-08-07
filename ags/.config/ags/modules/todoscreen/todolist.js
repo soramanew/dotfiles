@@ -3,6 +3,7 @@ import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { TabContainer } from "../.commonwidgets/tabcontainer.js";
 import Todo from "../../services/todo.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
+import GradientScrollable from "../.commonwidgets/gradientscrollable.js";
 
 const TodoListItem = (task, id, isDone) => {
     const crosser = Box({ className: "todoscreen-todo-crosser" });
@@ -71,9 +72,7 @@ const TodoListItem = (task, id, isDone) => {
 };
 
 const TodoItems = isDone =>
-    Scrollable({
-        hscroll: "never",
-        vscroll: "automatic",
+    GradientScrollable({
         child: Box({
             vertical: true,
             setup: self =>
@@ -105,10 +104,6 @@ const TodoItems = isDone =>
                     "updated"
                 ),
         }),
-        setup: self => {
-            const vScrollbar = self.get_vscrollbar();
-            vScrollbar.get_style_context().add_class("sidebar-scrollbar");
-        },
     });
 
 const UndoneTodoList = () => {

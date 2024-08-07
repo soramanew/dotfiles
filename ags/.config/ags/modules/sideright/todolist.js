@@ -1,9 +1,10 @@
 import Pango from "gi://Pango";
-const { Box, Button, Label, Revealer, Entry, Scrollable } = Widget;
+const { Box, Button, Label, Revealer, Entry } = Widget;
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { TabContainer } from "../.commonwidgets/tabcontainer.js";
 import Todo from "../../services/todo.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
+import GradientScrollable from "../.commonwidgets/gradientscrollable.js";
 
 const TodoListItem = (task, id, isDone) => {
     const crosser = Box({
@@ -65,9 +66,8 @@ const TodoListItem = (task, id, isDone) => {
 };
 
 const TodoItems = isDone =>
-    Scrollable({
-        hscroll: "never",
-        vscroll: "automatic",
+    GradientScrollable({
+        layer: 1,
         child: Box({
             vertical: true,
             className: "sidebar-todolist",
@@ -100,10 +100,6 @@ const TodoItems = isDone =>
                     "updated"
                 ),
         }),
-        setup: listContents => {
-            const vScrollbar = listContents.get_vscrollbar();
-            vScrollbar.get_style_context().add_class("sidebar-scrollbar");
-        },
     });
 
 const UndoneTodoList = () => {

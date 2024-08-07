@@ -1,5 +1,5 @@
 import Gdk from "gi://Gdk";
-const { Box, Label, Revealer, Entry, Scrollable } = Widget;
+const { Box, Label, Revealer, Entry } = Widget;
 const { exec } = Utils;
 const Applications = await Service.import("applications");
 import { hasUnterminatedBackslash, launchCustomCommand, ls, actions, actionsList } from "./miscfunctions.js";
@@ -17,6 +17,7 @@ import fuzzysort from "./fuzzysort.js";
 import mathexprs from "./mathexprs.js";
 import { SCREEN_HEIGHT, SEARCH_MAX_RESULTS as MAX_RESULTS } from "../../constants.js";
 import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
+import GradientScrollable from "../.commonwidgets/gradientscrollable.js";
 
 const MAX_HEIGHT = SCREEN_HEIGHT * 0.7;
 
@@ -74,15 +75,7 @@ export default () => {
     let appSearchResults = [];
 
     const resultsBox = Box({ vertical: true });
-    const resultsScrollable = Scrollable({
-        hscroll: "never",
-        vscroll: "automatic",
-        child: resultsBox,
-        setup: self => {
-            const vScrollbar = self.get_vscrollbar();
-            vScrollbar.get_style_context().add_class("overview-results-scrollbar");
-        },
-    });
+    const resultsScrollable = GradientScrollable({ child: resultsBox });
     const resultsRevealer = Revealer({
         transitionDuration: 200,
         revealChild: false,
@@ -200,7 +193,7 @@ export default () => {
             // Resize scrollable manually cause it doesn't want to fit content
             let height = resultsBox.get_preferred_height()[0];
             if (height > MAX_HEIGHT) height = MAX_HEIGHT;
-            resultsScrollable.css = `min-height: ${height}px; transition: 300ms cubic-bezier(0, 0.55, 0.45, 1);`;
+            resultsScrollable.child.css = `min-height: ${height}px; transition: 300ms cubic-bezier(0, 0.55, 0.45, 1);`;
         },
     });
     return Box({
