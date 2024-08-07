@@ -1,3 +1,7 @@
+@use "colours" as *;
+@use "lib_mixins" as *;
+@use "lib_functions" as *;
+
 .music-bg {
     @include menu_decel;
     @include elevation2;

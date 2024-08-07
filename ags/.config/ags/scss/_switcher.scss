@@ -1,3 +1,6 @@
+@use "colours" as *;
+@use "lib_mixins" as *;
+
 .switcher-bg {
     @include large-rounding;
     @include elevation-border;
@@ -32,7 +35,6 @@
 
 .switcher-activate-btn {
     @include normal-rounding;
-    @include group-padding;
     @include element-decel;
     color: $onLayer2;
     background-color: $layer2;

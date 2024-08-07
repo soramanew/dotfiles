@@ -1,3 +1,6 @@
+@forward "material";
+@use "material" as *;
+
 $rootTransparency: 0.3; // Transparency = 1 - opacity
 $transparency: 0.4;
 

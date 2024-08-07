@@ -1,3 +1,6 @@
+@use "colours" as *;
+@use "lib_mixins" as *;
+
 .test {
     background-image: linear-gradient(
         45deg,
@@ -200,6 +203,14 @@
     margin: 0rem 0.682rem;
     min-width: 0.273rem;
     min-height: 0.273rem;
+}
+
+// Classes for interaction
+.growingRadial {
+    transition: 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+.fadingRadial {
+    transition: 50ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 .spacing-h-3 > * {

@@ -1,3 +1,7 @@
+@use "colours" as *;
+@use "lib_mixins" as *;
+@use "lib_functions" as *;
+
 @mixin notif-rounding {
     @include normal-rounding;
 }
@@ -55,11 +59,11 @@
 }
 
 .notif-clicked-low {
-    background-color: mix($secondaryContainer, $surfaceContainerLow, 50%);
+    background-color: mix($secondaryContainer, $surfaceContainerLow, 40%);
 }
 
 .notif-clicked-normal {
-    background-color: $surfaceContainerHighest;
+    background-color: mix($secondaryContainer, $surfaceContainerHigh, 20%);
 }
 
 .notif-clicked-critical {

@@ -1,0 +1,15 @@
+@use "colours" as *;
+
+@function to-root-transparency($colour, $override: False) {
+    @if $override == True or $transparent == True {
+        $colour: change-color($colour, $alpha: 1 - $rootTransparency);
+    }
+    @return $colour;
+}
+
+@function to-dark-mode($colour, $override: False) {
+    @if $override == True or $darkmode == False {
+        $colour: complement(invert($colour));
+    }
+    @return $colour;
+}

@@ -1,3 +1,7 @@
+@use "colours" as *;
+@use "lib_mixins" as *;
+@use "lib_functions" as *;
+
 .applauncher-bg {
     background-color: to-root-transparency($layer0, $override: True);
 }

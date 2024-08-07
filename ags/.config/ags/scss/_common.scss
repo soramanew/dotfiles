@@ -1,10 +1,15 @@
+@use "colours" as *;
+@use "lib_mixins" as *;
+
 * {
     selection {
         background-color: $secondary;
         color: $onSecondary;
     }
 
-    caret-color: $onLayer2;
+    & {
+        caret-color: $onLayer2;
+    }
 }
 
 @keyframes appear {
