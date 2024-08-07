@@ -191,7 +191,7 @@ export default () => {
             if (
                 !isAction &&
                 !hasUnterminatedBackslash(text) &&
-                exec(`bash -c "command -v ${text.split(" ")[0]}"`) !== ""
+                exec(`fish -c 'command -v ${text.split(" ")[0]}'`) !== ""
             )
                 resultsBox.add(ExecuteCommandButton({ command: self.text, terminal: self.text.startsWith("sudo") }));
 

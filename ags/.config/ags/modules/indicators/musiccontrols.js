@@ -1,5 +1,5 @@
 const { Box, EventBox, Label, Button, Revealer, Overlay } = Widget;
-const { execAsync } = Utils;
+const { exec, execAsync } = Utils;
 const Mpris = await Service.import("mpris");
 import { fileExists } from "../.miscutils/files.js";
 import { AnimatedCircProg } from "../.commonwidgets/cairo_circularprogress.js";
@@ -215,23 +215,26 @@ const Background = player =>
                     if (!player.coverPath || !fileExists(player.coverPath)) return;
 
                     // CSS image background
-                    const blurCoverPath = `${player.coverPath}_blur`;
-                    if (fileExists(blurCoverPath)) self.css = `background-image: url('${blurCoverPath}');`;
-                    else {
-                        execAsync([
-                            "magick",
-                            player.coverPath,
-                            "-fill",
-                            "black",
-                            "-colorize",
-                            "50%",
-                            "-blur",
-                            "0x7",
-                            blurCoverPath,
-                        ])
-                            .then(() => (self.css = `background-image: url('${blurCoverPath}');`))
-                            .catch(print);
-                    }
+                    if (exec("which magick")) {
+                        // Blur and darken if imagemagick is installed
+                        const blurCoverPath = `${player.coverPath}_blur`;
+                        if (fileExists(blurCoverPath)) self.css = `background-image: url('${blurCoverPath}');`;
+                        else {
+                            execAsync([
+                                "magick",
+                                player.coverPath,
+                                "-fill",
+                                "black",
+                                "-colorize",
+                                "50%",
+                                "-blur",
+                                "0x7",
+                                blurCoverPath,
+                            ])
+                                .then(() => (self.css = `background-image: url('${blurCoverPath}');`))
+                                .catch(print);
+                        }
+                    } else self.css = `background-image: url('${player.coverPath}');`;
 
                     const coverId = player.coverPath.split("/").at(-1);
                     const rawPath = `${CACHE_DIR}/media/${coverId}`;

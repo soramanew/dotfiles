@@ -69,7 +69,7 @@ class BrightnessDdcService extends Service {
 }
 
 // the singleton instance
-const service = exec("bash -c 'command -v ddcutil'") ? new BrightnessDdcService() : new BrightnessCtlService();
+const service = exec("which ddcutil") ? new BrightnessDdcService() : new BrightnessCtlService();
 
 // make it global for easy use with cli
 globalThis.brightness = service;
