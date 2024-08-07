@@ -4,8 +4,8 @@ set script_name (basename (status filename))
 set wallpapers_dir ~/Pictures/Wallpapers/
 set threshold 80
 
-# Max 0 non-option args | h, f and d are exclusive
-argparse -n $script_name -X 0 -x 'h,f,d' \
+# Max 0 non-option args | h, f and d are exclusive | F and t are also exclusive
+argparse -n $script_name -X 0 -x 'h,f,d' -x 'F,t' \
     'h/help' \
     'f/file=!test -f "$_flag_value"' \
     'd/directory=!test -d "$_flag_value"' \
@@ -15,18 +15,19 @@ argparse -n $script_name -X 0 -x 'h,f,d' \
 or exit
 
 if set -q _flag_h
-    echo 'Usage: '$script_name
-    echo 'Usage: '$script_name' [ -h | --help ]'
-    echo 'Usage: '$script_name' [ -f | --file ] <file>'
-    echo 'Usage: '$script_name' [ -d | --directory ] <directory> [ -F | --no-filter ]'
-    echo 'Usage: '$script_name' [ -d | --directory ] <directory> [ -t | --threshold ] <threshold>'
+    echo 'Usage:'
+    echo '    '$script_name
+    echo '    '$script_name' [ -h | --help ]'
+    echo '    '$script_name' [ -f | --file ]'
+    echo '    '$script_name' [ -d | --directory ] [ -F | --no-filter ]'
+    echo '    '$script_name' [ -d | --directory ] [ -t | --threshold ]'
     echo
     echo 'Options:'
-    echo '    -h, --help            Print this help message and exit'
-    echo '    -f, --file            The file to change wallpaper to'
-    echo '    -d, --directory       The folder to select a random wallpaper from (default '$wallpapers_dir')'
-    echo '    -F, --no-filter       Do not filter by size'
-    echo '    -t, --threshold       The minimum percentage of the size the image must be greater than to be selected (default '$threshold')'
+    echo '    -h, --help                    Print this help message and exit'
+    echo '    -f, --file <file>             The file to change wallpaper to'
+    echo '    -d, --directory <directory>   The folder to select a random wallpaper from (default '$wallpapers_dir')'
+    echo '    -F, --no-filter               Do not filter by size'
+    echo '    -t, --threshold <threshold>   The minimum percentage of the size the image must be greater than to be selected (default '$threshold')'
 
     exit
 else
@@ -57,9 +58,12 @@ else
             set unfiltered_wallpapers (find $wallpapers_dir -type f)
         end
 
-        # Filter by resolution
-        if ! set -q _flag_F
+        # Filter by resolution if no filter option is not given
+        if set -q _flag_F
+            set wallpapers $unfiltered_wallpapers
+        else
             set -l screen_size (hyprctl monitors -j | jq -r '.[0] | "\(.width)\n\(.height)"')
+            set -l wall_sizes (identify -ping -format '%w %h\n' $unfiltered_wallpapers)
 
             # Apply threshold
             set -q _flag_t && set threshold $_flag_t
@@ -67,9 +71,11 @@ else
             set screen_size[2] (math $screen_size[2] x $threshold / 100)
 
             # Add wallpapers that are larger than the screen size * threshold to list to choose from ($wallpapers)
-            for wall in $unfiltered_wallpapers
-                set -l wall_size (identify -format '%w\n%h' $wall)
-                [ $wall_size[1] -ge $screen_size[1] -a $wall_size[2] -ge $screen_size[2] ] && set -a wallpapers $wall
+            for i in (seq 1 (count $wall_sizes))
+                set -l wall_size (string split ' ' $wall_sizes[$i])
+                if [ $wall_size[1] -ge $screen_size[1] -a $wall_size[2] -ge $screen_size[2] ]
+                    set -a wallpapers $unfiltered_wallpapers[$i]
+                end
             end
         end
 

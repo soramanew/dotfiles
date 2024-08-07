@@ -99,6 +99,7 @@ qt6ct
 rate-mirrors
 safeeyes
 seahorse
+snixembed
 spotify
 spotify-adblock
 starship
