@@ -1,9 +1,8 @@
-const { Box, EventBox, Button, Label, Revealer, Entry } = Widget;
+const { Box, EventBox, Button, Label, Revealer, Entry, Scrollable } = Widget;
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { TabContainer } from "../.commonwidgets/tabcontainer.js";
 import Todo from "../../services/todo.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
-import { RoundedScrollable } from "../.commonwidgets/cairo_roundedscrollable.js";
 
 const TodoListItem = (task, id, isDone) => {
     const crosser = Box({ className: "todoscreen-todo-crosser" });
@@ -72,7 +71,7 @@ const TodoListItem = (task, id, isDone) => {
 };
 
 const TodoItems = isDone =>
-    RoundedScrollable({
+    Scrollable({
         hscroll: "never",
         vscroll: "automatic",
         child: Box({
@@ -106,7 +105,6 @@ const TodoItems = isDone =>
                     "updated"
                 ),
         }),
-        overlayClass: "sidebar-scrollcorner0",
         setup: self => {
             const vScrollbar = self.get_vscrollbar();
             vScrollbar.get_style_context().add_class("sidebar-scrollbar");

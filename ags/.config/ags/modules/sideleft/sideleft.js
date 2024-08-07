@@ -1,9 +1,8 @@
-const { Box, Button, Label } = Widget;
+const { Box, Button, Label, Scrollable } = Widget;
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import { checkKeybind, keybinds } from "../.widgetutils/keybind.js";
 import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
-import { RoundedScrollable } from "../.commonwidgets/cairo_roundedscrollable.js";
 import QuickScripts from "./tools/quickscripts.js";
 import ColourPicker from "./tools/colorpicker.js";
 import PerfToggles from "./tools/perftoggles.js";
@@ -51,17 +50,14 @@ export default () => {
                             pinButton,
                         ],
                     }),
-                    Box({
+                    Scrollable({
                         vexpand: true,
-                        child: RoundedScrollable({
-                            hscroll: "never",
-                            vscroll: "automatic",
-                            overlayClass: "sidebar-scrollcorner0",
-                            child: Box({
-                                vertical: true,
-                                className: "spacing-v-10",
-                                children: [QuickScripts(), PerfToggles(), ColourPicker(), PackageUpdates(), Timer()],
-                            }),
+                        hscroll: "never",
+                        vscroll: "automatic",
+                        child: Box({
+                            vertical: true,
+                            className: "spacing-v-10",
+                            children: [QuickScripts(), PerfToggles(), ColourPicker(), PackageUpdates(), Timer()],
                         }),
                     }),
                 ],

@@ -2,11 +2,6 @@
     min-height: 2.727rem;
 }
 
-.overview-results-scrollcorner {
-    @include largeish-rounding;
-    background-color: $layer0;
-}
-
 .overview-results-scrollbar {
     trough {
         @include full-rounding;
