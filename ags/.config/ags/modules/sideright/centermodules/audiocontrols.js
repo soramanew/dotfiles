@@ -69,7 +69,7 @@ const AudioDevices = input => {
                 className: "txt spacing-h-10",
                 children: [
                     iconExists(stream.iconName)
-                        ? Icon({ className: "txt-norm symbolic-icon", icon: stream.bind("iconName") })
+                        ? Icon({ className: "txt-norm symbolic-icon", icon: stream.bind("icon-name") })
                         : MaterialIcon(matIcon, "norm"),
                     Label({
                         hexpand: true,
