@@ -11,13 +11,13 @@ const scripts = [
         icon: "nixos-symbolic",
         name: "Trim system generations to 5",
         command: `sudo ${App.configDir}/scripts/quickscripts/nixos-trim-generations.sh 5 0 system`,
-        enabled: distroID == "nixos",
+        enabled: distroID === "nixos",
     },
     {
         icon: "nixos-symbolic",
         name: "Trim home manager generations to 5",
         command: `${App.configDir}/scripts/quickscripts/nixos-trim-generations.sh 5 0 home-manager`,
-        enabled: distroID == "nixos",
+        enabled: distroID === "nixos",
     },
     {
         icon: "ubuntu-symbolic",
@@ -29,7 +29,7 @@ const scripts = [
         icon: "fedora-symbolic",
         name: "Update packages",
         command: "sudo dnf upgrade -y",
-        enabled: distroID == "fedora",
+        enabled: distroID === "fedora",
     },
     {
         icon: "arch-symbolic",
