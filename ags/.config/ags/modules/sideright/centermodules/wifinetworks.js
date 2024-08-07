@@ -1,6 +1,7 @@
-const { Box, Button, Entry, Label, Revealer, Scrollable } = Widget;
+const { Box, Button, Entry, Label, Revealer } = Widget;
 const { execAsync } = Utils;
 const Network = await Service.import("network");
+import GradientScrollable from "../../.commonwidgets/gradientscrollable.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 
@@ -149,10 +150,9 @@ const CurrentNetwork = () => {
 };
 
 const NetworkList = () =>
-    Scrollable({
+    GradientScrollable({
         vexpand: true,
-        hscroll: "never",
-        vscroll: "automatic",
+        layer: 1,
         child: Box({
             attribute: {
                 updateNetworks: self =>

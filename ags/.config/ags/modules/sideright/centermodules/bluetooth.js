@@ -1,9 +1,10 @@
-const { Box, Button, Icon, Label, Stack, Scrollable } = Widget;
+const { Box, Button, Icon, Label, Stack } = Widget;
 const { execAsync } = Utils;
 const Bluetooth = await Service.import("bluetooth");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { ConfigToggle } from "../../.commonwidgets/configwidgets.js";
+import GradientScrollable from "../../.commonwidgets/gradientscrollable.js";
 
 const BluetoothDevice = device => {
     const deviceIcon = Icon({
@@ -79,8 +80,9 @@ export default (props = {}) => {
             Label({ label: "No Bluetooth devices", className: "txt-small" }),
         ],
     });
-    const deviceList = Scrollable({
+    const deviceList = GradientScrollable({
         vexpand: true,
+        layer: 1,
         child: Box({
             vertical: true,
             className: "spacing-v-5",

@@ -43,10 +43,6 @@ export default () => {
         vscroll: "automatic",
         className: "applauncher-applist",
         child: appList,
-        setup: self => {
-            const vScrollbar = self.get_vscrollbar();
-            vScrollbar.get_style_context().add_class("applauncher-scrollbar");
-        },
     });
     const appListStack = Stack({
         transition: "crossfade",

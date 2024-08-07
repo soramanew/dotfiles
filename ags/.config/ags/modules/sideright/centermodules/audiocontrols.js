@@ -1,8 +1,9 @@
-const { Box, Button, Icon, Label, Revealer, Slider, Stack, Scrollable } = Widget;
+const { Box, Button, Icon, Label, Revealer, Slider, Stack } = Widget;
 const Audio = await Service.import("audio");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { iconExists } from "../../.miscutils/icons.js";
+import GradientScrollable from "../../.commonwidgets/gradientscrollable.js";
 
 const AppVolume = stream =>
     Box({
@@ -144,8 +145,9 @@ export default (props = {}) => {
             Label({ label: "No audio source", className: "txt-small" }),
         ],
     });
-    const appList = Scrollable({
+    const appList = GradientScrollable({
         vexpand: true,
+        layer: 1,
         child: Box({
             vertical: true,
             className: "spacing-v-5",

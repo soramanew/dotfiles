@@ -1,4 +1,4 @@
-const { Box, Button, Label, Scrollable } = Widget;
+const { Box, Button, Label } = Widget;
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import { checkKeybind, keybinds } from "../.widgetutils/keybind.js";
@@ -8,6 +8,7 @@ import ColourPicker from "./tools/colorpicker.js";
 import PerfToggles from "./tools/perftoggles.js";
 import PackageUpdates from "./tools/packageupdates.js";
 import Timer from "./tools/timer.js";
+import GradientScrollable from "../.commonwidgets/gradientscrollable.js";
 
 export default () => {
     const click2Close = Click2CloseRegion({ name: "sideleft", fill: "h" });
@@ -50,10 +51,8 @@ export default () => {
                             pinButton,
                         ],
                     }),
-                    Scrollable({
+                    GradientScrollable({
                         vexpand: true,
-                        hscroll: "never",
-                        vscroll: "automatic",
                         child: Box({
                             vertical: true,
                             className: "spacing-v-10",

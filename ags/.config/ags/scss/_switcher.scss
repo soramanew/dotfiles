@@ -85,28 +85,3 @@
 .switcher-list-txt {
     margin-right: 0.682rem;
 }
-
-.switcher-scrollbar {
-    trough {
-        @include full-rounding;
-        min-width: 0.545rem;
-        background-color: transparent;
-    }
-
-    slider {
-        @include full-rounding;
-        @include element_decel;
-        min-width: 0.273rem;
-        min-height: 2.045rem;
-        background-color: transparentize($onSurfaceVariant, 0.7);
-    }
-
-    slider:hover,
-    slider:focus {
-        background-color: transparentize($onSurfaceVariant, 0.6);
-    }
-
-    slider:active {
-        background-color: transparentize($onSurface, 0.5);
-    }
-}

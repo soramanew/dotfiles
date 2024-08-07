@@ -535,3 +535,21 @@
 .element-accel {
     @include element_accel;
 }
+
+$layers: $layer0 $layer1 $layer2 $layer3;
+$dirs: top bottom;
+@each $layer in (0, 1, 2, 3) {
+    @each $dir in (1, 2) {
+        .gradient-#{nth($dirs, $dir)}-layer#{$layer} {
+            @include element_decel;
+            // No gradients when transparent cause they don't look right
+            @if $transparent == False {
+                background: linear-gradient(
+                    to nth($dirs, 3 - $dir),
+                    nth($layers, $layer + 1),
+                    transparentize(nth($layers, $layer + 1), 1)
+                );
+            }
+        }
+    }
+}

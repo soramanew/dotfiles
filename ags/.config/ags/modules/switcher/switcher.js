@@ -1,12 +1,13 @@
 import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
-const { Box, Label, Button, Scrollable, Icon, Revealer } = Widget;
+const { Box, Label, Button, Icon, Revealer } = Widget;
 const Hyprland = await Service.import("hyprland");
 import { substitute } from "../.miscutils/icons.js";
 import { CACHE_DIR, SCREEN_HEIGHT, SCREEN_WIDTH } from "../../constants.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import { dispatch } from "../.miscutils/system.js";
 import { stripInvisUnicode } from "../.miscutils/strings.js";
+import GradientScrollable from "../.commonwidgets/gradientscrollable.js";
 
 const PREVIEW_SCALE = 0.15;
 
@@ -237,9 +238,8 @@ State: ${w?.floating ? "floating" : "tiled"}${getFullscreenStr(w?.fullscreen)}${
 
     const list = Box({
         className: "switcher-list",
-        child: Scrollable({
-            hscroll: "never",
-            vscroll: "automatic",
+        child: GradientScrollable({
+            layer: 1,
             child: Box({
                 vertical: true,
                 setup: self => {
@@ -263,10 +263,6 @@ State: ${w?.floating ? "floating" : "tiled"}${getFullscreenStr(w?.fullscreen)}${
                     );
                 },
             }),
-            setup: self => {
-                const vScrollbar = self.get_vscrollbar();
-                vScrollbar.get_style_context().add_class("switcher-scrollbar");
-            },
         }),
     });
 
