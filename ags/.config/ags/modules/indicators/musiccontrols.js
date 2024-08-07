@@ -7,6 +7,7 @@ import { showMusicControls } from "../../variables.js";
 import { hasPlasmaIntegration } from "../.miscutils/system.js";
 import { clamp } from "../.miscutils/mathfuncs.js";
 import { CACHE_DIR, COMPILED_STYLE_DIR } from "../../constants.js";
+import Players from "../../services/players.js";
 
 function isRealPlayer(player) {
     return (
@@ -197,7 +198,8 @@ const PlayState = player => {
                     vpack: "center",
                     label: player.bind("play_back_status").as(status => (status == "Playing" ? "pause" : "play_arrow")),
                 }),
-                onClicked: player.playPause,
+                onPrimaryClickRelease: () => player.playPause(),
+                onSecondaryClickRelease: () => Players.makeCurrent(player),
                 onHover: () => hoverLayer.toggleClassName("music-playstate-hover-on", true),
                 onHoverLost: () => hoverLayer.toggleClassName("music-playstate-hover-on", false),
             }),
