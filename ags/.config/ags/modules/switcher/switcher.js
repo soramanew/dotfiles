@@ -117,6 +117,7 @@ export default () => {
             Label({
                 className: "txt-title-small",
                 label: currentWindow.bind().as(w => stripInvisUnicode(w?.title) || "No title"),
+                selectable: true,
                 justification: "center",
                 wrap: true,
                 wrapMode: Pango.WrapMode.WORD_CHAR,
@@ -125,6 +126,7 @@ export default () => {
             Label({
                 className: "txt-subtext txt-norm",
                 label: currentWindow.bind().as(w => `${w?.class || "No class"}${w?.xwayland ? " (xwayland)" : ""}`),
+                selectable: true,
                 justification: "center",
                 wrap: true,
                 wrapMode: Pango.WrapMode.WORD_CHAR,
@@ -146,6 +148,7 @@ State: ${w?.floating ? "floating" : "tiled"}${getFullscreenStr(w?.fullscreen)}${
                             : ""
                     }`
                 ),
+                selectable: true,
             }),
         ],
     });
@@ -170,8 +173,11 @@ State: ${w?.floating ? "floating" : "tiled"}${getFullscreenStr(w?.fullscreen)}${
             // Window not on current special ws and currently on special ws
             else if (currentWs?.startsWith("special:") && !currentWindow.value.workspace.name.startsWith("special:"))
                 Hyprland.message(`dispatch togglespecialworkspace ${currentWs.replace("special:", "")}`);
-            // Focus window, delay because doesn't focus if not
-            Utils.timeout(10, () => dispatch(`focuswindow address:${currentWindow.value.address}`));
+            // Bring to top and focus window, delay because doesn't focus if not
+            Utils.timeout(10, () => {
+                dispatch(`alterzorder top,address:${currentWindow.value.address}`);
+                dispatch(`focuswindow address:${currentWindow.value.address}`);
+            });
         },
     });
 
