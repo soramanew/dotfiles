@@ -17,6 +17,8 @@ const BarGroupSystem = child => BarGroup(child, "system");
 
 const BarClock = () => {
     const getTime = format => GLib.DateTime.new_now_local().format(format);
+    const time = Variable("", { poll: [5000, () => getTime("%H:%M")] });
+    const date = Variable("", { poll: [60000, () => getTime("%A, %d/%m")] });
     return EventBox({
         onPrimaryClick: () => (showClock.value = !showClock.value),
         child: Box({
@@ -25,8 +27,7 @@ const BarClock = () => {
             children: [
                 Label({
                     className: "bar-time",
-                    label: getTime("%H:%M"),
-                    setup: self => self.poll(5000, self => (self.label = getTime("%H:%M"))),
+                    label: time.bind(),
                 }),
                 Label({
                     className: "txt-norm txt-onLayer1",
@@ -34,8 +35,7 @@ const BarClock = () => {
                 }),
                 Label({
                     className: "txt-smallie bar-date",
-                    label: getTime("%A, %d/%m"),
-                    setup: self => self.poll(60000, self => (self.label = getTime("%A, %d/%m"))),
+                    label: date.bind(),
                 }),
             ],
         }),

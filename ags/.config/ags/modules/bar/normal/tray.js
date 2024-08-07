@@ -14,7 +14,7 @@ const SysTrayItem = item =>
 export default (props = {}) => {
     const trayContent = Box({
         className: "margin-right-5 spacing-h-15",
-        children: SystemTray.bind("items").as(i => i.map(SysTrayItem)),
+        children: SystemTray.bind("items").as(i => i.filter(({ id }) => id !== null).map(SysTrayItem)),
     });
     const trayRevealer = Revealer({
         revealChild: true,

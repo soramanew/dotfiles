@@ -28,19 +28,15 @@ const timezones = [
 ];
 
 const Timezone = ({ name, timeFormat, dateFormat }) => {
-    const now = new Date();
-    const timeLabel = Label({ className: "txt-small txt-subtext", label: timeFormat.format(now) });
-    const dateLabel = Label({ className: "txt-small txt-subtext", label: dateFormat.format(now) });
+    const now = Variable("", { poll: [1000, () => new Date()] });
     return Box({
         vertical: true,
         className: "osd-clock-timezone",
-        attribute: {
-            update: now => {
-                timeLabel.label = timeFormat.format(now);
-                dateLabel.label = dateFormat.format(now);
-            },
-        },
-        children: [Label({ className: "txt-norm titlefont", label: name }), timeLabel, dateLabel],
+        children: [
+            Label({ className: "txt-norm titlefont", label: name }),
+            Label({ className: "txt-small txt-subtext", label: now.bind().as(timeFormat.format) }),
+            Label({ className: "txt-small txt-subtext", label: now.bind().as(dateFormat.format) }),
+        ],
     });
 };
 
@@ -64,8 +60,6 @@ export default () =>
                     className: "spacing-h-10",
                     homogeneous: true,
                     children: timezones.map(Timezone),
-                    setup: self =>
-                        self.poll(1000, () => self.get_children().forEach(ch => ch.attribute.update(new Date()))),
                 }),
             ],
         }),
