@@ -4,6 +4,8 @@ const Audio = await Service.import("audio");
 const Hyprland = await Service.import("hyprland");
 import { CACHE_DIR } from "../../constants.js";
 
+export const inPath = bin => !exec(`which ${bin}`).startsWith(`which: no ${bin} in `);
+
 export const distroID = exec(`bash -c 'cat /etc/os-release | grep "^ID=" | cut -d "=" -f 2 | sed "s/\\"//g"'`).trim();
 export const isDebianDistro =
     distroID === "linuxmint" ||
@@ -14,7 +16,7 @@ export const isDebianDistro =
     distroID === "raspbian" ||
     distroID === "kali";
 export const isArchDistro = distroID === "arch" || distroID === "endeavouros" || distroID === "cachyos";
-export const hasFlatpak = !!exec("which flatpak");
+export const hasFlatpak = inPath("flatpak");
 
 const LIGHTDARK_FILE_LOCATION = `${CACHE_DIR}/user/colormode.txt`;
 export const darkMode = Variable(readFile(LIGHTDARK_FILE_LOCATION).split("\n")[0].trim() !== "light");
@@ -28,7 +30,7 @@ darkMode.connect("changed", ({ value }) => {
         .then(() => execAsync(`${App.configDir}/scripts/color_generation/switchcolor.sh`).catch(print))
         .catch(print);
 });
-export const hasPlasmaIntegration = !!exec("which plasma-browser-integration-host");
+export const hasPlasmaIntegration = inPath("plasma-browser-integration-host");
 
 export const getDistroIcon = () => {
     // Arches
