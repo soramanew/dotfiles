@@ -8,7 +8,7 @@ import { BluetoothIndicator, NetworkIndicator } from "../.commonwidgets/statusic
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { sidebarOptionsStack } from "./sideright.js";
-import { hasTouchscreen } from "../.miscutils/system.js";
+import { hasTouchscreen, inPath } from "../.miscutils/system.js";
 import { tabletMode } from "../../variables.js";
 
 export const ToggleIconWifi = (props = {}) =>
@@ -19,7 +19,7 @@ export const ToggleIconWifi = (props = {}) =>
         onSecondaryClick: () => sidebarOptionsStack.focusName("Wifi networks"),
         onMiddleClick: () => {
             execAsync(
-                exec("which gnome-control-center")
+                inPath("gnome-control-center")
                     ? "gnome-control-center wifi"
                     : // Delete COLORTERM env var, rescan network connections, sleep if last command took less than 0.1s (so nmtui size and position loads properly)
                       "foot -T nmtui fish -c 'set -e COLORTERM ; nmcli device wifi rescan ; [ $CMD_DURATION -lt 100 ] && sleep (math 0.1 - $CMD_DURATION / 1000) ; TERM=xterm-old nmtui connect ; exit'"
@@ -85,7 +85,7 @@ export const HyprToggleIcon = (icon, name, hyprlandConfigValue, values = [0, 1],
     });
 
 export const ModuleNightLight = (props = {}) =>
-    exec("which gammastep")
+    inPath("gammastep")
         ? Button({
               attribute: { enabled: false },
               className: "txt-small sidebar-iconbutton",
@@ -216,7 +216,7 @@ const AutoRotate = () =>
 
 export const ModuleTouchscreen = (props = {}) => {
     if (!hasTouchscreen) return null;
-    if (exec("which rot8"))
+    if (inPath("rot8"))
         return Stack({
             transition: "slide_up_down",
             transitionDuration: 180,
@@ -251,7 +251,7 @@ export const ModuleReloadIcon = (props = {}) => {
 };
 
 export const ModuleSettingsIcon = (props = {}) =>
-    exec("which gnome-control-center")
+    inPath("gnome-control-center")
         ? Button({
               ...props,
               className: "txt-small sidebar-iconbutton",

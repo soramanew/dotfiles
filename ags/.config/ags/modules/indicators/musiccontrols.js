@@ -1,12 +1,12 @@
 const { Box, EventBox, Label, Button, Revealer, Overlay } = Widget;
-const { exec, execAsync } = Utils;
+const { execAsync } = Utils;
 const Mpris = await Service.import("mpris");
 import { fileExists } from "../.miscutils/files.js";
 import { AnimatedCircProg } from "../.commonwidgets/cairo_circularprogress.js";
 import { showMusicControls } from "../../variables.js";
-import { hasPlasmaIntegration } from "../.miscutils/system.js";
+import { hasPlasmaIntegration, inPath } from "../.miscutils/system.js";
 import { clamp } from "../.miscutils/mathfuncs.js";
-import { CACHE_DIR, COMPILED_STYLE_DIR } from "../../constants.js";
+import { CACHE_DIR } from "../../constants.js";
 import Players from "../../services/players.js";
 
 function isRealPlayer(player) {
@@ -217,7 +217,7 @@ const Background = player =>
                     if (!player.coverPath || !fileExists(player.coverPath)) return;
 
                     // Blurred and darkened cover as background if imagemagick is installed
-                    if (exec("which magick")) {
+                    if (inPath("magick")) {
                         const blurCoverPath = `${player.coverPath}_blur`;
                         if (fileExists(blurCoverPath)) self.css = `background-image: url('${blurCoverPath}');`;
                         else {

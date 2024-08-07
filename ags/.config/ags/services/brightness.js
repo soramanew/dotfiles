@@ -1,5 +1,6 @@
 const { exec, execAsync } = Utils;
 import { clamp } from "../modules/.miscutils/mathfuncs.js";
+import { inPath } from "../modules/.miscutils/system.js";
 
 class BrightnessCtlService extends Service {
     static {
@@ -69,7 +70,7 @@ class BrightnessDdcService extends Service {
 }
 
 // the singleton instance
-const service = exec("which ddcutil") ? new BrightnessDdcService() : new BrightnessCtlService();
+const service = inPath("ddcutil") ? new BrightnessDdcService() : new BrightnessCtlService();
 
 // make it global for easy use with cli
 globalThis.brightness = service;
