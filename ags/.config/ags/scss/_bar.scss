@@ -1,3 +1,6 @@
+@use "colours" as *;
+@use "lib_mixins" as *;
+
 // Made to be pixel-perfect with 11pt font size
 // 1rem = 11pt = 14.6666666667px
 $bar_ws_width: 1.774rem;

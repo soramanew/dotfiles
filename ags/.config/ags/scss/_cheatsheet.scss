@@ -1,3 +1,6 @@
+@use "colours" as *;
+@use "lib_mixins" as *;
+
 .cheatsheet-bg {
     @include large-rounding;
     @include elevation-border;

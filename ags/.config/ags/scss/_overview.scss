@@ -1,3 +1,6 @@
+@use "colours" as *;
+@use "lib_mixins" as *;
+
 .overview-top-space {
     min-height: 2.727rem;
 }
@@ -19,7 +22,9 @@
         color: $onSecondary;
     }
 
-    caret-color: transparent;
+    & {
+        caret-color: transparent;
+    }
 }
 
 .overview-search-box-extended {
