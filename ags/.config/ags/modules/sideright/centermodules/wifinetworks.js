@@ -4,7 +4,7 @@ const Network = await Service.import("network");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 
-const MATERIAL_SYMBOL_SIGNAL_STRENGTH = {
+const materialSignalStrengths = {
     "network-wireless-signal-excellent-symbolic": "signal_wifi_4_bar",
     "network-wireless-signal-good-symbolic": "network_wifi_3_bar",
     "network-wireless-signal-ok-symbolic": "network_wifi_2_bar",
@@ -14,31 +14,29 @@ const MATERIAL_SYMBOL_SIGNAL_STRENGTH = {
 
 let connectAttempt = "";
 
-const WifiNetwork = accessPoint => {
-    const networkStrength = MaterialIcon(MATERIAL_SYMBOL_SIGNAL_STRENGTH[accessPoint.iconName], "hugerass");
+const WifiNetwork = ({ iconName, strength, ssid, active, bssid }) => {
+    const networkStrength = MaterialIcon(materialSignalStrengths[iconName], "hugerass", {
+        tooltipText: `Strength: ${strength}/100`,
+    });
     const networkName = Box({
         vertical: true,
         children: [
-            Label({ hpack: "start", label: accessPoint.ssid }),
-            accessPoint.active
-                ? Label({ hpack: "start", className: "txt-smaller txt-subtext", label: "Selected" })
-                : null,
+            Label({ hpack: "start", label: ssid }),
+            active ? Label({ hpack: "start", className: "txt-smaller txt-subtext", label: "Selected" }) : null,
         ],
     });
     return Button({
-        onClicked: accessPoint.active
-            ? () => {}
-            : () => execAsync(`nmcli device wifi connect ${accessPoint.bssid}`).catch(print),
+        onClicked: active ? () => {} : () => execAsync(`nmcli device wifi connect ${bssid}`).catch(print),
         child: Box({
             className: "sidebar-wifinetworks-network spacing-h-10",
             children: [
                 networkStrength,
                 networkName,
                 Box({ hexpand: true }),
-                accessPoint.active ? MaterialIcon("check", "large") : null,
+                active ? MaterialIcon("check", "large") : null,
             ],
         }),
-        setup: accessPoint.active ? () => {} : setupCursorHover,
+        setup: active ? () => {} : setupCursorHover,
     });
 };
 
