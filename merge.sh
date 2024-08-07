@@ -2,9 +2,10 @@
 
 cd (dirname (status -f)) || exit
 
-function output -a text no_newline
+function output -a text
     set_color --bold cyan
-    [ -n "$no_newline" ] && echo -n ":: $text" || echo ":: $text"
+    # Pass arguments other than text to echo
+    echo $argv[2..] -- ":: $text"
     set_color normal
 end
 
