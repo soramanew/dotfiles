@@ -161,14 +161,13 @@ const NetworkList = () =>
                     (self.children = Object.values(
                         (Network.wifi?.access_points || []).reduce((a, accessPoint) => {
                             // Only keep max strength networks by ssid
-                            if (!a[accessPoint.ssid] || a[accessPoint.ssid].strength < accessPoint.strength) {
+                            const prev = a[accessPoint.ssid];
+                            if (!prev?.active && (!prev || prev.strength < accessPoint.strength))
                                 a[accessPoint.ssid] = accessPoint;
-                                a[accessPoint.ssid].active |= accessPoint.active;
-                            }
                             return a;
                         }, {})
                     )
-                        .sort((a, b) => b.strength - a.strength)
+                        .sort((a, b) => (a.active ? -1 : b.strength - a.strength))
                         .map(WifiNetwork)),
             },
             vertical: true,
