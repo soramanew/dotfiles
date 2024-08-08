@@ -39,4 +39,4 @@ end
 output 'Reloading Hyprland config...'
 hyprctl reload
 
-ouput 'Done!'
+output 'Done!'
