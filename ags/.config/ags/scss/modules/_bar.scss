@@ -2,6 +2,7 @@
 @use "../lib/rounding";
 @use "../lib/font";
 @use "../lib/anim";
+@use "../vars";
 
 .bar-bg {
     background-color: c.$layer0;
@@ -43,6 +44,14 @@
 .bar-group-pad-music {
     padding-right: 0.528rem;
     padding-left: 0.341rem;
+}
+
+.bar-sidemodule {
+    min-width: 26rem;
+
+    @if vars.$extended-bar {
+        min-width: 52rem;
+    }
 }
 
 .bar-ws {

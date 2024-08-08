@@ -17,17 +17,19 @@ if [ (git status --porcelain) ]
     end
 end
 
-output 'Starting merge...'
+# Pull changes including submodule changes
+output 'Pulling changes from remote...'
+git pull --recurse-submodules
 
 # Merge without committing or fast forward
-git merge --no-commit --no-ff $argv[1]
+output 'Starting merge...'
+git merge --no-commit --no-ff $argv
 
 # Revert file changes
 output 'Reverting files...'
 for pathspec in \
         .others/pkglist.txt \
         wlogout/.config/wlogout/style.css \
-        ags/.config/ags/scss/_specific.scss \
         hypr/.config/hypr/hyprland/specific.conf
     git reset HEAD $pathspec
     git checkout -- $pathspec
@@ -37,4 +39,4 @@ end
 ouput 'Reloading Hyprland config...'
 hyprctl reload
 
-output 'Finished merge.'
+ouput 'Done!'
