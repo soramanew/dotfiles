@@ -238,9 +238,8 @@ const Background = player =>
                     }
 
                     const coverId = player.coverPath.split("/").at(-1);
-                    const rawPath = `${CACHE_DIR}/media/${coverId}`;
-                    const cssPath = `${rawPath}.css`;
-                    const scssPath = `${rawPath}.scss`;
+                    const cssPath = `${player.coverPath}.css`;
+                    const scssPath = `${player.coverPath}.scss`;
 
                     const applyCss = () =>
                         execAsync(`sass ${scssPath} ${cssPath}`)
