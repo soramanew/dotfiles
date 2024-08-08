@@ -2,7 +2,9 @@
 // Import
 const { exec, execAsync } = Utils;
 const Battery = await Service.import("battery");
+const Mpris = await Service.import("mpris");
 import { forMonitors, hasTouchscreen } from "./modules/.miscutils/system.js";
+import { fileExists } from "./modules/.miscutils/files.js";
 import { COMPILED_STYLE_DIR } from "./constants.js";
 // Widgets
 import Bar, { BarCornerTopleft, BarCornerTopright } from "./modules/bar/main.js";
@@ -25,6 +27,8 @@ export function applyStyle() {
     exec(`sass ${App.configDir}/scss/main.scss ${COMPILED_STYLE_DIR}/style.css`);
     App.resetCss();
     App.applyCss(`${COMPILED_STYLE_DIR}/style.css`);
+    for (const player of Mpris.players)
+        if (fileExists(`${player.coverPath}.css`)) App.applyCss(`${player.coverPath}.css`);
     console.log("[LOG] Styles loaded");
 }
 // Global for external control
