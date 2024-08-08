@@ -1,8 +1,8 @@
 @forward "material";
 @use "material" as *;
 
-$rootTransparency: 0.3; // Transparency = 1 - opacity
-$transparency: 0.4;
+$rootTransparency: 0.1; // Transparency = 1 - opacity
+$transparency: 0.3;
 
 // Extended material
 $success: #4f6354;
