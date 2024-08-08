@@ -3,7 +3,8 @@ import GLib from "gi://GLib";
 const { execAsync } = Utils;
 const Applications = await Service.import("applications");
 import Todo from "../../services/todo.js";
-import { darkMode, dispatch } from "../.miscutils/system.js";
+import { dispatch } from "../.miscutils/system.js";
+import { darkMode } from "../../variables.js";
 
 // Use a regular expression to match a trailing odd number of backslashes
 export const hasUnterminatedBackslash = inputString => /\\+$/.test(inputString);
@@ -64,7 +65,7 @@ export function launchCustomCommand(command) {
 export function execAndClose(command, terminal = false, then = () => {}) {
     App.closeWindow("overview");
     if (terminal) {
-        execAsync(`foot fish -C "${command}"`).then(then).catch(print);
+        execAsync(["foot", "fish", "-C", command]).then(then).catch(print);
     } else execAsync(command).then(then).catch(print);
 }
 

@@ -4,9 +4,10 @@ const Mpris = await Service.import("mpris");
 import { fileExists } from "../.miscutils/files.js";
 import { AnimatedCircProg } from "../.commonwidgets/cairo_circularprogress.js";
 import { showMusicControls } from "../../variables.js";
-import { hasPlasmaIntegration } from "../.miscutils/system.js";
+import { hasPlasmaIntegration, inPath } from "../.miscutils/system.js";
 import { clamp } from "../.miscutils/mathfuncs.js";
-import { CACHE_DIR, COMPILED_STYLE_DIR } from "../../constants.js";
+import { CACHE_DIR } from "../../constants.js";
+import Players from "../../services/players.js";
 
 function isRealPlayer(player) {
     return (
@@ -197,7 +198,8 @@ const PlayState = player => {
                     vpack: "center",
                     label: player.bind("play_back_status").as(status => (status == "Playing" ? "pause" : "play_arrow")),
                 }),
-                onClicked: player.playPause,
+                onPrimaryClickRelease: () => player.playPause(),
+                onSecondaryClickRelease: () => Players.makeCurrent(player),
                 onHover: () => hoverLayer.toggleClassName("music-playstate-hover-on", true),
                 onHoverLost: () => hoverLayer.toggleClassName("music-playstate-hover-on", false),
             }),
@@ -214,29 +216,30 @@ const Background = player =>
                 self => {
                     if (!player.coverPath || !fileExists(player.coverPath)) return;
 
-                    // CSS image background
-                    const blurCoverPath = `${player.coverPath}_blur`;
-                    if (fileExists(blurCoverPath)) self.css = `background-image: url('${blurCoverPath}');`;
-                    else {
-                        execAsync([
-                            "magick",
-                            player.coverPath,
-                            "-fill",
-                            "black",
-                            "-colorize",
-                            "50%",
-                            "-blur",
-                            "0x7",
-                            blurCoverPath,
-                        ])
-                            .then(() => (self.css = `background-image: url('${blurCoverPath}');`))
-                            .catch(print);
+                    // Blurred and darkened cover as background if imagemagick is installed
+                    if (inPath("magick")) {
+                        const blurCoverPath = `${player.coverPath}_blur`;
+                        if (fileExists(blurCoverPath)) self.css = `background-image: url('${blurCoverPath}');`;
+                        else {
+                            execAsync([
+                                "magick",
+                                player.coverPath,
+                                "-fill",
+                                "black",
+                                "-colorize",
+                                "50%",
+                                "-blur",
+                                "0x7",
+                                blurCoverPath,
+                            ])
+                                .then(() => (self.css = `background-image: url('${blurCoverPath}');`))
+                                .catch(print);
+                        }
                     }
 
                     const coverId = player.coverPath.split("/").at(-1);
-                    const rawPath = `${CACHE_DIR}/media/${coverId}`;
-                    const cssPath = `${rawPath}.css`;
-                    const scssPath = `${rawPath}.scss`;
+                    const cssPath = `${player.coverPath}.css`;
+                    const scssPath = `${player.coverPath}.scss`;
 
                     const applyCss = () =>
                         execAsync(`sass ${scssPath} ${cssPath}`)

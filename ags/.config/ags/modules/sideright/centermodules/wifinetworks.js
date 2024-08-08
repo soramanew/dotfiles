@@ -1,11 +1,11 @@
 const { Box, Button, Entry, Label, Revealer } = Widget;
 const { execAsync } = Utils;
 const Network = await Service.import("network");
-import { RoundedScrollable } from "../../.commonwidgets/cairo_roundedscrollable.js";
+import GradientScrollable from "../../.commonwidgets/gradientscrollable.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 
-const MATERIAL_SYMBOL_SIGNAL_STRENGTH = {
+const materialSignalStrengths = {
     "network-wireless-signal-excellent-symbolic": "signal_wifi_4_bar",
     "network-wireless-signal-good-symbolic": "network_wifi_3_bar",
     "network-wireless-signal-ok-symbolic": "network_wifi_2_bar",
@@ -15,31 +15,29 @@ const MATERIAL_SYMBOL_SIGNAL_STRENGTH = {
 
 let connectAttempt = "";
 
-const WifiNetwork = accessPoint => {
-    const networkStrength = MaterialIcon(MATERIAL_SYMBOL_SIGNAL_STRENGTH[accessPoint.iconName], "hugerass");
+const WifiNetwork = ({ iconName, strength, ssid, active, bssid }) => {
+    const networkStrength = MaterialIcon(materialSignalStrengths[iconName], "hugerass", {
+        tooltipText: `Strength: ${strength}/100`,
+    });
     const networkName = Box({
         vertical: true,
         children: [
-            Label({ hpack: "start", label: accessPoint.ssid }),
-            accessPoint.active
-                ? Label({ hpack: "start", className: "txt-smaller txt-subtext", label: "Selected" })
-                : null,
+            Label({ hpack: "start", label: ssid }),
+            active ? Label({ hpack: "start", className: "txt-smaller txt-subtext", label: "Selected" }) : null,
         ],
     });
     return Button({
-        onClicked: accessPoint.active
-            ? () => {}
-            : () => execAsync(`nmcli device wifi connect ${accessPoint.bssid}`).catch(print),
+        onClicked: active ? () => {} : () => execAsync(`nmcli device wifi connect ${bssid}`).catch(print),
         child: Box({
             className: "sidebar-wifinetworks-network spacing-h-10",
             children: [
                 networkStrength,
                 networkName,
                 Box({ hexpand: true }),
-                accessPoint.active ? MaterialIcon("check", "large") : null,
+                active ? MaterialIcon("check", "large") : null,
             ],
         }),
-        setup: accessPoint.active ? () => {} : setupCursorHover,
+        setup: active ? () => {} : setupCursorHover,
     });
 };
 
@@ -151,43 +149,36 @@ const CurrentNetwork = () => {
     });
 };
 
-export default (props = {}) => {
-    const networkList = Box({
-        vertical: true,
-        className: "spacing-v-10",
-        children: [
-            RoundedScrollable({
-                vexpand: true,
-                hscroll: "never",
-                vscroll: "automatic",
-                overlayClass: "sidebar-scrollcorner1",
-                child: Box({
-                    attribute: {
-                        updateNetworks: self =>
-                            (self.children = Object.values(
-                                (Network.wifi?.access_points || []).reduce((a, accessPoint) => {
-                                    // Only keep max strength networks by ssid
-                                    if (!a[accessPoint.ssid] || a[accessPoint.ssid].strength < accessPoint.strength) {
-                                        a[accessPoint.ssid] = accessPoint;
-                                        a[accessPoint.ssid].active |= accessPoint.active;
-                                    }
-                                    return a;
-                                }, {})
-                            )
-                                .sort((a, b) => b.strength - a.strength)
-                                .map(WifiNetwork)),
-                    },
-                    vertical: true,
-                    className: "spacing-v-5",
-                    setup: self => self.hook(Network, self.attribute.updateNetworks),
-                }),
-            }),
-        ],
+const NetworkList = () =>
+    GradientScrollable({
+        vexpand: true,
+        layer: 1,
+        child: Box({
+            attribute: {
+                updateNetworks: self =>
+                    (self.children = Object.values(
+                        (Network.wifi?.access_points || []).reduce((a, accessPoint) => {
+                            // Only keep max strength networks by ssid
+                            const prev = a[accessPoint.ssid];
+                            if (!prev?.active && (!prev || prev.strength < accessPoint.strength))
+                                a[accessPoint.ssid] = accessPoint;
+                            return a;
+                        }, {})
+                    )
+                        .sort((a, b) => (a.active ? -1 : b.strength - a.strength))
+                        .map(WifiNetwork)),
+            },
+            vertical: true,
+            className: "spacing-v-5",
+            setup: self => self.hook(Network, self.attribute.updateNetworks),
+        }),
     });
+
+export default (props = {}) => {
     return Box({
         ...props,
         className: "spacing-v-10",
         vertical: true,
-        children: [CurrentNetwork(), networkList],
+        children: [CurrentNetwork(), NetworkList()],
     });
 };

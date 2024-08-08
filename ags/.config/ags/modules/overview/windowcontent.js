@@ -15,9 +15,9 @@ import { checkKeybind, keybinds } from "../.widgetutils/keybind.js";
 import Overview from "./overview_hyprland.js";
 import fuzzysort from "./fuzzysort.js";
 import mathexprs from "./mathexprs.js";
-import { RoundedScrollable } from "../.commonwidgets/cairo_roundedscrollable.js";
 import { SCREEN_HEIGHT, SEARCH_MAX_RESULTS as MAX_RESULTS } from "../../constants.js";
 import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
+import GradientScrollable from "../.commonwidgets/gradientscrollable.js";
 
 const MAX_HEIGHT = SCREEN_HEIGHT * 0.7;
 
@@ -75,16 +75,7 @@ export default () => {
     let appSearchResults = [];
 
     const resultsBox = Box({ vertical: true });
-    const resultsScrollable = RoundedScrollable({
-        hscroll: "never",
-        vscroll: "automatic",
-        child: resultsBox,
-        overlayClass: "overview-results-scrollcorner",
-        setup: self => {
-            const vScrollbar = self.get_vscrollbar();
-            vScrollbar.get_style_context().add_class("overview-results-scrollbar");
-        },
-    });
+    const resultsScrollable = GradientScrollable({ child: resultsBox });
     const resultsRevealer = Revealer({
         transitionDuration: 200,
         revealChild: false,
@@ -191,7 +182,7 @@ export default () => {
             if (
                 !isAction &&
                 !hasUnterminatedBackslash(text) &&
-                exec(`bash -c "command -v ${text.split(" ")[0]}"`) !== ""
+                exec(`fish -c 'command -v ${text.split(" ")[0]}'`) !== ""
             )
                 resultsBox.add(ExecuteCommandButton({ command: self.text, terminal: self.text.startsWith("sudo") }));
 

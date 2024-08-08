@@ -1,0 +1,19 @@
+@use "colour" as c;
+
+$margin: 0.476rem;
+
+@mixin e2 {
+    box-shadow: 0px 2px 3px change-color(c.$shadow, $alpha: 0.3);
+    margin: $margin;
+}
+
+@mixin border {
+    border: 1px solid mix(c.$surfaceContainer, c.$outline, 90%);
+}
+
+@mixin border-softer {
+    border-top: 1px solid mix(c.$surface, c.$onSurface, 86%);
+    border-left: 1px solid mix(c.$surface, c.$onSurface, 86%);
+    border-right: 1px solid mix(c.$surface, c.$onSurface, 90%);
+    border-bottom: 1px solid mix(c.$surface, c.$onSurface, 90%);
+}

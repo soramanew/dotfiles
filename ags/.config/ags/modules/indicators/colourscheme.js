@@ -1,11 +1,11 @@
 const { Box, EventBox, Revealer, Button, Label } = Widget;
-const { exec, execAsync } = Utils;
+const { exec } = Utils;
 import { ConfigToggle, ConfigMultipleSelection } from "../.commonwidgets/configwidgets.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
-import { showColorScheme } from "../../variables.js";
+import { darkMode, showColorScheme } from "../../variables.js";
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
-import { darkMode } from "../.miscutils/system.js";
-import { CACHE_DIR } from "../../constants.js";
+import { updateColourMode } from "../.miscutils/system.js";
+import { COLOUR_MODE_FILE } from "../../constants.js";
 
 const ColourBox = ({ name = "Colour", ...rest }) => Box({ ...rest, homogeneous: true, child: Label(name) });
 
@@ -64,10 +64,6 @@ const schemeOptionsArr = [
     [{ name: "Vibrant+", value: "morevibrant" }],
 ];
 
-const LIGHTDARK_FILE_LOCATION = `${CACHE_DIR}/user/colormode.txt`;
-const initScheme = exec(`bash -c "sed -n \'3p\' ${LIGHTDARK_FILE_LOCATION}"`);
-const initSchemeIndex = calculateSchemeInitIndex(schemeOptionsArr, initScheme);
-
 const ColourSchemeSettings = () =>
     Box({
         className: "osd-colorscheme-settings spacing-v-5",
@@ -109,22 +105,8 @@ const ColourSchemeSettings = () =>
                         hpack: "center",
                         vpack: "center",
                         optionsArr: schemeOptionsArr,
-                        initIndex: initSchemeIndex,
-                        onChange: value => {
-                            execAsync([
-                                "bash",
-                                "-c",
-                                `mkdir -p ${CACHE_DIR}/user && sed -i "3s/.*/${value}/" ${CACHE_DIR}/user/colormode.txt`,
-                            ])
-                                .then(() =>
-                                    execAsync([
-                                        "bash",
-                                        "-c",
-                                        `${App.configDir}/scripts/color_generation/switchcolor.sh`,
-                                    ]).catch(print)
-                                )
-                                .catch(print);
-                        },
+                        initIndex: calculateSchemeInitIndex(schemeOptionsArr, exec(`sed -n 3p '${COLOUR_MODE_FILE}'`)),
+                        onChange: value => updateColourMode(3, value),
                     }),
                 ],
             }),

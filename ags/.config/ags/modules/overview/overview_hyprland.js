@@ -79,7 +79,7 @@ export default () => {
         onClicked = () => dispatchAndClose(`focuswindow address:${address}`)
     ) => {
         title = stripInvisUnicode(title);
-        if (w <= 0 || h <= 0 || (c === "" && title === "")) return null;
+
         // Non-primary monitors
         if (screenCoords.x !== 0) x -= screenCoords.x;
         if (screenCoords.y !== 0) y -= screenCoords.y;
@@ -100,6 +100,8 @@ export default () => {
 
         if (c.length === 0) c = initialClass;
         if (c.length === 0) c = stripInvisUnicode(initialTitle);
+
+        if (w <= 0 || h <= 0 || (c === "" && title === "")) return null;
 
         const iconSize = Math.min(w, h) * OVERVIEW_SCALE;
         const appIcon = Icon({ icon: substitute(c), size: iconSize / 2.5 });
@@ -182,7 +184,7 @@ export default () => {
                             // hexpand: true,
                             maxWidthChars: 1, // Min width when ellipsizing (truncated)
                             truncate: "end",
-                            className: `txt txt-reading ${xwayland ? "txt-italic" : ""}`,
+                            className: `txt readingfont ${xwayland ? "txt-italic" : ""}`,
                             css: `
                                 font-size: ${
                                     (Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) /
