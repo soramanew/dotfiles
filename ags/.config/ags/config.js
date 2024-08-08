@@ -1,11 +1,11 @@
 "use strict";
 // Import
-const { exec, execAsync } = Utils;
+const { exec, execAsync, writeFileSync } = Utils;
 const Battery = await Service.import("battery");
 const Mpris = await Service.import("mpris");
 import { forMonitors, hasTouchscreen } from "./modules/.miscutils/system.js";
 import { fileExists } from "./modules/.miscutils/files.js";
-import { COMPILED_STYLE_DIR } from "./constants.js";
+import { COMPILED_STYLE_DIR, EXTENDED_BAR } from "./constants.js";
 // Widgets
 import Bar, { BarCornerTopleft, BarCornerTopright } from "./modules/bar/main.js";
 import Cheatsheet from "./modules/cheatsheet/main.js";
@@ -21,12 +21,15 @@ import AppLauncher from "./modules/applauncher/main.js";
 import GCheatsheet from "./modules/gcheatsheet/main.js";
 import Switcher from "./modules/switcher/main.js";
 
-// SCSS compilation
 export function applyStyle() {
+    // SCSS dynamic variables
+    writeFileSync(`$extended-bar: ${EXTENDED_BAR};`, `${App.configDir}/scss/_vars.scss`);
+    // Compile and apply SCSS
     exec(`mkdir -p ${COMPILED_STYLE_DIR}`);
     exec(`sass ${App.configDir}/scss/main.scss ${COMPILED_STYLE_DIR}/style.css`);
     App.resetCss();
     App.applyCss(`${COMPILED_STYLE_DIR}/style.css`);
+    // Apply music styles
     for (const player of Mpris.players)
         if (fileExists(`${player.coverPath}.css`)) App.applyCss(`${player.coverPath}.css`);
     console.log("[LOG] Styles loaded");
