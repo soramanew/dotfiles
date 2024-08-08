@@ -21,7 +21,7 @@ import AppLauncher from "./modules/applauncher/main.js";
 import GCheatsheet from "./modules/gcheatsheet/main.js";
 import Switcher from "./modules/switcher/main.js";
 
-export function applyStyle() {
+function applyStyle() {
     // SCSS dynamic variables
     writeFileSync(`$extended-bar: ${EXTENDED_BAR};`, `${App.configDir}/scss/_vars.scss`);
     // Compile and apply SCSS
