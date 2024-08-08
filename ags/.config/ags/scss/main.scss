@@ -1,24 +1,12 @@
 // Reset styles
 @use "reset";
 
-// Colours
-@use "colours"; // Global colour definitions. Uses material colours as base.
+// Lib stuff (colours, spacing, etc)
+@use "lib";
 
-// Lib stuff
-@use "lib_classes";
-@use "common"; // Context menu n stuff
+// Common widget and class styles
+@use "common";
 
 // Components
-@use "specific"; // Git branch specific stuff (bar module width)
-@use "bar";
-@use "cheatsheet";
-@use "osd";
-@use "overview";
-@use "osk";
-@use "sidebars";
-@use "session";
-@use "notifications";
-@use "todoscreen";
-@use "applauncher";
-@use "switcher";
-@use "music";
+@use "modules";
+@use "specific"; // Git branch specific stuff (bar module width, etc)

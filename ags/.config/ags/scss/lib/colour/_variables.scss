@@ -1,5 +1,5 @@
-@forward "material";
-@use "material" as *;
+@forward "../../material";
+@use "../../material" as *;
 
 $rootTransparency: 0.1; // Transparency = 1 - opacity
 $transparency: 0.3;
@@ -37,8 +37,6 @@ $onSuccessContainer: #0c1f13;
 // Others
 $subtext: $outline;
 $actiontext: mix($onBackground, $background, 85%);
-$black: black;
-$white: white;
 
 /// Colour mappings for more chaotic, dynamic colors like the average rice ///
 // General

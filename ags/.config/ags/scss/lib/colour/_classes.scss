@@ -1,0 +1,30 @@
+@use "mixins" as m;
+@use "variables" as v;
+
+.txt-subtext {
+    @include m.subtext;
+}
+
+.txt-action {
+    @include m.actiontext;
+}
+
+.txt {
+    color: v.$onBackground;
+}
+
+.txt-primary {
+    color: v.$primary;
+}
+
+.txt-onSecondaryContainer {
+    color: v.$onSecondaryContainer;
+}
+
+.txt-onSurfaceVariant {
+    color: v.$onSurfaceVariant;
+}
+
+.txt-onLayer1 {
+    color: v.$onLayer1;
+}

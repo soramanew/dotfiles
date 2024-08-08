@@ -1,0 +1,20 @@
+@use "colour" as c;
+@use "anim";
+
+$-layers: c.$layer0 c.$layer1 c.$layer2 c.$layer3;
+$-dirs: top bottom;
+@for $layer from 0 to 4 {
+    @each $dir in (1, 2) {
+        .gradient-#{nth($-dirs, $dir)}-layer#{$layer} {
+            @include anim.element-decel;
+            // No gradients when transparent cause they don't look right
+            @if c.$transparent == False {
+                background: linear-gradient(
+                    to nth($-dirs, 3 - $dir),
+                    nth($-layers, $layer + 1),
+                    transparentize(nth($-layers, $layer + 1), 1)
+                );
+            }
+        }
+    }
+}
