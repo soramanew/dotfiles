@@ -36,7 +36,7 @@ for pathspec in \
 end
 
 # Need to reload config cause Hyprland detects changes when merge but not when revert files
-ouput 'Reloading Hyprland config...'
+output 'Reloading Hyprland config...'
 hyprctl reload
 
 ouput 'Done!'
