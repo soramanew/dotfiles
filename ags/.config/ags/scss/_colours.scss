@@ -12,26 +12,26 @@ $onSuccessContainer: #0c1f13;
 
 @if $darkmode == True {
     // Dark variant
-    $success: #b5ccba;
-    $onSuccess: #213528;
-    $successContainer: #374b3e;
-    $onSuccessContainer: #d1e9d6;
+    $success: #b5ccba !global;
+    $onSuccess: #213528 !global;
+    $successContainer: #374b3e !global;
+    $onSuccessContainer: #d1e9d6 !global;
 }
 
 // Transparent versions
 @if $transparent == True {
-    $background: transparentize($background, $rootTransparency);
-    $surface: transparentize($surface, $transparency);
-    $surfaceDim: transparentize($surfaceDim, $transparency);
-    $surfaceBright: transparentize($surfaceBright, $transparency);
-    $surfaceContainerLowest: transparentize($surfaceContainerLowest, $transparency);
-    $surfaceContainerLow: transparentize($surfaceContainerLow, $transparency);
-    $surfaceContainer: transparentize($surfaceContainer, $transparency);
-    $surfaceContainerHigh: transparentize($surfaceContainerHigh, $transparency);
-    $surfaceContainerHighest: transparentize($surfaceContainerHighest, $transparency);
-    $surfaceVariant: transparentize($surfaceVariant, $transparency);
-    $inverseSurface: transparentize($inverseSurface, $transparency);
-    $surfaceTint: transparentize($surfaceTint, $transparency);
+    $background: transparentize($background, $rootTransparency) !global;
+    $surface: transparentize($surface, $transparency) !global;
+    $surfaceDim: transparentize($surfaceDim, $transparency) !global;
+    $surfaceBright: transparentize($surfaceBright, $transparency) !global;
+    $surfaceContainerLowest: transparentize($surfaceContainerLowest, $transparency) !global;
+    $surfaceContainerLow: transparentize($surfaceContainerLow, $transparency) !global;
+    $surfaceContainer: transparentize($surfaceContainer, $transparency) !global;
+    $surfaceContainerHigh: transparentize($surfaceContainerHigh, $transparency) !global;
+    $surfaceContainerHighest: transparentize($surfaceContainerHighest, $transparency) !global;
+    $surfaceVariant: transparentize($surfaceVariant, $transparency) !global;
+    $inverseSurface: transparentize($inverseSurface, $transparency) !global;
+    $surfaceTint: transparentize($surfaceTint, $transparency) !global;
 }
 
 // Others
