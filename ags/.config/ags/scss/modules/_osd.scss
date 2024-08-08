@@ -88,27 +88,6 @@
     color: grayscale(darken(c.$onLayer0, 30%));
 }
 
-.osd-clock {
-    @include elevation.e2;
-    border-radius: 1.023rem;
-    background-color: c.$layer0;
-    color: c.$onLayer0;
-    padding: 0.626rem;
-}
-
-.osd-clock-title {
-    @include font.title;
-    font-weight: 500;
-    margin-top: -0.2rem;
-}
-
-.osd-clock-timezone {
-    @include rounding.small;
-    background-color: c.$layer1;
-    color: c.$onLayer1;
-    padding: 0.313rem 0.626rem;
-}
-
 .osd-colorscheme {
     @include elevation.e2;
     border-radius: 1.023rem;
