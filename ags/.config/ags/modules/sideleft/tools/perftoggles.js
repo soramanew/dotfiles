@@ -1,11 +1,12 @@
 import GLib from "gi://GLib";
-const { exec, execAsync, readFile, writeFile } = Utils;
+const { exec, readFile, writeFile } = Utils;
 const { Box, Button } = Widget;
 import Wallpaper from "../../../services/wallpaper.js";
 import SidebarModule from "./module.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
-import { CACHE_DIR } from "../../../constants.js";
+import { COLOUR_MODE_FILE } from "../../../constants.js";
+import { updateColourMode } from "../../.miscutils/system.js";
 
 const confDir = `${GLib.get_home_dir()}/.config`;
 const perfConfPath = `${confDir}/hypr/hyprland/perf.conf`;
@@ -77,23 +78,8 @@ export default () =>
                 ToggleButton({
                     icon: "opacity",
                     tooltipText: "Transparent shell and terminal",
-                    enabled: exec(`sed -n 2p '${CACHE_DIR}/user/colormode.txt'`) === "transparent",
-                    onClicked: (_, toggled) =>
-                        execAsync([
-                            "bash",
-                            "-c",
-                            `mkdir -p ${CACHE_DIR}/user && sed -i "2s/.*/${
-                                toggled ? "transparent" : "opaque"
-                            }/"  ${CACHE_DIR}/user/colormode.txt`,
-                        ])
-                            .then(() =>
-                                execAsync([
-                                    "bash",
-                                    "-c",
-                                    `${App.configDir}/scripts/color_generation/switchcolor.sh`,
-                                ]).catch(print)
-                            )
-                            .catch(print),
+                    enabled: exec(`sed -n 2p '${COLOUR_MODE_FILE}'`) === "transparent",
+                    onClicked: (_, toggled) => updateColourMode(2, toggled ? "transparent" : "opaque"),
                 }),
                 ToggleSetting({
                     setting: "opacity",

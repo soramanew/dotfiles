@@ -1,0 +1,37 @@
+@use "mixins" as anim;
+
+.no-anim {
+    @include anim.noanim;
+}
+
+.instant {
+    @include anim.noanim;
+}
+
+.menu-decel {
+    @include anim.menu-decel;
+}
+
+.element-show {
+    @include anim.element-easeInOut;
+}
+
+.element-hide {
+    @include anim.element-easeInOut;
+}
+
+.element-move {
+    @include anim.element-easeInOut;
+}
+
+.element-decel {
+    @include anim.element-decel;
+}
+
+.element-bounceout {
+    @include anim.element-bounceOut;
+}
+
+.element-accel {
+    @include anim.element-accel;
+}

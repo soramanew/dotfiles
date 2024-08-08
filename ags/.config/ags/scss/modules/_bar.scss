@@ -1,0 +1,398 @@
+@use "../lib/colour" as c;
+@use "../lib/rounding";
+@use "../lib/font";
+@use "../lib/anim";
+@use "../vars";
+
+.bar-bg {
+    background-color: c.$layer0;
+    min-height: 2.727rem;
+}
+
+.bar-bg-focus {
+    background-color: c.$layer0;
+    min-height: 1.364rem;
+}
+
+.bar-bg-focus-batterylow {
+    background-color: mix(c.$layer0, c.$errorContainer, 80%);
+}
+
+.bar-sidespace {
+    min-width: 1.5rem;
+}
+
+.bar-group-margin {
+    padding: 0.273rem 0rem;
+}
+
+.bar-group {
+    @include rounding.small;
+    -gtk-outline-radius: 1.364rem;
+    background-color: c.$layer1;
+    margin: 0rem 0.1365rem;
+}
+
+.bar-group-pad {
+    padding: 0.205rem;
+}
+
+.bar-group-pad-system {
+    padding: 0rem 0.341rem;
+}
+
+.bar-group-pad-music {
+    padding-right: 0.528rem;
+    padding-left: 0.341rem;
+}
+
+.bar-sidemodule {
+    min-width: 26rem;
+
+    @if vars.$extended-bar {
+        min-width: 52rem;
+    }
+}
+
+.bar-ws {
+    min-width: 1.774rem;
+    color: c.$workspaceOnLayer1Inactive;
+}
+
+.bar-ws-content {
+    transition: min-width 300ms cubic-bezier(0.1, 1, 0, 1), min-height 150ms cubic-bezier(0.42, 0, 1, 1);
+}
+
+.bar-ws-active {
+    background-color: c.$workspaceLayer3;
+    color: c.$workspaceOnLayer3;
+}
+
+.bar-ws-occupied {
+    background-color: c.$layer2;
+    color: c.$workspaceOnLayer2;
+}
+
+// Focus is the bar mode name, not the workspace state!
+
+.bar-ws-focus {
+    background-color: c.$surfaceVariant;
+    min-width: 0.614rem;
+}
+
+.bar-ws-focus-active {
+    min-width: 2.045rem;
+    background-color: c.$onLayer0;
+}
+
+.bar-ws-focus-occupied {
+    background-color: c.$secondaryContainer;
+}
+
+.bar-clock-box {
+    margin: 0rem 0.682rem;
+}
+
+.bar-time {
+    @include font.title;
+    font-size: 1.2727rem;
+    color: c.$timeOnLayer1;
+}
+
+.bar-date {
+    color: c.$dateOnLayer1;
+    margin-top: 0.1rem;
+}
+
+.bar-batt {
+    @include rounding.full;
+    @include anim.element-decel;
+    min-height: 1.77rem;
+    min-width: 1.77rem;
+    color: c.$battOnLayer2;
+}
+
+.bar-batt-txt {
+    color: c.$battOnLayer1;
+}
+
+.bar-batt-circprog {
+    @include anim.fluent-decel-long;
+    min-width: 0.068rem; // line width
+    min-height: 1.636rem;
+    padding: 0rem;
+    background-color: c.$battLayer2;
+    color: c.$battOnLayer2;
+}
+
+.bar-batt-circprog-low {
+    background-color: c.$error;
+    color: c.$errorContainer;
+}
+
+.bar-batt-low {
+    background-color: c.$error;
+    color: c.$errorContainer;
+}
+
+.bar-ram-icon {
+    @include rounding.full;
+    @include anim.element-decel;
+    min-height: 1.77rem;
+    min-width: 1.77rem;
+    margin-top: 0.18rem;
+    color: c.$ramOnLayer2;
+}
+
+.bar-ram-circprog {
+    @include anim.fluent-decel-long;
+    min-width: 0.068rem; // line width
+    min-height: 1.636rem;
+    padding: 0rem;
+    background-color: c.$ramLayer2;
+    color: c.$ramOnLayer2;
+}
+
+.bar-ram-txt {
+    color: c.$ramOnLayer1;
+}
+
+.bar-swap-icon {
+    @include rounding.full;
+    @include anim.element-decel;
+    min-height: 1.77rem;
+    min-width: 1.77rem;
+    margin-top: 0.18rem;
+    color: c.$swapOnLayer2;
+}
+
+.bar-swap-circprog {
+    @include anim.fluent-decel-long;
+    min-width: 0.068rem; // line width
+    min-height: 1.636rem;
+    padding: 0rem;
+    background-color: c.$swapLayer2;
+    color: c.$swapOnLayer2;
+}
+
+.bar-swap-txt {
+    color: c.$swapOnLayer1;
+}
+
+.bar-cpu-icon {
+    @include rounding.full;
+    @include anim.element-decel;
+    min-height: 1.77rem;
+    min-width: 1.77rem;
+    margin-top: 0.18rem;
+    color: c.$cpuOnLayer2;
+}
+
+.bar-cpu-circprog {
+    @include anim.fluent-decel-long;
+    min-width: 0.068rem; // line width
+    min-height: 1.636rem;
+    padding: 0rem;
+    background-color: c.$cpuLayer2;
+    color: c.$cpuOnLayer2;
+}
+
+.bar-cpu-txt {
+    color: c.$cpuOnLayer1;
+}
+
+.bar-gpu-icon {
+    @include rounding.full;
+    @include anim.element-decel;
+    min-height: 1.77rem;
+    min-width: 1.77rem;
+    margin-top: 0.18rem;
+    color: c.$gpuOnLayer2;
+}
+
+.bar-gpu-circprog {
+    @include anim.fluent-decel-long;
+    min-width: 0.068rem; // line width
+    min-height: 1.636rem;
+    padding: 0rem;
+    background-color: c.$gpuLayer2;
+    color: c.$gpuOnLayer2;
+}
+
+.bar-gpu-txt {
+    color: c.$gpuOnLayer1;
+}
+
+.bar-upload-icon {
+    @include rounding.full;
+    @include anim.element-decel;
+    min-height: 1.77rem;
+    min-width: 1.77rem;
+    margin-right: -0.18rem;
+    color: c.$uploadOnLayer2;
+}
+
+.bar-upload-txt {
+    color: c.$uploadOnLayer1;
+}
+
+.bar-download-icon {
+    @include rounding.full;
+    @include anim.element-decel;
+    min-height: 1.77rem;
+    min-width: 1.77rem;
+    margin-right: -0.18rem;
+    color: c.$downloadOnLayer2;
+}
+
+.bar-download-txt {
+    color: c.$downloadOnLayer1;
+}
+
+.bar-music-playstate {
+    @include rounding.full;
+    @include anim.element-decel;
+    min-height: 1.77rem;
+    min-width: 1.77rem;
+    margin-top: 0.18rem;
+    color: c.$musicOnLayer2;
+}
+
+.bar-music-circprog {
+    @include anim.fluent-decel-long;
+    min-width: 0.068rem; // line width
+    min-height: 1.636rem;
+    padding: 0rem;
+    background-color: c.$musicLayer2;
+    color: c.$musicOnLayer2;
+}
+
+.bar-music-playstate-txt {
+    @include font.material;
+    transition: 100ms cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+
+.bar-music-txt {
+    color: c.$musicOnLayer1;
+}
+
+.bar-music-cover {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    min-width: 11.932rem;
+}
+
+.bar-music-extended-bg {
+    border-radius: 1.364rem;
+    min-width: 34.091rem;
+}
+
+.bar-music-hide-false {
+    @include anim.menu-decel;
+    transition-duration: 100ms;
+    opacity: 1;
+}
+
+.bar-music-hide-true {
+    @include anim.menu-accel;
+    transition-duration: 100ms;
+    opacity: 0;
+}
+
+.bar-corner-spacing {
+    min-width: rounding.$large;
+    min-height: rounding.$large;
+}
+
+.corner {
+    @include rounding.large;
+    background-color: c.$layer0;
+}
+
+.corner-black {
+    @include rounding.large;
+    background-color: black; // Hard code: fake screen corner
+}
+
+.bar-wintitle {
+    padding: 0rem 0.614rem;
+}
+
+.bar-wintitle-topdesc {
+    margin-top: -0.136rem;
+    margin-bottom: -0.341rem;
+    color: c.$windowtitleOnLayer0Inactive;
+}
+
+.bar-wintitle-txt {
+    color: c.$windowtitleOnLayer0;
+    min-height: 1.63rem;
+    margin-bottom: -0.341rem;
+}
+
+.bar-space-button {
+    padding: 0.341rem;
+}
+
+.bar-space-button > box:first-child {
+    @include rounding.full;
+    padding: 0rem 0.682rem;
+}
+
+.bar-systray {
+    @include rounding.full;
+    margin: 0.137rem 0rem;
+    padding: 0rem 0.682rem;
+}
+
+.bar-systray-item {
+    @include rounding.full;
+    @include anim.element-decel;
+    min-height: 1.032rem;
+    min-width: 1.032rem;
+    font-size: 1.032rem;
+    color: c.$trayOnLayer0;
+}
+
+.bar-statusicons {
+    @include rounding.full;
+    @include anim.element-decel;
+    margin: 0.273rem;
+    padding: 0rem 0.614rem;
+}
+
+.bar-statusicons-active {
+    background-color: c.$layer0Active;
+    color: c.$onLayer0Active;
+}
+
+.bar-util-btn {
+    @include rounding.full;
+    @include anim.element-decel;
+    min-height: 1.77rem;
+    min-width: 1.77rem;
+    background-color: c.$utilsLayer2;
+    color: c.$utilsOnLayer2;
+
+    &:hover,
+    &:focus {
+        background-color: c.$layer2Hover;
+    }
+
+    &:active {
+        background-color: c.$layer2Active;
+    }
+}
+
+.bar-spaceright {
+    color: c.$barspacerightOnLayer0;
+}
+
+.bar-bluetooth-device {
+    @include rounding.full;
+    min-height: 1.032rem;
+    min-width: 1.032rem;
+    font-size: 1.032rem;
+    padding: 0.205rem 0.341rem;
+}

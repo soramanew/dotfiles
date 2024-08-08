@@ -15,6 +15,19 @@ class PlayersService extends Service {
         return this.#players[0];
     }
 
+    makeCurrent(player) {
+        // Remove if present
+        const index = this.#players.indexOf(player);
+        if (index >= 0) this.#players.splice(index, 1);
+
+        // Add to front
+        this.#players.unshift(player);
+        this.notify("last-player");
+
+        // Save to file
+        this.#save();
+    }
+
     #save() {
         // writeFile throws errors so use exec instead
         exec(`bash -c "echo '${this.#players.map(p => p.name).join("\n")}' > '${this.#path}'"`);
@@ -29,18 +42,7 @@ class PlayersService extends Service {
             "notify::volume",
             "position",
         ])
-            player.connect(signal, () => {
-                // Remove if present
-                const index = this.#players.indexOf(player);
-                if (index >= 0) this.#players.splice(index, 1);
-
-                // Add to front
-                this.#players.unshift(player);
-                this.notify("last-player");
-
-                // Save to file
-                this.#save();
-            });
+            player.connect(signal, () => this.makeCurrent(player));
     }
 
     constructor() {

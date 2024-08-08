@@ -94,7 +94,7 @@ apply_term() {
     done
 
     # Set terminal alpha
-    [ "$transparent" = true ] && term_alpha=70 || term_alpha=100
+    [ "$transparent" = true ] && term_alpha=90 || term_alpha=100
     sed -i "s/\$alpha/$term_alpha/g" "$HOME/.cache/ags/user/generated/terminal/sequences.txt"
 
     for file in /dev/pts/*; do

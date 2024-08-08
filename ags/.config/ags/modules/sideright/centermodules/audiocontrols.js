@@ -1,10 +1,9 @@
 const { Box, Button, Icon, Label, Revealer, Slider, Stack } = Widget;
 const Audio = await Service.import("audio");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
-import { RoundedScrollable } from "../../.commonwidgets/cairo_roundedscrollable.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { iconExists } from "../../.miscutils/icons.js";
-// import { AnimatedSlider } from "../../.commonwidgets/cairo_slider.js";
+import GradientScrollable from "../../.commonwidgets/gradientscrollable.js";
 
 const AppVolume = stream =>
     Box({
@@ -56,13 +55,6 @@ const AppVolume = stream =>
                         onChange: ({ value }) => (stream.volume = value),
                         setup: setupCursorHover,
                     }),
-                    // AnimatedSlider({
-                    //     hpack: "fill",
-                    //     className: "sidebar-volmixer-stream-slider",
-                    //     initFrom: stream.volume * 100,
-                    //     onChange: value => (stream.volume = value),
-                    //     extraSetup: self => self.hook(stream, () => self.attribute.updateProgress(stream.volume * 100)),
-                    // }),
                 ],
             }),
         ],
@@ -78,7 +70,7 @@ const AudioDevices = input => {
                 className: "txt spacing-h-10",
                 children: [
                     iconExists(stream.iconName)
-                        ? Icon({ className: "txt-norm symbolic-icon", icon: stream.bind("iconName") })
+                        ? Icon({ className: "txt-norm", icon: stream.bind("icon-name") })
                         : MaterialIcon(matIcon, "norm"),
                     Label({
                         hexpand: true,
@@ -153,9 +145,9 @@ export default (props = {}) => {
             Label({ label: "No audio source", className: "txt-small" }),
         ],
     });
-    const appList = RoundedScrollable({
+    const appList = GradientScrollable({
         vexpand: true,
-        overlayClass: "sidebar-scrollcorner1",
+        layer: 1,
         child: Box({
             vertical: true,
             className: "spacing-v-5",

@@ -63,6 +63,10 @@ transparent = (args.transparency == 'transparent')
 
 if args.path is not None:
     image = Image.open(args.path)
+
+    if image.format == "GIF":
+        image.seek(1)
+
     wsize, hsize = image.size
     wsize_new, hsize_new = calculate_optimal_size(wsize, hsize, args.size)
     if wsize_new < wsize or hsize_new < hsize:
@@ -77,8 +81,8 @@ if args.path is not None:
     if(args.smart):
         if(hct.chroma < 20):
             args.scheme = 'neutral'
-        # if(hct.tone > 60):
-        #     darkmode = False
+        if(hct.tone > 60):
+            darkmode = False
 elif args.color is not None:
     argb = hex_to_argb(args.color)
     hct = Hct.from_int(argb)

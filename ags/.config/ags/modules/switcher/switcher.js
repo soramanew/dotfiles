@@ -1,12 +1,13 @@
 import Gtk from "gi://Gtk";
 import Pango from "gi://Pango";
-const { Box, Label, Button, Scrollable, Icon, Revealer } = Widget;
+const { Box, Label, Button, Icon, Revealer } = Widget;
 const Hyprland = await Service.import("hyprland");
 import { substitute } from "../.miscutils/icons.js";
 import { CACHE_DIR, SCREEN_HEIGHT, SCREEN_WIDTH } from "../../constants.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import { dispatch } from "../.miscutils/system.js";
 import { stripInvisUnicode } from "../.miscutils/strings.js";
+import GradientScrollable from "../.commonwidgets/gradientscrollable.js";
 
 const PREVIEW_SCALE = 0.15;
 
@@ -117,6 +118,7 @@ export default () => {
             Label({
                 className: "txt-title-small",
                 label: currentWindow.bind().as(w => stripInvisUnicode(w?.title) || "No title"),
+                selectable: true,
                 justification: "center",
                 wrap: true,
                 wrapMode: Pango.WrapMode.WORD_CHAR,
@@ -125,6 +127,7 @@ export default () => {
             Label({
                 className: "txt-subtext txt-norm",
                 label: currentWindow.bind().as(w => `${w?.class || "No class"}${w?.xwayland ? " (xwayland)" : ""}`),
+                selectable: true,
                 justification: "center",
                 wrap: true,
                 wrapMode: Pango.WrapMode.WORD_CHAR,
@@ -132,7 +135,7 @@ export default () => {
             }),
             Box({ className: "separator-line margin-top-5 margin-bottom-5" }),
             Label({
-                className: "txt-reading",
+                className: "readingfont",
                 label: currentWindow.bind().as(
                     w => `Address: ${w?.address.slice(2)} with pid ${w?.pid}
 Position: ${w?.at.join(", ")} on monitor ${w?.monitor}
@@ -146,6 +149,7 @@ State: ${w?.floating ? "floating" : "tiled"}${getFullscreenStr(w?.fullscreen)}${
                             : ""
                     }`
                 ),
+                selectable: true,
             }),
         ],
     });
@@ -170,8 +174,11 @@ State: ${w?.floating ? "floating" : "tiled"}${getFullscreenStr(w?.fullscreen)}${
             // Window not on current special ws and currently on special ws
             else if (currentWs?.startsWith("special:") && !currentWindow.value.workspace.name.startsWith("special:"))
                 Hyprland.message(`dispatch togglespecialworkspace ${currentWs.replace("special:", "")}`);
-            // Focus window, delay because doesn't focus if not
-            Utils.timeout(10, () => dispatch(`focuswindow address:${currentWindow.value.address}`));
+            // Bring to top and focus window, delay because doesn't focus if not
+            Utils.timeout(10, () => {
+                dispatch(`alterzorder top,address:${currentWindow.value.address}`);
+                dispatch(`focuswindow address:${currentWindow.value.address}`);
+            });
         },
     });
 
@@ -231,9 +238,8 @@ State: ${w?.floating ? "floating" : "tiled"}${getFullscreenStr(w?.fullscreen)}${
 
     const list = Box({
         className: "switcher-list",
-        child: Scrollable({
-            hscroll: "never",
-            vscroll: "automatic",
+        child: GradientScrollable({
+            layer: 1,
             child: Box({
                 vertical: true,
                 setup: self => {
@@ -257,10 +263,6 @@ State: ${w?.floating ? "floating" : "tiled"}${getFullscreenStr(w?.fullscreen)}${
                     );
                 },
             }),
-            setup: self => {
-                const vScrollbar = self.get_vscrollbar();
-                vScrollbar.get_style_context().add_class("switcher-scrollbar");
-            },
         }),
     });
 
