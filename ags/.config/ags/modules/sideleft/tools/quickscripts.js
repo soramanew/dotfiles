@@ -8,37 +8,37 @@ import { distroID, isArchDistro, isDebianDistro, hasFlatpak } from "../../.miscu
 
 const scripts = [
     {
-        icon: "nixos-symbolic",
+        icon: "nixos",
         name: "Trim system generations to 5",
         command: `sudo ${App.configDir}/scripts/quickscripts/nixos-trim-generations.sh 5 0 system`,
         enabled: distroID === "nixos",
     },
     {
-        icon: "nixos-symbolic",
+        icon: "nixos",
         name: "Trim home manager generations to 5",
         command: `${App.configDir}/scripts/quickscripts/nixos-trim-generations.sh 5 0 home-manager`,
         enabled: distroID === "nixos",
     },
     {
-        icon: "ubuntu-symbolic",
+        icon: "ubuntu",
         name: "Update packages",
         command: "sudo apt update && sudo apt upgrade -y",
         enabled: isDebianDistro,
     },
     {
-        icon: "fedora-symbolic",
+        icon: "fedora",
         name: "Update packages",
         command: "sudo dnf upgrade -y",
         enabled: distroID === "fedora",
     },
     {
-        icon: "arch-symbolic",
+        icon: "arch",
         name: "Update packages",
         command: "yay",
         enabled: isArchDistro,
     },
     {
-        icon: "flatpak-symbolic",
+        icon: "flatpak",
         name: "Uninstall unused flatpak packages",
         command: "flatpak uninstall --unused",
         enabled: hasFlatpak,
@@ -55,7 +55,7 @@ const scripts = [
         material: true,
     },
     {
-        icon: "arch-symbolic",
+        icon: "arch",
         name: Variable("Update pacman mirrors", {
             poll: [
                 60000,
@@ -68,7 +68,7 @@ const scripts = [
         enabled: true,
     },
     {
-        icon: "linux-symbolic",
+        icon: "linux",
         name: "Update firmware",
         command: "fwupdmgr refresh; fwupdmgr update",
         enabled: true,
@@ -92,7 +92,7 @@ const QuickScript = ({ icon, name, command, material = false }) => {
     return Box({
         className: "spacing-h-5 txt",
         children: [
-            material ? MaterialIcon(icon, "large") : Icon({ className: "txt-large", icon: icon }),
+            material ? MaterialIcon(icon, "large") : Icon({ className: "txt-large", icon: `${icon}-symbolic` }),
             Label({
                 className: "txt-small",
                 hpack: "start",
