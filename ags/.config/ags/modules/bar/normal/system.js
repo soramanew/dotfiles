@@ -1,6 +1,6 @@
 // This is for the right pills of the bar.
 import GLib from "gi://GLib";
-const { Box, Button, Label, EventBox, Revealer, Overlay, Icon } = Widget;
+const { Box, Button, Label, Revealer, Overlay, Icon } = Widget;
 const { execAsync, exec, readFile, writeFile } = Utils;
 const Battery = await Service.import("battery");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
@@ -8,7 +8,6 @@ import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js
 import { WWO_CODE, WEATHER_SYMBOL } from "../../.commondata/weather.js";
 import { BarGroup } from "./main.js";
 import { BATTERY_LOW, CACHE_DIR, EXTENDED_BAR } from "../../../constants.js";
-import { showClock } from "../../../variables.js";
 
 const WEATHER_CACHE_FOLDER = `${CACHE_DIR}/weather`;
 exec(`mkdir -p "${WEATHER_CACHE_FOLDER}"`);
@@ -19,26 +18,23 @@ const BarClock = () => {
     const getTime = format => GLib.DateTime.new_now_local().format(format);
     const time = Variable("", { poll: [5000, () => getTime("%H:%M")] });
     const date = Variable("", { poll: [60000, () => getTime("%A, %d/%m")] });
-    return EventBox({
-        onPrimaryClick: () => (showClock.value = !showClock.value),
-        child: Box({
-            vpack: "center",
-            className: "spacing-h-4 bar-clock-box",
-            children: [
-                Label({
-                    className: "bar-time",
-                    label: time.bind(),
-                }),
-                Label({
-                    className: "txt-norm txt-onLayer1",
-                    label: "•",
-                }),
-                Label({
-                    className: "txt-smallie bar-date",
-                    label: date.bind(),
-                }),
-            ],
-        }),
+    return Box({
+        vpack: "center",
+        className: "spacing-h-4 bar-clock-box",
+        children: [
+            Label({
+                className: "bar-time",
+                label: time.bind(),
+            }),
+            Label({
+                className: "txt-norm txt-onLayer1",
+                label: "•",
+            }),
+            Label({
+                className: "txt-smallie bar-date",
+                label: date.bind(),
+            }),
+        ],
     });
 };
 

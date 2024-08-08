@@ -22,8 +22,6 @@ showColorScheme.connect("changed", () => {
     if (showColorScheme.value) showColourSchemeFn();
 });
 globalThis.openColourScheme = () => showColorScheme.setValue(true); // setValue to force changed signal
-export const showClock = Variable(false);
-globalThis.openClock = showClock;
 globalThis.mpris = Mpris;
 
 // Mode switching
