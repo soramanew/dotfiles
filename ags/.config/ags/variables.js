@@ -1,6 +1,7 @@
 const { exec } = Utils;
 const Mpris = await Service.import("mpris");
-import { forMonitors, hasTouchscreen } from "./modules/.miscutils/system.js";
+import { COLOUR_MODE_FILE } from "./constants.js";
+import { forMonitors, hasTouchscreen, updateColourMode } from "./modules/.miscutils/system.js";
 
 const showIndicatorsFn = (indicator, timeout = 1000) => {
     let currentIndicatorTimeout;
@@ -35,6 +36,10 @@ globalThis.cycleMode = () => {
 // Tablet mode (triggered via acpi events, need external script to trigger)
 export const tabletMode = Variable(false);
 globalThis.tabletMode = tabletMode;
+
+// Dark mode
+export const darkMode = Variable(exec(`sed -n 1p '${COLOUR_MODE_FILE}'`) !== "light");
+darkMode.connect("changed", ({ value }) => updateColourMode(1, value ? "dark" : "light"));
 
 // For lock indicators (isCapsLockOn and isNumLockOn global for external script control)
 export const showLockIndicators = Variable(false);

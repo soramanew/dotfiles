@@ -3,7 +3,8 @@ import GLib from "gi://GLib";
 const { execAsync } = Utils;
 const Applications = await Service.import("applications");
 import Todo from "../../services/todo.js";
-import { darkMode, dispatch } from "../.miscutils/system.js";
+import { dispatch } from "../.miscutils/system.js";
+import { darkMode } from "../../variables.js";
 
 // Use a regular expression to match a trailing odd number of backslashes
 export const hasUnterminatedBackslash = inputString => /\\+$/.test(inputString);

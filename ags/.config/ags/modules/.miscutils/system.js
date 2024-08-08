@@ -1,8 +1,8 @@
 import Gdk from "gi://Gdk";
-const { exec, execAsync, readFile } = Utils;
+const { exec, execAsync } = Utils;
 const Audio = await Service.import("audio");
 const Hyprland = await Service.import("hyprland");
-import { CACHE_DIR } from "../../constants.js";
+import { COLOUR_MODE_FILE } from "../../constants.js";
 
 export const inPath = bin => !exec(`which ${bin}`).startsWith(`which: no ${bin} in `);
 
@@ -18,18 +18,6 @@ export const isDebianDistro =
 export const isArchDistro = distroID === "arch" || distroID === "endeavouros" || distroID === "cachyos";
 export const hasFlatpak = inPath("flatpak");
 
-const LIGHTDARK_FILE_LOCATION = `${CACHE_DIR}/user/colormode.txt`;
-export const darkMode = Variable(readFile(LIGHTDARK_FILE_LOCATION).split("\n")[0].trim() !== "light");
-darkMode.connect("changed", ({ value }) => {
-    let lightdark = value ? "dark" : "light";
-    execAsync([
-        "bash",
-        "-c",
-        `mkdir -p ${CACHE_DIR}/user && sed -i "1s/.*/${lightdark}/"  ${CACHE_DIR}/user/colormode.txt`,
-    ])
-        .then(() => execAsync(`${App.configDir}/scripts/color_generation/switchcolor.sh`).catch(print))
-        .catch(print);
-});
 export const hasPlasmaIntegration = inPath("plasma-browser-integration-host");
 
 export const getDistroIcon = () => {
@@ -84,3 +72,8 @@ export const isUsingHeadphones = () => /head(phone|set)/i.test(Audio.speaker?.st
 export const hasTouchscreen = exec("bash -c 'udevadm info --export-db | grep ID_INPUT_TOUCHSCREEN=1'").trim() !== "";
 
 export const dispatch = dispatcher => Hyprland.messageAsync(`dispatch ${dispatcher}`).catch(print);
+
+export const updateColourMode = (index, value) =>
+    execAsync(["sed", "-i", `${index}s/.*/${value}/`, COLOUR_MODE_FILE])
+        .then(() => execAsync(`${App.configDir}/scripts/color_generation/switchcolor.sh`).catch(print))
+        .catch(print);
