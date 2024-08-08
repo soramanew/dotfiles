@@ -1,0 +1,281 @@
+@use "../lib/colour" as c;
+@use "../lib/rounding";
+@use "../lib/anim";
+@use "../lib/font";
+@use "../lib/elevation";
+
+.osd-bg {
+    min-width: 8.864rem;
+    min-height: 3.409rem;
+}
+
+.osd-value {
+    @include elevation.border;
+    @include elevation.e2;
+    background-color: c.$layer0;
+    border-radius: 1.023rem;
+    padding: 0.625rem 1.023rem;
+    padding-top: 0.313rem;
+}
+
+.osd-progress {
+    @include anim.fluent_decel_long;
+    // transition: 120ms linear;
+    min-height: 0.955rem;
+    min-width: 0.068rem;
+    padding: 0rem;
+    margin: 0rem 0.137rem;
+    background-color: c.$layer2;
+    color: c.$onLayer2;
+    border-radius: 80px;
+}
+
+.osd-label {
+    font-size: 1.023rem;
+    font-weight: 500;
+}
+
+.osd-value-txt {
+    @include font.title;
+    font-size: 1.688rem;
+    font-weight: 500;
+    color: c.$onLayer0;
+}
+
+.osd-brightness {
+    color: c.$brightnessOnLayer0;
+}
+
+.osd-brightness-progress {
+    color: c.$brightnessOnLayer0;
+}
+
+.osd-volume {
+    color: c.$volumeOnLayer0;
+}
+
+.osd-volume-progress {
+    color: c.$volumeOnLayer0;
+}
+
+.osd-volume-disabled {
+    color: grayscale(darken(c.$volumeOnLayer0, 50%));
+}
+
+.osd-volume-progress-disabled {
+    color: grayscale(darken(c.$volumeOnLayer0, 50%));
+}
+
+.osd-notifs {
+    padding-top: 0.313rem;
+}
+
+.osd-lockindicator {
+    @include elevation.e2;
+    border-radius: 1.023rem;
+    background-color: c.$layer0;
+    color: c.$onLayer0;
+    padding: 0.626rem;
+    padding-right: 0.824rem;
+}
+
+.osd-locklabel {
+    @include font.title;
+    font-weight: 500;
+}
+
+.osd-lockoff {
+    color: grayscale(darken(c.$onLayer0, 30%));
+}
+
+.osd-clock {
+    @include elevation.e2;
+    border-radius: 1.023rem;
+    background-color: c.$layer0;
+    color: c.$onLayer0;
+    padding: 0.626rem;
+}
+
+.osd-clock-title {
+    @include font.title;
+    font-weight: 500;
+    margin-top: -0.2rem;
+}
+
+.osd-clock-timezone {
+    @include rounding.small;
+    background-color: c.$layer1;
+    color: c.$onLayer1;
+    padding: 0.313rem 0.626rem;
+}
+
+.osd-colorscheme {
+    @include elevation.e2;
+    border-radius: 1.023rem;
+    background-color: c.$layer0;
+    padding: 0.313rem 0.626rem;
+}
+
+.osd-colorscheme-settings {
+    @include rounding.small;
+    background-color: c.$layer0;
+    padding: 0.313rem 0.626rem;
+}
+
+.osd-color {
+    border-radius: 0.65rem;
+    -gtk-outline-radius: 0.65rem;
+    min-width: 2.727rem;
+    min-height: 1.705rem;
+    padding: 0rem 0.341rem;
+    font-weight: bold;
+
+    box {
+        @include rounding.small;
+        margin: 0.409rem;
+    }
+}
+
+.osd-color-primary {
+    background-color: c.$primary;
+    color: c.$onPrimary;
+
+    box {
+        background-color: c.$onPrimary;
+    }
+}
+.osd-color-primaryContainer {
+    background-color: c.$primaryContainer;
+    color: c.$onPrimaryContainer;
+
+    box {
+        background-color: c.$onPrimaryContainer;
+    }
+}
+.osd-color-secondary {
+    background-color: c.$secondary;
+    color: c.$onSecondary;
+
+    box {
+        background-color: c.$onSecondary;
+    }
+}
+.osd-color-secondaryContainer {
+    background-color: c.$secondaryContainer;
+    color: c.$onSecondaryContainer;
+
+    box {
+        background-color: c.$onSecondaryContainer;
+    }
+}
+
+.osd-color-tertiary {
+    background-color: c.$tertiary;
+    color: c.$onTertiary;
+
+    box {
+        background-color: c.$onTertiary;
+    }
+}
+.osd-color-tertiaryContainer {
+    background-color: c.$tertiaryContainer;
+    color: c.$onTertiaryContainer;
+
+    box {
+        background-color: c.$onTertiaryContainer;
+    }
+}
+
+.osd-color-error {
+    background-color: c.$error;
+    color: c.$onError;
+
+    box {
+        background-color: c.$onError;
+    }
+}
+.osd-color-errorContainer {
+    background-color: c.$errorContainer;
+    color: c.$onErrorContainer;
+
+    box {
+        background-color: c.$onErrorContainer;
+    }
+}
+
+.osd-color-surface {
+    background-color: c.$surface;
+    color: c.$onSurface;
+    border: 0.068rem solid c.$outlineVariant;
+
+    box {
+        background-color: c.$onSurface;
+    }
+}
+
+.osd-color-surfaceContainer {
+    background-color: c.$surfaceContainer;
+    color: c.$onSurface;
+
+    box {
+        background-color: c.$onSurface;
+    }
+}
+
+.osd-color-inverseSurface {
+    background-color: c.$inverseSurface;
+    color: c.$inverseOnSurface;
+
+    box {
+        background-color: c.$onSurfaceVariant;
+    }
+}
+
+.osd-color-surfaceVariant {
+    background-color: c.$surfaceVariant;
+    color: c.$onSurfaceVariant;
+
+    box {
+        background-color: c.$onSurfaceVariant;
+    }
+}
+.osd-color-L1 {
+    background-color: c.$layer1;
+    color: c.$onLayer1;
+
+    box {
+        background-color: c.$onLayer1;
+    }
+}
+
+.osd-color-layer0 {
+    background-color: c.$layer0;
+    color: c.$onLayer0;
+
+    box {
+        background-color: c.$onLayer0;
+    }
+}
+
+.osd-settings-btn-arrow {
+    @include rounding.full;
+    @include font.material;
+    min-width: 1.705rem;
+    min-height: 1.705rem;
+    color: c.$onSurface;
+
+    &:hover {
+        background-color: c.$surfaceContainerHigh;
+    }
+    &:active {
+        background-color: c.$surfaceContainerHighest;
+    }
+}
+
+.osd-show {
+    transition: 200ms cubic-bezier(0.1, 1, 0, 1);
+}
+
+.osd-hide {
+    transition: 190ms cubic-bezier(0.85, 0, 0.15, 1);
+}

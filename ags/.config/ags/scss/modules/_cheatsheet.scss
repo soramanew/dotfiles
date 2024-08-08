@@ -1,0 +1,72 @@
+@use "../lib/colour" as c;
+@use "../lib/rounding";
+@use "../lib/elevation";
+@use "../lib/font";
+@use "../lib/anim";
+
+.cheatsheet-bg {
+    @include rounding.large;
+    @include elevation.border;
+    @include elevation.e2;
+    margin-bottom: 0.682rem;
+    background-color: c.$layer0;
+    padding: 1.364rem;
+}
+
+.cheatsheet-title {
+    color: c.$cheatsheetTitle;
+}
+
+.cheatsheet-key {
+    @include font.tech;
+    min-height: 1.364rem;
+    min-width: 1.364rem;
+    margin: 0.17rem;
+    padding: 0.136rem 0.205rem;
+    -gtk-outline-radius: 0.409rem;
+    color: c.$cheatsheetTitle;
+    border-radius: 0.409rem;
+    border: 0.068rem solid c.$cheatsheetTitle;
+    box-shadow: 0rem 0.136rem 0rem c.$cheatsheetTitle;
+}
+
+.cheatsheet-key-super {
+    padding-left: 0.103rem;
+    padding-right: 0.308rem;
+}
+
+.cheatsheet-key-notkey {
+    min-height: 1.364rem;
+    padding: 0.136rem 0.205rem;
+    margin: 0.17rem;
+    color: c.$onLayer0;
+}
+
+@for $i from 1 through 8 {
+    .cheatsheet-color-#{$i} {
+        color: nth(c.$cheatsheetColors, $i);
+        border-color: nth(c.$cheatsheetColors, $i);
+        box-shadow: 0rem 0.136rem 0rem nth(c.$cheatsheetColors, $i);
+    }
+}
+
+.cheatsheet-closebtn {
+    @include anim.element-decel;
+    @include rounding.full;
+    min-width: 2.386rem;
+    min-height: 2.386rem;
+}
+
+.cheatsheet-closebtn:hover,
+.cheatsheet-closebtn:focus {
+    background-color: c.$layer0Hover;
+}
+
+.cheatsheet-closebtn:active {
+    background-color: c.$layer0Active;
+}
+
+.cheatsheet-category-title {
+    @include font.title;
+    font-size: 1.705rem;
+}

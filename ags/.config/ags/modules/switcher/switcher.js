@@ -135,7 +135,7 @@ export default () => {
             }),
             Box({ className: "separator-line margin-top-5 margin-bottom-5" }),
             Label({
-                className: "txt-reading",
+                className: "readingfont",
                 label: currentWindow.bind().as(
                     w => `Address: ${w?.address.slice(2)} with pid ${w?.pid}
 Position: ${w?.at.join(", ")} on monitor ${w?.monitor}

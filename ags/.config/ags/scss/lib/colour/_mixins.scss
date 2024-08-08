@@ -1,0 +1,9 @@
+@use "variables" as v;
+
+@mixin subtext {
+    color: v.$subtext;
+}
+
+@mixin actiontext {
+    color: v.$actiontext;
+}

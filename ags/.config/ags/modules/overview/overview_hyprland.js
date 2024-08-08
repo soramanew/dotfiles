@@ -182,7 +182,7 @@ export default () => {
                             // hexpand: true,
                             maxWidthChars: 1, // Min width when ellipsizing (truncated)
                             truncate: "end",
-                            className: `txt txt-reading ${xwayland ? "txt-italic" : ""}`,
+                            className: `txt readingfont ${xwayland ? "txt-italic" : ""}`,
                             css: `
                                 font-size: ${
                                     (Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) /

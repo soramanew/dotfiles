@@ -1,0 +1,75 @@
+@use "../mixins" as fonts;
+
+.txt-title {
+    @include fonts.title;
+    font-size: 2.045rem;
+}
+
+.txt-title-small {
+    @include fonts.title;
+    font-size: 1.364rem;
+}
+
+.txt-gigantic {
+    @include fonts.main;
+    font-size: 3rem;
+}
+
+.txt-massive {
+    @include fonts.main;
+    font-size: 2.7273rem;
+}
+
+.txt-hugerass {
+    @include fonts.main;
+    font-size: 2.045rem;
+}
+
+.txt-hugeass {
+    @include fonts.main;
+    font-size: 1.8182rem;
+}
+
+.txt-larger {
+    @include fonts.main;
+    font-size: 1.6363rem;
+}
+
+.txt-large {
+    //16pt
+    @include fonts.main;
+    font-size: 1.4545rem;
+}
+
+.txt-norm {
+    //14pt
+    @include fonts.main;
+    font-size: 1.2727rem;
+}
+
+.txt-small {
+    //12pt
+    @include fonts.main;
+    font-size: 1.0909rem;
+}
+
+.txt-smallie {
+    //11pt
+    @include fonts.main;
+    font-size: 1rem;
+}
+
+.txt-smaller {
+    //10pt
+    @include fonts.main;
+    font-size: 0.9091rem;
+}
+
+.txt-tiny {
+    @include fonts.main;
+    font-size: 0.7273rem;
+}
+
+.txt-poof {
+    font-size: 0px;
+}
