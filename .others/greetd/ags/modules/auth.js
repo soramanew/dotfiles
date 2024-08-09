@@ -4,10 +4,9 @@ const Greetd = await Service.import("greetd");
 import { session } from "./session.js";
 import { CACHE_DIR, setupCursorHover } from "../lib.js";
 
-const users = Utils.exec("find /home -maxdepth 1 -mindepth 1 -type d")
-    .split("\n")
-    .map(d => d.replace("/home/", ""))
-    .filter(u => u !== "lost+found");
+const users = Utils.exec(
+    "find /home -maxdepth 1 -mindepth 1 -type d -not -name 'lost+found' -exec basename {} \\;"
+).split("\n");
 const user = Variable(Utils.readFile(`${CACHE_DIR}/last-user.txt`) || users[0]);
 
 const Face = () =>
@@ -16,7 +15,7 @@ const Face = () =>
         overlays: [
             Box({
                 className: "face",
-                css: user.bind().as(u => `background-image: url("/home/${u}/.face");`),
+                css: user.bind().as(u => `background-image: url("${CACHE_DIR}/faces/${u}");`),
             }),
         ],
     });
