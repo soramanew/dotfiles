@@ -40,6 +40,13 @@ Change greetd background:
 sudo cp -f <FILE> /etc/greetd/ags/assets/background
 ```
 
+Plymouth:
+
+```sh
+sudo cp -r .others/plymouth/circle /usr/share/plymouth/themes/
+sudo plymouth-set-default-theme circle
+```
+
 To use vesktop arRPC:
 
 ```sh
