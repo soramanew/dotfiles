@@ -1,0 +1,11 @@
+@use "reset";
+
+@use "modules/widgets";
+@use "modules/auth";
+@use "modules/timedate";
+@use "modules/session";
+
+.background {
+    background-size: cover;
+    background-position: center;
+}
