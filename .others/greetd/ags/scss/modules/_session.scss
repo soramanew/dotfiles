@@ -1,0 +1,78 @@
+@use "../lib/colour" as c;
+@use "../lib/rounding";
+@use "../lib/font";
+@use "../lib/anim";
+@use "../lib/border";
+
+.session {
+    margin: 1rem;
+
+    & > * {
+        margin-left: 1rem;
+    }
+}
+
+.session-chip {
+    @include rounding.normal;
+    @include border.elevation;
+    @include font.small;
+
+    background: c.$layer0;
+    color: c.$onLayer0;
+}
+
+.dropdown-btn {
+    @include anim.element-decel;
+
+    padding: 0 1.5rem;
+    min-height: 2.32rem;
+
+    &:hover,
+    &:focus {
+        background-color: c.$layer0Hover;
+    }
+
+    &:active {
+        background-color: c.$layer0Active;
+    }
+}
+
+.dropdown-btn:first-child {
+    border-top-left-radius: rounding.$medium;
+    border-top-right-radius: rounding.$medium;
+}
+
+.dropdown-title {
+    @include rounding.normal;
+}
+
+.dropdown-title-open {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.session-icon {
+    @include font.material;
+    margin-left: 0.4rem;
+}
+
+.power-dropdown {
+    @include font.material;
+}
+
+.power-btn {
+    @include font.norm;
+
+    padding: 0;
+    min-width: 2.32rem;
+}
+
+.battery-icon {
+    margin-left: 0.28rem;
+}
+
+.battery-low {
+    @include border.error;
+
+    background-color: c.$error;
+}
