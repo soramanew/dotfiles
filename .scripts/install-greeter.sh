@@ -1,9 +1,10 @@
 #!/bin/fish
 
 cd (dirname (status filename)) || exit
+cd ..  # Move to project root
 
 # Reset config
-sudo rm -r /etc/greetd
+[ -d '/etc/greetd' ] && sudo rm -r /etc/greetd
 sudo cp -r .others/greetd /etc/greetd
 
 # Create cache dir tmpfile config
