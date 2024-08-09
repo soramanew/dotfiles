@@ -82,6 +82,7 @@
     @include font.larger;
     @include font.semibold;
     @include border.elevation;
+    @include border.primary(1px);
 
     margin-top: 0.68rem;
     min-width: 2.727rem;

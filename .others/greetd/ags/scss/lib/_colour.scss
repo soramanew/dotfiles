@@ -26,3 +26,4 @@ $layer3Active: mix($layer3, $onLayer3, 80%);
 // Others
 $subtext: $outline;
 $actiontext: mix($onBackground, $background, 85%);
+$shadow: change-color($shadow, $alpha: 0.8);

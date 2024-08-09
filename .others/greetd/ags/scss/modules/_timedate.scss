@@ -3,6 +3,7 @@
 
 .time-date {
     margin-top: 4rem;
+    text-shadow: 0px 2px 3px c.$shadow;
     color: c.$onLayer0;
 
     @if c.$darkmode == False {
