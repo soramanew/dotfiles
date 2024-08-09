@@ -129,12 +129,12 @@ const BatteryStatus = () =>
         vpack: "end",
         className: Utils.merge(
             [Battery.bind("percent"), Battery.bind("charging")],
-            (p, c) => `session-chip ${!c && p <= 20 ? "battery-low" : ""}`
+            (p, c) => `session-chip dropdown-btn battery ${!c && p <= 20 ? "battery-low" : ""}`
         ),
         visible: Battery.bind("available"),
         children: [
-            Icon({ className: "battery-icon", icon: Battery.bind("icon-name") }),
-            Label({ label: Battery.bind("percent").as(p => `${p}%`) }),
+            Icon({ icon: Battery.bind("icon-name") }),
+            Label({ className: "battery-percent", label: Battery.bind("percent").as(p => `${p}%`) }),
         ],
     });
 

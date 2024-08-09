@@ -67,12 +67,16 @@
     min-width: 2.32rem;
 }
 
-.battery-icon {
+.battery {
+    padding: 0 1rem;
+}
+
+.battery-percent {
     margin-left: 0.28rem;
 }
 
 .battery-low {
     @include border.error;
 
-    background-color: c.$error;
+    color: c.$error;
 }
