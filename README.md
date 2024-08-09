@@ -25,6 +25,21 @@ Update the repo using:
 git pull --recurse-submodules
 ```
 
+Greetd:
+
+```sh
+sudo rm -r /etc/greetd
+sudo cp -r .others/greetd /etc/greetd
+echo 'd /var/cache/greeter - greeter greeter - -' | sudo tee /etc/tmpfiles.d/greeter.conf
+sudo cp -r theming/.icons/sweet-cursors /usr/share/icons/sweet-cursors
+```
+
+Change greetd background:
+
+```sh
+sudo cp -f <FILE> /etc/greetd/ags/assets/background
+```
+
 To use vesktop arRPC:
 
 ```sh
@@ -62,4 +77,6 @@ git checkout
 mv kde/cursors/Sweet-cursors ../theming/.icons/sweet-cursors
 cd ..
 rm -rf temp
+# Optionally, for greetd (system-wide)
+sudo cp -r theming/.icons/sweet-cursors /usr/share/icons/sweet-cursors
 ```
