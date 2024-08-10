@@ -54,6 +54,7 @@ apply_fuzzel() {
         sed -i "s/{{ ${colourlist[$i]} }}/${colourvalues[$i]#\#}/g" "$HOME"/.cache/ags/user/generated/fuzzel/fuzzel.ini
     done
 
+    mkdir -p "$HOME"/.config/fuzzel
     cp "$HOME"/.cache/ags/user/generated/fuzzel/fuzzel.ini "$HOME"/.config/fuzzel/fuzzel.ini
 }
 
@@ -73,6 +74,7 @@ apply_cava() {
         sed -i "s/{{ ${colourlist[$i]} }}/${colourvalues[$i]#\#}/g" "$HOME"/.cache/ags/user/generated/terminal/cava
     done
 
+    mkdir -p "$HOME"/.config/cava
     cp "$HOME"/.cache/ags/user/generated/terminal/cava "$HOME"/.config/cava/config
     killall -USR2 cava
 }

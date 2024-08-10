@@ -16,7 +16,7 @@
 
 .face {
     @include rounding.small;
-    @include border.primary;
+    @include border.primary(3px);
 
     background-size: cover;
     background-position: center;
@@ -26,7 +26,7 @@
     @include rounding.small;
     @include font.material;
     @include font.gigantic;
-    @include border.primary;
+    @include border.primary(3px);
 
     min-width: 8.181rem;
     min-height: 8.181rem;
@@ -35,7 +35,7 @@
 }
 
 .face-offset {
-    min-height: 15rem;
+    min-height: 14.96rem;
 }
 
 .username {
@@ -44,7 +44,7 @@
     @include font.main;
     @include font.large;
 
-    padding: 0.4rem 1.023rem;
+    padding: 0.136rem 1.023rem;
     background-color: c.$layer0;
     color: c.$onLayer0;
 
@@ -58,12 +58,25 @@
     }
 }
 
+.username-single {
+    // For some reason when using a box instead of a button the bottom padding doesn't work correctly
+    // So extra padding to fix it
+    padding-bottom: 0.408rem;
+}
+
+.user-picker-icon {
+    @include font.material;
+    @include font.hugeass;
+
+    margin-right: -0.544rem;
+}
+
 .password {
     @include rounding.small;
     @include font.main;
     @include font.small;
 
-    margin-top: 0.68rem;
+    margin-top: 0.544rem;
     padding: 0.4rem 1.023rem;
     background-color: c.$layer2;
     color: c.$onLayer2;
@@ -75,6 +88,12 @@
     color: c.$error;
 }
 
+.loading {
+    @include border.primary;
+
+    color: mix(c.$primary, c.$outline, 90%);
+}
+
 .login-button {
     @include anim.element-decel;
     @include rounding.full;
@@ -82,7 +101,7 @@
     @include font.larger;
     @include font.semibold;
     @include border.elevation;
-    @include border.primary(1px);
+    @include border.primary;
 
     margin-top: 0.68rem;
     min-width: 2.727rem;

@@ -19,7 +19,6 @@ class WallpaperService extends Service {
 
     #cacheDir = `${CACHE_DIR}/user/wallpaper`;
     #enabledStorage = `${this.#cacheDir}/enabled.txt`;
-    #changeScript = `${App.configDir}/scripts/color_generation/change-wallpaper.sh`;
     #timeoutLength = 900; // seconds
     #pollFrequency = 5000; // ms
 
@@ -64,7 +63,7 @@ class WallpaperService extends Service {
     #go(delay = this.#timeoutLength) {
         this.#stop();
         this.#timeout = setTimeout(() => {
-            execAsync(this.#changeScript).catch(print);
+            execAsync("dotctl wallpaper change").catch(print);
             this.emit("triggered");
             this.#go();
         }, delay * 1000); // because seconds
@@ -127,7 +126,7 @@ class WallpaperService extends Service {
     }
 
     oneshot() {
-        execAsync(this.#changeScript).catch(print);
+        execAsync("dotctl wallpaper change").catch(print);
         if (this.#enabled) this.#go();
     }
 
