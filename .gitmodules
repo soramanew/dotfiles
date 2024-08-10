@@ -1,9 +1,12 @@
-[submodule "stow/vesktop/.config/vesktop/arrpc"]
-	path = stow/vesktop/.config/vesktop/arrpc
-	url = https://github.com/OpenAsar/arrpc.git
 [submodule "firefox/ShyFox"]
 	path = firefox/ShyFox
 	url = https://github.com/Naezr/ShyFox.git
+	branch = main
 [submodule "stow/theming/.icons/candy-icons"]
 	path = stow/theming/.icons/candy-icons
 	url = https://github.com/EliverLara/candy-icons.git
+	branch = master
+[submodule "stow/vesktop/.config/vesktop/arrpc"]
+	path = stow/vesktop/.config/vesktop/arrpc
+	url = https://github.com/OpenAsar/arrpc.git
+	branch = main

@@ -1,6 +1,6 @@
 # dotfiles
 
-My dotfiles for Hyprland on Arch Linux
+My dotfiles for Hyprland on Arch Linux.
 
 > [!WARNING]
 > These were made for personal use and may not work on other systems.
