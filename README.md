@@ -3,7 +3,7 @@
 My dotfiles for Hyprland on Arch Linux.
 
 > [!WARNING]
-> These were made for personal use and may not work on other systems.
+> These were made for personal use and may not work on other systems. Also, I make breaking changes quite often, so beware of updates.
 
 ## Installation
 
