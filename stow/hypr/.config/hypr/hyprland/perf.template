@@ -1,0 +1,27 @@
+# ## opacity 6
+windowrule = opacity 1 override, .*
+decoration {
+    blur {
+        ignore_opacity = false
+    }
+}
+
+# ## animations 3
+# animations {
+#    enabled = false
+# }
+
+# ## blur 5
+# decoration {
+#     blur {
+#         enabled = false
+#     }
+# }
+
+# ## xray 6
+# layerrule = xray 0, .*
+# decoration {
+#    blur {
+#        xray = false
+#    }
+# }

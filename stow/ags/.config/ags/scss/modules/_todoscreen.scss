@@ -1,0 +1,68 @@
+@use "../lib/colour" as c;
+@use "../lib/rounding";
+@use "../lib/anim";
+@use "../lib/elevation";
+
+.todoscreen-bg {
+    @include rounding.large;
+    @include elevation.border;
+    @include elevation.e2;
+    margin-bottom: 0.682rem;
+    background-color: c.$layer0;
+    padding: 1.364rem;
+    min-width: 100rem;
+    min-height: 50rem;
+}
+
+.todoscreen-closebtn {
+    @include anim.element-decel;
+    @include rounding.full;
+    min-width: 2.386rem;
+    min-height: 2.386rem;
+
+    &:hover,
+    &:focus {
+        background-color: c.$layer0Hover;
+    }
+
+    &:active {
+        background-color: c.$layer0Active;
+    }
+}
+
+.todoscreen-todo-item {
+    @include rounding.small;
+    padding: 0.273rem 0.273rem 0.273rem 0.545rem;
+}
+
+.todoscreen-todo-item-wrapper {
+    @include rounding.small;
+    transition: 200ms cubic-bezier(0, 0.55, 0.45, 1);
+}
+
+.todoscreen-todo-item-hovered {
+    background-color: c.$layer0Hover;
+}
+
+.todoscreen-todo-crosser {
+    @include rounding.small;
+    padding: 0.273rem 0.273rem 0.273rem 0.545rem;
+    transition: margin 200ms cubic-bezier(0.1, 1, 0, 1), background-color 0ms;
+    min-width: 0rem;
+}
+
+.todoscreen-todo-item-action {
+    @include anim.element-decel;
+    border-radius: 9999px;
+    min-width: 1.705rem;
+    min-height: 1.705rem;
+
+    &:hover,
+    &:focus {
+        background-color: mix(c.$primary, c.$layer1Hover, 20%);
+    }
+
+    &:active {
+        background-color: mix(c.$primary, c.$layer1Active, 40%);
+    }
+}

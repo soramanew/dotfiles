@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Backing up package list to {{ $dots_dir }}/pkglist.txt
+When = PostTransaction
+Exec = /bin/sudo -u {{ $user }} cp -f /etc/pkglist.txt {{ $dots_dir }}/pkglist.txt

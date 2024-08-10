@@ -1,0 +1,23 @@
+#!/bin/fish
+
+cd (dirname (realpath (status filename))) || exit
+cd ../../../../scripts || exit
+
+# Source utils file
+. _util.sh
+
+# Copy argv so I can still access it if needed
+set args $argv
+
+while [ ! -f "$args[1].sh" ]
+    if [ -d "$args[1]" ]
+        # Cd into dir and remove first arg
+        cd $args[1]
+        set args $args[2..]
+    else
+        output "Invalid command: $args[1]"
+        exit
+    end
+end
+
+"./$args[1].sh" $args[2..]

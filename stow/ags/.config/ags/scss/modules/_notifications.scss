@@ -1,0 +1,271 @@
+@use "../lib/colour" as c;
+@use "../lib/rounding";
+@use "../lib/functions" as fn;
+
+@mixin -notif-rounding {
+    @include rounding.normal;
+}
+
+@mixin -notif {
+    @include -notif-rounding;
+    padding: rounding.$small;
+    padding-right: rounding.$small + 0.545rem;
+}
+
+.notif-category {
+    @include -notif-rounding;
+    border: 0.034rem solid c.$outlineVariant;
+    background-color: c.$layer2;
+    color: c.$onLayer2;
+    padding: calc(rounding.$small / 2);
+    padding-right: rounding.$small; // + 0.545rem;
+}
+
+.notif-category-clicked {
+    background-color: c.$layer1Hover;
+}
+
+.notif-cat-expand-btn {
+    @include -notif-rounding;
+    min-width: 2rem;
+    min-height: 2rem;
+
+    &:hover,
+    &:focus {
+        background: c.$layer2Hover;
+    }
+
+    &:active {
+        background: c.$layer2Active;
+    }
+}
+
+.notif-low {
+    @include -notif;
+    background-color: mix(c.$layer1, c.$secondaryContainer, 80%);
+    color: c.$onLayer1;
+}
+
+.notif-normal {
+    @include -notif;
+    background-color: c.$layer2;
+    color: c.$onLayer2;
+}
+
+.notif-critical {
+    @include -notif;
+    background-color: c.$secondaryContainer;
+    color: c.$onSecondaryContainer;
+}
+
+.notif-clicked-low {
+    background-color: mix(c.$secondaryContainer, c.$surfaceContainerLow, 40%);
+}
+
+.notif-clicked-normal {
+    background-color: mix(c.$secondaryContainer, c.$surfaceContainerHigh, 20%);
+}
+
+.notif-clicked-critical {
+    background-color: c.$onSecondary;
+}
+
+.popup-notif-low {
+    @include -notif;
+    min-width: 30.682rem;
+    background-color: fn.to-root-transparency(mix(c.$layer1, c.$surfaceContainerLow, 80%));
+    border: 0.034rem solid c.$outlineVariant;
+    color: c.$onLayer1;
+}
+
+.popup-notif-normal {
+    @include -notif;
+    min-width: 30.682rem;
+    border: 0.034rem solid c.$outlineVariant;
+    color: c.$onLayer2;
+    background-color: c.$layer2;
+
+    @if c.$transparent == True {
+        background-color: c.$layer0;
+    }
+}
+
+.popup-notif-critical {
+    @include -notif;
+    min-width: 30.682rem;
+    background-color: c.$secondaryContainer;
+    border: 0.034rem solid c.$onSecondaryContainer;
+    color: c.$onSecondaryContainer;
+}
+
+.popup-notif-clicked-low {
+    background-color: fn.to-root-transparency(mix(c.$secondaryContainer, c.$surfaceContainerLow, 10%));
+}
+
+.popup-notif-clicked-normal {
+    background-color: fn.to-root-transparency(c.$surfaceContainerLow);
+}
+
+.popup-notif-clicked-critical {
+    background-color: c.$onSecondary;
+    color: c.$onSecondaryContainer;
+}
+
+.notif-body-low {
+    color: c.$outline;
+}
+
+.notif-body-normal {
+    color: c.$outline;
+}
+
+.notif-body-critical {
+    color: mix(c.$onSecondaryContainer, c.$secondaryContainer, 67%);
+}
+
+.notif-icon {
+    @include rounding.full;
+    min-width: 3.409rem;
+    min-height: 3.409rem;
+    font-size: 2.182rem;
+}
+
+.notif-icon-material {
+    background-color: c.$secondaryContainer;
+    color: c.$onSecondaryContainer;
+}
+
+.notif-icon-material-low {
+    background-color: c.$secondaryContainer;
+    color: c.$onSecondaryContainer;
+}
+
+.notif-icon-material-normal {
+    background-color: c.$secondaryContainer;
+    color: c.$onSecondaryContainer;
+}
+
+.notif-icon-material-critical {
+    background-color: c.$secondary;
+    color: c.$onSecondary;
+}
+
+.notif-expand-btn {
+    @include -notif-rounding;
+    min-width: 1.841rem;
+    min-height: 1.841rem;
+
+    &:hover,
+    &:focus {
+        background: c.$layer2Hover;
+    }
+
+    &:active {
+        background: c.$layer2Active;
+    }
+}
+
+.notif-listaction-btn {
+    @include -notif-rounding;
+    padding: 0.341rem 0.682rem;
+
+    &:hover,
+    &:focus {
+        background-color: c.$layer2Hover;
+    }
+
+    &:active {
+        background-color: c.$layer2Active;
+    }
+}
+
+.notif-listaction-btn-enabled {
+    background-color: c.$secondaryContainer;
+    color: c.$onSecondaryContainer;
+
+    &:hover,
+    &:focus {
+        background-color: mix(c.$secondaryContainer, c.$onSecondaryContainer, 90%);
+    }
+
+    &:active {
+        background-color: mix(c.$secondaryContainer, c.$onSecondaryContainer, 75%);
+    }
+}
+
+.osd-notif {
+    @include -notif-rounding;
+    background-color: c.$layer0;
+    min-width: 30.682rem;
+}
+
+.notif-circprog-low {
+    min-width: 0.136rem; // line width
+    min-height: 3.136rem;
+    padding: 0rem;
+    color: c.$onSecondaryContainer;
+}
+
+.notif-circprog-normal {
+    min-width: 0.136rem; // line width
+    min-height: 3.136rem;
+    padding: 0rem;
+    color: c.$onSecondaryContainer;
+}
+
+.notif-circprog-critical {
+    min-width: 0.136rem; // line width
+    min-height: 3.136rem;
+    padding: 0rem;
+    color: c.$secondaryContainer;
+}
+
+.notif-actions {
+    min-height: 2.045rem;
+}
+
+.notif-action {
+    @include rounding.small;
+}
+
+.notif-action-low {
+    background-color: mix(c.$surfaceContainerHighest, c.$secondaryContainer, 70%);
+    color: c.$onSurfaceVariant;
+
+    &:focus,
+    &:hover {
+        border: 0.04rem solid c.$outlineVariant;
+    }
+
+    &:active {
+        background-color: c.$surfaceBright;
+    }
+}
+
+.notif-action-normal {
+    background-color: c.$surfaceContainerHighest;
+    color: c.$onSurface;
+
+    &:focus,
+    &:hover {
+        border: 0.04rem solid c.$outlineVariant;
+    }
+
+    &:active {
+        background-color: c.$surfaceBright;
+    }
+}
+
+.notif-action-critical {
+    background-color: mix(c.$secondary, c.$onSecondary, 30%);
+    color: c.$onSurfaceVariant;
+
+    &:focus,
+    &:hover {
+        border: 0.04rem solid c.$outline;
+    }
+
+    &:active {
+        background-color: mix(c.$secondary, c.$onSecondary, 40%);
+    }
+}

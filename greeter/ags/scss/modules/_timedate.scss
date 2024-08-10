@@ -1,0 +1,24 @@
+@use "../lib/colour" as c;
+@use "../lib/font";
+
+.time-date {
+    margin-top: 4rem;
+    text-shadow: 0px 2px 3px c.$shadow;
+    color: c.$onLayer0;
+
+    @if c.$darkmode == False {
+        color: c.$layer0;
+    }
+}
+
+.time {
+    @include font.title;
+    @include font.bold;
+
+    font-size: 6rem;
+}
+
+.date {
+    @include font.larger;
+    @include font.reading;
+}
