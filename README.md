@@ -11,8 +11,9 @@ My dotfiles for Hyprland on Arch Linux.
 git clone --recurse-submodules https://github.com/soramanew/dotfiles.git
 cat dotfiles/pkglist.txt | yay -S --needed -  # Or other AUR helper
 cd dotfiles/stow
-stow -t ~ */
+stow -t ~ */  # Optionally, stow individual folders for individual configs (not guaranteed to work cause interdependent stuff)
 
+# Optionals
 dotctl install greeter  # Frontend for greetd
 dotctl install plymouth  # Plymouth theme
 dotctl install arrpc  # arRPC for use with custom discord clients (Vesktop, Armcord, etc)
