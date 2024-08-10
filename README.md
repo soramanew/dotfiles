@@ -18,6 +18,7 @@ dotctl install greeter  # Frontend for greetd
 dotctl install plymouth  # Plymouth theme
 dotctl install arrpc  # arRPC for use with custom discord clients (Vesktop, Armcord, etc)
 dotctl install shyfox [ <PROFILE> ]  # ShyFox firefox theme, optionally specify profile
+dotctl install pkglist-backup  # Pacman hooks to back up packages to /etc/pkglist.txt and dotfiles directory
 ```
 
 On conflicts, remove files or use the `--adopt` flag to use existing files.
