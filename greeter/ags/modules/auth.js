@@ -25,7 +25,7 @@ const Username = () => {
     if (users.length <= 1)
         return Box({
             hpack: "center",
-            className: "username",
+            className: "username username-single",
             child: name,
         });
 
@@ -40,7 +40,9 @@ const Username = () => {
     return Button({
         hpack: "center",
         className: "username",
-        child: name,
+        child: Box({
+            children: [name, Label({ className: "user-picker-icon", label: "keyboard_arrow_down" })],
+        }),
         onPrimaryClick: self => menu.popup_at_widget(self, Gdk.Gravity.SOUTH, Gdk.Gravity.NORTH, null),
         setup: self => self.on("destroy", () => menu.destroy()),
         setup: setupCursorHover,
@@ -51,9 +53,14 @@ export default () => {
     const login = () => {
         Utils.writeFile(user.value, `${CACHE_DIR}/last-user.txt`).catch(print);
         Utils.writeFile(JSON.stringify(session.value), `${CACHE_DIR}/last-session.txt`).catch(print);
+        stack.shown = "loading";
         Greetd.login(user.value, password.text, session.value.exec).catch(e => {
-            response.child.label = JSON.stringify(e).description;
-            passwordOrResponse.shown = "resp";
+            let resp;
+            if (e.type === "error") resp = e.error_type === "auth_error" ? "Wrong Password" : e.description;
+            else resp = e.auth_message;
+            response.child.label = resp || "Error";
+
+            stack.shown = "response";
             response.grab_focus();
         });
     };
@@ -69,19 +76,20 @@ export default () => {
     });
 
     const response = Button({
-        child: Label({ truncate: "end", className: "password response" }),
+        child: Label({ className: "password response" }),
         onClicked: () => {
-            passwordOrResponse.shown = "pass";
+            stack.shown = "password";
             password.grab_focus();
         },
     });
 
-    const passwordOrResponse = Stack({
+    const stack = Stack({
         transition: "crossfade",
         transitionDuration: 150,
         children: {
-            pass: password,
-            resp: response,
+            password,
+            response,
+            loading: Label({ className: "password loading", label: "Loading..." }),
         },
     });
 
@@ -106,7 +114,7 @@ export default () => {
                         hexpand: true,
                         vertical: true,
                         className: "auth",
-                        children: [Box({ vexpand: true }), Username(), passwordOrResponse],
+                        children: [Box({ vexpand: true }), Username(), stack],
                     }),
                     loginButton,
                 ],

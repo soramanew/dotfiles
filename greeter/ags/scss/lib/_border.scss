@@ -5,7 +5,7 @@
     box-shadow: 0px 2px 3px c.$shadow;
 }
 
-@mixin primary($width: 3px) {
+@mixin primary($width: 1px) {
     $colour: c.$onPrimary;
     @if c.$darkmode == False {
         $colour: c.$primary;
@@ -15,4 +15,8 @@
 
 @mixin error {
     border: 1px solid mix(c.$error, c.$outline, 50%);
+}
+
+@mixin success {
+    border: 1px solid mix(c.$success, c.$outline, 50%);
 }
