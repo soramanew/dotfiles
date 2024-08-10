@@ -9,8 +9,24 @@ cd ../.. || exit  # Move to project root
 # Source utils file
 . scripts/_util.sh
 
-output "Symlinking ShyFox chrome/ and user.js to firefox $profile..."
-ln -sf (realpath firefox/ShyFox/chrome) ~/.mozilla/firefox/*.$profile/chrome
-ln -sf (realpath firefox/ShyFox/user.js) ~/.mozilla/firefox/*.$profile/user.js
+set profile_path (find ~/.mozilla/firefox -type d -name '*.'$profile)[1]
+if [ -z "$profile_path" ]
+    output "Unable to get path for $profile. Exiting."
+    exit 1
+end
+
+if [ -e "$profile_path/chrome" ]
+    output "Existing $profile_path/chrome found. Deleting..."
+    rm -r $profile_path/chrome
+end
+
+if [ -e "$profile_path/user.js" ]
+    output "Existing $profile_path/user.js found. Deleting..."
+    rm $profile_path/user.js
+end
+
+output "Symlinking ShyFox chrome/ and user.js to $profile_path..."
+ln -s (realpath firefox/ShyFox/chrome) $profile_path/chrome
+ln -s (realpath firefox/ShyFox/user.js) $profile_path/user.js
 
 output 'Done!'
