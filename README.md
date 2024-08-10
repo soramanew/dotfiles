@@ -1,69 +1,36 @@
 # dotfiles
 
-### My dotfiles for Hyprland on Arch Linux
+My dotfiles for Hyprland on Arch Linux
 
-Usage:
+> [!WARNING]
+> These were made for personal use and may not work on other systems.
 
-```sh
-# On install
-cd stow
-stow -t ~ */
-# Update
-dotctl stow -R
-# Remove
-dotctl stow -D
-```
-
-Clone the repo using:
+## Installation
 
 ```sh
 git clone --recurse-submodules https://github.com/soramanew/dotfiles.git
+cat dotfiles/pkglist.txt | yay -S --needed -  # Or other AUR helper
+cd dotfiles/stow
+stow -t ~ */
+
+dotctl install greeter  # Frontend for greetd
+dotctl install plymouth  # Plymouth theme
+dotctl install arrpc  # arRPC for use with custom discord clients (Vesktop, Armcord, etc)
+dotctl install shyfox [ <PROFILE> ]  # ShyFox firefox theme, optionally specify profile
 ```
 
-Update the repo using:
+On conflicts, remove files or use the `--adopt` flag to use existing files.
+
+## Usage
 
 ```sh
+# Update
 git pull --recurse-submodules
-```
+dotctl stow -R
 
-Greeter:
+# Remove
+dotctl stow -D
 
-```sh
-dotctl install greeter
-```
-
-Add greeter backgrounds:
-
-```sh
+# Add greeter background
 sudo cp <FILE> /etc/greetd/ags/backgrounds/
-```
-
-Plymouth:
-
-```sh
-dotctl install plymouth
-```
-
-To use vesktop arRPC:
-
-```sh
-dotctl install arrpc
-```
-
-To use ShyFox firefox theme:
-
-```sh
-dotctl install shyfox <PROFILE>
-```
-
-To update icon theme:
-
-```sh
-dotctl update icons
-```
-
-To update cursor theme:
-
-```sh
-dotctl update cursors
 ```

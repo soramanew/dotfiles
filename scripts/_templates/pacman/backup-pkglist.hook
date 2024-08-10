@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Remove
+Type = Package
+Target = *
+
+[Action]
+Description = Backing up package list to /etc/pkglist.txt
+When = PostTransaction
+Exec = /bin/sh -c '/usr/bin/pacman -Qqe > /etc/pkglist.txt'
