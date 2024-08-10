@@ -1,20 +1,20 @@
 # Generated stuff
-/ags/.config/ags/scss/_material.scss
-/ags/.config/ags/scss/_vars.scss
-/gtk/.config/gtk-[34].0/gtk.css
-/gtk/.config/gtk-[34].0/gtk.css.bak
-/hypr/.config/hypr/hyprlock.conf
-/hypr/.config/hypr/hyprland/colours.conf
-/hypr/.config/hypr/hyprland/perf.conf
-/fuzzel/.config/fuzzel/fuzzel.ini
+/stow/ags/.config/ags/scss/_material.scss
+/stow/ags/.config/ags/scss/_vars.scss
+/stow/gtk/.config/gtk-[34].0/gtk.css
+/stow/gtk/.config/gtk-[34].0/gtk.css.bak
+/stow/hypr/.config/hypr/hyprlock.conf
+/stow/hypr/.config/hypr/hyprland/colours.conf
+/stow/hypr/.config/hypr/hyprland/perf.conf
+/stow/fuzzel/.config/fuzzel/fuzzel.ini
 
 # Unnecessary configs
-/thunar/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
-/thunar/.config/Thunar/accels.scm
+/stow/thunar/.config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml
+/stow/thunar/.config/Thunar/accels.scm
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 
 # Systemd enabled units
-/systemd/.config/systemd/user/*.target.wants/
+/stow/systemd/.config/systemd/user/*.target.wants/
