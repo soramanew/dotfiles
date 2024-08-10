@@ -55,8 +55,7 @@ export default () => {
         Greetd.login(user.value, password.text, session.value.exec)
             .then(() => (stack.shown = "password"))
             .catch(e => {
-                const resp = JSON.stringify(e);
-                response.child.label = resp.description;
+                response.child.label = e.description || "Error";
                 stack.shown = "response";
                 response.grab_focus();
             });
