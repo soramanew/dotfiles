@@ -1,5 +1,5 @@
 import GLib from "gi://GLib";
-const { exec } = Utils;
+const { exec, readFile } = Utils;
 
 export const SCREEN_WIDTH = Number(
     exec(
@@ -17,7 +17,16 @@ export const CACHE_DIR = `${GLib.get_user_cache_dir()}/ags`;
 export const COMPILED_STYLE_DIR = `${CACHE_DIR}/user/generated`;
 export const COLOUR_MODE_FILE = `${CACHE_DIR}/user/colormode.txt`;
 
-export const GIT_PATHS = ["~/.dotfiles", "~/Desktop/SoftwareProjects/not-so-dead-cells"];
+const dotsDir = exec(`realpath '${App.configDir}'`) + "/../../../..";
+export const GIT_PATHS = [
+    dotsDir,
+    `${dotsDir}/firefox/ShyFox`,
+    `${dotsDir}/stow/vesktop/.config/vesktop/arrpc`,
+    `${dotsDir}/stow/theming/.icons/candy-icons`,
+];
+try {
+    GIT_PATHS.push(...JSON.parse(readFile(`${App.configDir}/gitpaths.json`)));
+} catch {}
 
 export const OVERVIEW_ROWS = 2;
 export const OVERVIEW_COLS = 5;

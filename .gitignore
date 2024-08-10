@@ -18,3 +18,6 @@ __pycache__/
 
 # Systemd enabled units
 /stow/systemd/.config/systemd/user/*.target.wants/
+
+# Config specific
+/stow/ags/.config/ags/gitpaths.json

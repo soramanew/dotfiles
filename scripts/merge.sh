@@ -14,9 +14,9 @@ if [ (git status --porcelain) ]
     end
 end
 
-# Pull changes including submodule changes
-output 'Pulling changes from remote...'
-git pull --recurse-submodules
+# Fetch changes
+output 'Getting changes from remote...'
+git fetch
 
 # Merge without committing or fast forward
 output 'Starting merge...'
