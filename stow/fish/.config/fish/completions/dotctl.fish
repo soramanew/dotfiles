@@ -1,3 +1,4 @@
+set prev_dir (pwd)
 
 cd (dirname (realpath (status filename))) || exit
 cd ../../../../../scripts || exit
@@ -14,3 +15,5 @@ end
 
 complete -c dotctl -f
 recurse_completions
+
+cd $prev_dir
