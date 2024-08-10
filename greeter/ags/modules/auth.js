@@ -52,13 +52,15 @@ export default () => {
         Utils.writeFile(user.value, `${CACHE_DIR}/last-user.txt`).catch(print);
         Utils.writeFile(JSON.stringify(session.value), `${CACHE_DIR}/last-session.txt`).catch(print);
         stack.shown = "loading";
-        Greetd.login(user.value, password.text, session.value.exec)
-            .then(() => (stack.shown = "password"))
-            .catch(e => {
-                response.child.label = e.description || "Error";
-                stack.shown = "response";
-                response.grab_focus();
-            });
+        Greetd.login(user.value, password.text, session.value.exec).catch(e => {
+            let resp;
+            if (e.type === "error") resp = e.error_type === "auth_error" ? "Wrong Password" : e.description;
+            else resp = e.auth_message;
+            response.child.label = resp || "Error";
+
+            stack.shown = "response";
+            response.grab_focus();
+        });
     };
 
     // TODO: fix stack not allowing mouse focus
@@ -72,7 +74,7 @@ export default () => {
     });
 
     const response = Button({
-        child: Label({ truncate: "end", maxWidthChars: 1, className: "password response" }),
+        child: Label({ className: "password response" }),
         onClicked: () => {
             stack.shown = "password";
             password.grab_focus();
