@@ -1,5 +1,5 @@
 function output -a text
-    set_color --bold cyan
+    set_color cyan
     # Pass arguments other than text to echo
     echo $argv[2..] -- ":: $text"
     set_color normal
