@@ -424,6 +424,10 @@
     padding: 0.341rem;
 }
 
+.sidebar-module-packageupdates {
+    margin-top: 0.341rem;
+}
+
 .sidebar-module-repo {
     @include rounding.normal;
     @include -group-padding;
