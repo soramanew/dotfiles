@@ -9,7 +9,7 @@ import { dispatch } from "../.miscutils/system.js";
 import { stripInvisUnicode } from "../.miscutils/strings.js";
 import GradientScrollable from "../.commonwidgets/gradientscrollable.js";
 
-const PREVIEW_SCALE = 0.15;
+const PREVIEW_SCALE = 0.2;
 
 const monitorMap = JSON.parse(Hyprland.message("j/monitors")).reduce((acc, item) => {
     acc[item.id] = { x: item.x, y: item.y };
