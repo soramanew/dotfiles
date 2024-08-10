@@ -23,6 +23,12 @@ for user in (find /home -maxdepth 1 -mindepth 1 -type d -not -name 'lost+found' 
     end
 end
 
+# Execute tmpfiles config
+sudo systemd-tmpfiles --create /etc/tmpfiles.d/greeter.conf
+
+# Change ownership of all existing files in cache
+sudo chown $perm:$perm /var/cache/greeter/**
+
 # Copy cursor theme to system-wide if not same
 sudo-push stow/theming/.icons/sweet-cursors /usr/share/icons/sweet-cursors
 

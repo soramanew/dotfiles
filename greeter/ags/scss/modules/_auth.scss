@@ -16,7 +16,7 @@
 
 .face {
     @include rounding.small;
-    @include border.primary;
+    @include border.primary(3px);
 
     background-size: cover;
     background-position: center;
@@ -26,7 +26,7 @@
     @include rounding.small;
     @include font.material;
     @include font.gigantic;
-    @include border.primary;
+    @include border.primary(3px);
 
     min-width: 8.181rem;
     min-height: 8.181rem;
@@ -75,6 +75,12 @@
     color: c.$error;
 }
 
+.loading {
+    @include border.primary;
+
+    color: mix(c.$primary, c.$outline, 90%);
+}
+
 .login-button {
     @include anim.element-decel;
     @include rounding.full;
@@ -82,7 +88,7 @@
     @include font.larger;
     @include font.semibold;
     @include border.elevation;
-    @include border.primary(1px);
+    @include border.primary;
 
     margin-top: 0.68rem;
     min-width: 2.727rem;

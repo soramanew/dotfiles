@@ -7,6 +7,7 @@ import Auth from "./modules/auth.js";
 const win = Window({
     name: "greeter",
     anchor: ["top", "left", "right", "bottom"],
+    exclusivity: "ignore",
     keymode: "exclusive",
     child: Overlay({
         passThrough: true,
