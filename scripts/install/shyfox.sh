@@ -10,7 +10,7 @@ cd ../.. || exit  # Move to project root
 . scripts/_util.sh
 
 output "Symlinking ShyFox chrome/ and user.js to firefox $profile..."
-ln -sf (realpath others/ShyFox/chrome) ~/.mozilla/firefox/*.$profile/chrome
-ln -sf (realpath others/ShyFox/user.js) ~/.mozilla/firefox/*.$profile/user.js
+ln -sf (realpath firefox/ShyFox/chrome) ~/.mozilla/firefox/*.$profile/chrome
+ln -sf (realpath firefox/ShyFox/user.js) ~/.mozilla/firefox/*.$profile/user.js
 
 output 'Done!'

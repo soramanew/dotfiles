@@ -25,7 +25,7 @@ git merge --no-commit --no-ff $argv
 # Revert file changes
 output 'Reverting files...'
 for pathspec in \
-        others/pkglist.txt \
+        pkglist.txt \
         stow/wlogout/.config/wlogout/style.css \
         stow/hypr/.config/hypr/hyprland/specific.conf
     git reset HEAD $pathspec
