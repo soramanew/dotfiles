@@ -120,7 +120,7 @@ export default () =>
         revealChild: false,
         child: Box({
             vertical: true,
-            className: "spacing-v-5",
+            className: "sidebar-module-packageupdates spacing-v-5",
             children: PackageUpdates.bind("updates").as(({ updates, errors, git }) => {
                 const children = [];
                 for (const repo of updates) {

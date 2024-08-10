@@ -101,6 +101,7 @@ const QuickScript = ({ icon, name, command, material = false }) => {
                 tooltipText: typeof command === "function" ? command.toString() : command,
             }),
             Button({
+                vpack: "center",
                 className: "sidebar-module-scripts-button",
                 child: MaterialIcon(stateIcon.bind(), "norm"),
                 onClicked: () => {
