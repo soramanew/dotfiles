@@ -51,11 +51,15 @@ export default () => {
     const login = () => {
         Utils.writeFile(user.value, `${CACHE_DIR}/last-user.txt`).catch(print);
         Utils.writeFile(JSON.stringify(session.value), `${CACHE_DIR}/last-session.txt`).catch(print);
-        Greetd.login(user.value, password.text, session.value.exec).catch(e => {
-            response.child.label = JSON.stringify(e).description;
-            passwordOrResponse.shown = "resp";
-            response.grab_focus();
-        });
+        stack.shown = "loading";
+        Greetd.login(user.value, password.text, session.value.exec)
+            .then(() => (stack.shown = "password"))
+            .catch(e => {
+                const resp = JSON.stringify(e);
+                response.child.label = resp.description;
+                stack.shown = "response";
+                response.grab_focus();
+            });
     };
 
     // TODO: fix stack not allowing mouse focus
@@ -69,19 +73,20 @@ export default () => {
     });
 
     const response = Button({
-        child: Label({ truncate: "end", className: "password response" }),
+        child: Label({ truncate: "end", maxWidthChars: 1, className: "password response" }),
         onClicked: () => {
-            passwordOrResponse.shown = "pass";
+            stack.shown = "password";
             password.grab_focus();
         },
     });
 
-    const passwordOrResponse = Stack({
+    const stack = Stack({
         transition: "crossfade",
         transitionDuration: 150,
         children: {
-            pass: password,
-            resp: response,
+            password,
+            response,
+            loading: Label({ className: "password loading", label: "Loading..." }),
         },
     });
 
@@ -106,7 +111,7 @@ export default () => {
                         hexpand: true,
                         vertical: true,
                         className: "auth",
-                        children: [Box({ vexpand: true }), Username(), passwordOrResponse],
+                        children: [Box({ vexpand: true }), Username(), stack],
                     }),
                     loginButton,
                 ],

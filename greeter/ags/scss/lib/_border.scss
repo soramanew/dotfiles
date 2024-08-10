@@ -5,7 +5,7 @@
     box-shadow: 0px 2px 3px c.$shadow;
 }
 
-@mixin primary($width: 3px) {
+@mixin primary($width: 1px) {
     $colour: c.$onPrimary;
     @if c.$darkmode == False {
         $colour: c.$primary;
