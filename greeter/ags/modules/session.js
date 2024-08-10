@@ -31,6 +31,22 @@ const sessions = Utils.exec("find /usr/share/wayland-sessions -maxdepth 1 -type 
 export const session = Variable(getLastSession());
 
 const SessionDropdown = () => {
+    const sessionTitle = Box({
+        hpack: "center",
+        children: [
+            Label({ label: session.bind().as(s => s.name) }),
+            Label({ className: "session-icon", label: "desktop_windows" }),
+        ],
+    });
+
+    if (sessions.length <= 1)
+        return Box({
+            vpack: "end",
+            className: "session-chip dropdown-btn dropdown-title",
+            tooltipText: session.bind().as(s => s.comment),
+            child: sessionTitle,
+        });
+
     const SessionButton = s =>
         Button({
             className: "dropdown-btn",
@@ -58,13 +74,7 @@ const SessionDropdown = () => {
     const currentSession = Button({
         className: "dropdown-btn dropdown-title",
         tooltipText: session.bind().as(s => s.comment),
-        child: Box({
-            hpack: "center",
-            children: [
-                Label({ label: session.bind().as(s => s.name) }),
-                Label({ className: "session-icon", label: "desktop_windows" }),
-            ],
-        }),
+        child: sessionTitle,
         onClicked: () => {
             dropdown.revealChild = !dropdown.revealChild;
             currentSession.toggleClassName("dropdown-title-open", dropdown.revealChild);
@@ -128,8 +138,9 @@ const BatteryStatus = () =>
     Box({
         vpack: "end",
         className: Utils.merge(
-            [Battery.bind("percent"), Battery.bind("charging")],
-            (p, c) => `session-chip dropdown-btn battery ${!c && p <= 20 ? "battery-low" : ""}`
+            [Battery.bind("percent"), Battery.bind("charging"), Battery.bind("charged")],
+            (p, c, cd) =>
+                `session-chip dropdown-btn battery ${cd ? "battery-charged" : !c && p <= 20 ? "battery-low" : ""}`
         ),
         visible: Battery.bind("available"),
         children: [

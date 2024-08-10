@@ -75,6 +75,12 @@
     margin-left: 0.28rem;
 }
 
+.battery-charged {
+    @include border.success;
+
+    color: c.$success;
+}
+
 .battery-low {
     @include border.error;
 

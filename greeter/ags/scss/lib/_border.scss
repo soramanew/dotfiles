@@ -16,3 +16,7 @@
 @mixin error {
     border: 1px solid mix(c.$error, c.$outline, 50%);
 }
+
+@mixin success {
+    border: 1px solid mix(c.$success, c.$outline, 50%);
+}

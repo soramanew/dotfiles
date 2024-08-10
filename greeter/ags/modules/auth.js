@@ -25,7 +25,7 @@ const Username = () => {
     if (users.length <= 1)
         return Box({
             hpack: "center",
-            className: "username",
+            className: "username username-single",
             child: name,
         });
 
@@ -40,7 +40,9 @@ const Username = () => {
     return Button({
         hpack: "center",
         className: "username",
-        child: name,
+        child: Box({
+            children: [name, Label({ className: "user-picker-icon", label: "keyboard_arrow_down" })],
+        }),
         onPrimaryClick: self => menu.popup_at_widget(self, Gdk.Gravity.SOUTH, Gdk.Gravity.NORTH, null),
         setup: self => self.on("destroy", () => menu.destroy()),
         setup: setupCursorHover,
