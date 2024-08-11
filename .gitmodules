@@ -8,5 +8,5 @@
 	branch = master
 [submodule "stow/vesktop/.config/vesktop/arrpc"]
 	path = stow/vesktop/.config/vesktop/arrpc
-	url = https://github.com/OpenAsar/arrpc.git
+	url = https://github.com/soramanew/arrpc.git
 	branch = main
