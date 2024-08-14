@@ -71,6 +71,7 @@ export default () => {
         placeholderText: "Enter Password",
         visibility: false,
         onAccept: login,
+        setup: self => Utils.timeout(1, () => self.grab_focus()),
     });
 
     const response = Button({

@@ -140,17 +140,15 @@ export default () =>
                                 const status = [];
                                 if (ahead > 0) status.push(`${ahead} ahead`);
                                 if (behind > 0) status.push(`${behind} behind`);
+                                branches = branches.map(({ name, ahead, behind }) => {
+                                    const status = [];
+                                    if (ahead > 0) status.push(`${ahead} commit${ahead > 1 ? "s" : ""} ahead`);
+                                    if (behind > 0) status.push(`${behind} commit${behind > 1 ? "s" : ""} behind`);
+                                    return `${name} - ${status.join(", ")}`;
+                                });
                                 return Text(
-                                    [
-                                        `${path} - ${status.join(", ")}`,
-                                        ...branches.map(({ name, ahead, behind }) => {
-                                            const status = [];
-                                            if (ahead > 0) status.push(`${ahead} commit${ahead > 1 ? "s" : ""} ahead`);
-                                            if (behind > 0)
-                                                status.push(`${behind} commit${behind > 1 ? "s" : ""} behind`);
-                                            return `${name} - ${status.join(", ")}`;
-                                        }),
-                                    ].join("\n ˪ ")
+                                    [`${path.split("/").at(-1)} - ${status.join(", ")}`, ...branches].join("\n ˪ "),
+                                    [`${path} - ${status.join(", ")}`, ...branches].join("\n ˪ ")
                                 );
                             })
                         )
