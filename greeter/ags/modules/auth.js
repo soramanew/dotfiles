@@ -65,14 +65,12 @@ export default () => {
         });
     };
 
-    // TODO: fix stack not allowing mouse focus
     const password = Entry({
         className: "password",
         xalign: 0.5,
         placeholderText: "Enter Password",
         visibility: false,
         onAccept: login,
-        setup: self => Utils.timeout(1, () => self.grab_focus()),
     });
 
     const response = Button({
@@ -102,6 +100,7 @@ export default () => {
     });
 
     return Overlay({
+        attribute: password,
         passThrough: true,
         child: Box({ expand: true }),
         overlays: [
