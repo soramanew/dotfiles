@@ -17,7 +17,7 @@ export const CACHE_DIR = `${GLib.get_user_cache_dir()}/ags`;
 export const COMPILED_STYLE_DIR = `${CACHE_DIR}/user/generated`;
 export const COLOUR_MODE_FILE = `${CACHE_DIR}/user/colormode.txt`;
 
-const dotsDir = exec(`realpath '${App.configDir}'`) + "/../../../..";
+const dotsDir = exec(`realpath ${exec(`realpath '${App.configDir}'`)}/../../../..`);
 export const GIT_PATHS = [
     dotsDir,
     `${dotsDir}/firefox/ShyFox`,
