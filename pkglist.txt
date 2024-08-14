@@ -1,4 +1,4 @@
-adw-gtk3-git
+adw-gtk-theme-git
 anyrun-git
 asdf-vm
 aylurs-gtk-shell-git
