@@ -1,6 +1,6 @@
 import GLib from "gi://GLib";
 const { Button, Stack } = Widget;
-const { execAsync, exec } = Utils;
+const { execAsync, exec, HOME } = Utils;
 const Hyprland = await Service.import("hyprland");
 const Bluetooth = await Service.import("bluetooth");
 const Network = await Service.import("network");
@@ -131,7 +131,7 @@ export const ModuleInvertColour = (props = {}) =>
                         button.toggleClassName("sidebar-button-active", false);
                     } else {
                         Hyprland.messageAsync(
-                            `keyword decoration:screen_shader ${GLib.get_home_dir()}/.config/hypr/shaders/invert.frag`
+                            `keyword decoration:screen_shader ${HOME}/.config/hypr/shaders/invert.frag`
                         ).catch(print);
                         button.toggleClassName("sidebar-button-active", true);
                     }
