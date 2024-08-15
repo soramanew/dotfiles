@@ -150,32 +150,40 @@ const WorkspaceContents = () =>
 
                     // Draw active ws
                     const HALF_PI = Math.PI / 2;
-                    let originalLeading = widgetStyleContext.get_property("min-width", Gtk.StateFlags.NORMAL) / 100;
-                    let leading = originalLeading;
+                    let leading = widgetStyleContext.get_property("min-width", Gtk.StateFlags.NORMAL) / 100;
                     let trailing = widgetStyleContext.get_property("min-height", Gtk.StateFlags.NORMAL) / 100;
-                    if (leading < trailing) {
-                        const tmp = leading;
-                        leading = trailing;
-                        trailing = tmp;
-                    }
-                    originalLeading = workspaceRadius + (originalLeading - 1) * workspaceDiameter;
                     leading = workspaceRadius + (leading - 1) * workspaceDiameter;
                     trailing = workspaceRadius + (trailing - 1) * workspaceDiameter;
+
                     // trail
-                    cr.setSourceRGBA(activebg.red, activebg.green, activebg.blue, activebg.alpha * 0.7);
-                    cr.arc(trailing, activeWsCenterY, indicatorRadius, -(Math.PI + HALF_PI), -HALF_PI); // left
-                    cr.arc(leading, activeWsCenterY, indicatorRadius, -HALF_PI, HALF_PI); // Right
+                    const gradient = new Cairo.LinearGradient(
+                        leading + indicatorRadius * (leading >= trailing ? 1 : -1),
+                        activeWsCenterY,
+                        trailing - indicatorRadius * (leading >= trailing ? 1 : -1),
+                        activeWsCenterY
+                    );
+                    gradient.addColorStopRGBA(0, activebg.red, activebg.green, activebg.blue, activebg.alpha);
+                    gradient.addColorStopRGBA(1, activebg.red, activebg.green, activebg.blue, 0);
+                    cr.setSource(gradient);
+                    cr.arc(
+                        Math.min(leading, trailing),
+                        activeWsCenterY,
+                        indicatorRadius,
+                        -(Math.PI + HALF_PI),
+                        -HALF_PI
+                    ); // left
+                    cr.arc(Math.max(leading, trailing), activeWsCenterY, indicatorRadius, -HALF_PI, HALF_PI); // Right
                     cr.closePath();
                     cr.fill();
 
                     // base
                     cr.setSourceRGBA(activebg.red, activebg.green, activebg.blue, activebg.alpha);
-                    cr.arc(originalLeading, activeWsCenterY, indicatorRadius, 0, 2 * Math.PI);
+                    cr.arc(leading, activeWsCenterY, indicatorRadius, 0, 2 * Math.PI);
                     cr.fill();
 
                     // inner decor
                     cr.setSourceRGBA(activefg.red, activefg.green, activefg.blue, activefg.alpha);
-                    cr.arc(originalLeading, activeWsCenterY, indicatorRadius * 0.2, 0, 2 * Math.PI);
+                    cr.arc(leading, activeWsCenterY, indicatorRadius * 0.2, 0, 2 * Math.PI);
                     cr.fill();
                 }),
     });
