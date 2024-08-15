@@ -6,7 +6,6 @@ import { AnimatedCircProg } from "../.commonwidgets/cairo_circularprogress.js";
 import { showMusicControls } from "../../variables.js";
 import { hasPlasmaIntegration, inPath } from "../.miscutils/system.js";
 import { clamp } from "../.miscutils/mathfuncs.js";
-import { CACHE_DIR } from "../../constants.js";
 import Players from "../../services/players.js";
 
 function isRealPlayer(player) {

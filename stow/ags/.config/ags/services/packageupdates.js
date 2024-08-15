@@ -1,5 +1,5 @@
-const { exec, execAsync, readFile, writeFile } = Utils;
-import { CACHE_DIR, GIT_PATHS } from "../constants.js";
+const { exec, execAsync, readFile, writeFile, CACHE_DIR } = Utils;
+import { GIT_PATHS } from "../constants.js";
 import { expandTilde } from "../modules/.miscutils/files.js";
 
 class PkgUpdatesService extends Service {

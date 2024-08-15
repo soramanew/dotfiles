@@ -1,6 +1,5 @@
-const { exec, readFile } = Utils;
+const { exec, readFile, CACHE_DIR } = Utils;
 const Mpris = await Service.import("mpris");
-import { CACHE_DIR } from "../constants.js";
 import { fileExists } from "../modules/.miscutils/files.js";
 
 class PlayersService extends Service {
