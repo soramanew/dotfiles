@@ -1,6 +1,6 @@
 "use strict";
 // Import
-const { exec, execAsync, writeFileSync } = Utils;
+const { exec, execAsync, writeFileSync, ensureDirectory } = Utils;
 const Battery = await Service.import("battery");
 const Mpris = await Service.import("mpris");
 import { forMonitors, hasTouchscreen } from "./modules/.miscutils/system.js";
@@ -25,7 +25,7 @@ function applyStyle() {
     // SCSS dynamic variables
     writeFileSync(`$extended-bar: ${EXTENDED_BAR};`, `${App.configDir}/scss/_vars.scss`);
     // Compile and apply SCSS
-    exec(`mkdir -p ${COMPILED_STYLE_DIR}`);
+    ensureDirectory(COMPILED_STYLE_DIR);
     exec(`sass ${App.configDir}/scss/main.scss ${COMPILED_STYLE_DIR}/style.css`);
     App.resetCss();
     App.applyCss(`${COMPILED_STYLE_DIR}/style.css`);

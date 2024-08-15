@@ -1,11 +1,12 @@
-const { exec, readFile, writeFile, CACHE_DIR } = Utils;
+const { readFile, writeFile, CACHE_DIR, ensureDirectory } = Utils;
 
 class TodoService extends Service {
     static {
         Service.register(this, { updated: [] });
     }
 
-    #todoPath = "";
+    #cacheDir = `${CACHE_DIR}/user`;
+    #todoPath = `${this.#cacheDir}/todo.json`;
     #todoJson = [];
 
     refresh(value) {
@@ -46,13 +47,10 @@ class TodoService extends Service {
 
     constructor() {
         super();
-        this.#todoPath = `${CACHE_DIR}/user/todo.json`;
         try {
-            const fileContents = readFile(this.#todoPath);
-            this.#todoJson = JSON.parse(fileContents);
+            this.#todoJson = JSON.parse(readFile(this.#todoPath));
         } catch {
-            exec(`bash -c 'mkdir -p ${CACHE_DIR}/user'`);
-            exec(`touch ${this.#todoPath}`);
+            ensureDirectory(this.#cacheDir);
             writeFile("[]", this.#todoPath)
                 .then(() => (this.#todoJson = JSON.parse(readFile(this.#todoPath))))
                 .catch(print);
