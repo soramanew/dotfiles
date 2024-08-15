@@ -4,8 +4,10 @@ export const iconExists = iconName => Gtk.IconTheme.get_default().has_icon(iconN
 
 const substitutions = {
     "": "image-missing",
+    // Mime types
     "text-plain": "text-x-generic",
     "application-x-zerosize": "text-x-generic",
+    // Applications
     "code-url-handler": "visual-studio-code",
     code: "visual-studio-code",
     "codium-url-handler": "vscodium",
