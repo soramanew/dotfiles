@@ -1,5 +1,4 @@
-const { exec, readFile, writeFile } = Utils;
-import { CACHE_DIR } from "../constants.js";
+const { exec, readFile, writeFile, CACHE_DIR } = Utils;
 
 class TodoService extends Service {
     static {

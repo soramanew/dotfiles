@@ -3,7 +3,7 @@ import Pango from "gi://Pango";
 const { Box, Label, Button, Icon, Revealer } = Widget;
 const Hyprland = await Service.import("hyprland");
 import { substitute } from "../.miscutils/icons.js";
-import { CACHE_DIR, SCREEN_HEIGHT, SCREEN_WIDTH } from "../../constants.js";
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../constants.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import { dispatch } from "../.miscutils/system.js";
 import { stripInvisUnicode } from "../.miscutils/strings.js";
@@ -103,10 +103,10 @@ export default () => {
                 (self.css = `
                     min-width: ${SCREEN_WIDTH * PREVIEW_SCALE}px;
                     min-height: ${SCREEN_HEIGHT * PREVIEW_SCALE}px;
-                    background-image: url("${CACHE_DIR}/user/wallpaper/currentwall");
+                    background-image: url("${Utils.CACHE_DIR}/user/wallpaper/currentwall");
                 `);
             setCss();
-            const monitor = Utils.monitorFile(`${CACHE_DIR}/user/wallpaper/currentwall`, setCss);
+            const monitor = Utils.monitorFile(`${Utils.CACHE_DIR}/user/wallpaper/currentwall`, setCss);
             self.connect("destroy", () => monitor.cancel());
         },
     });
