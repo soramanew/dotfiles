@@ -60,6 +60,7 @@ jq
 kvantum
 kvantum-qt5
 lexend-fonts-git
+libastal-tray-git
 linux
 linux-firmware
 man-db

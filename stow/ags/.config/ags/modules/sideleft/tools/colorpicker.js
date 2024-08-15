@@ -40,7 +40,7 @@ export default () => {
                 clicked: false,
                 setHue: event => {
                     const widgetHeight = hueRange.children[0].get_allocated_height();
-                    const [_, _x, cursorY] = event.get_coords();
+                    const [, , cursorY] = event.get_coords();
                     const cursorYPercent = clamp(cursorY / widgetHeight, 0, 1);
                     selectedColor.hue = Math.round(cursorYPercent * 360);
                 },
@@ -142,7 +142,7 @@ export default () => {
                 clicked: false,
                 setSaturationAndLightness: event => {
                     const allocation = saturationAndLightnessRange.children[0].get_allocation();
-                    const [_, cursorX, cursorY] = event.get_coords();
+                    const [, cursorX, cursorY] = event.get_coords();
                     const cursorXPercent = clamp(cursorX / allocation.width, 0, 1);
                     const cursorYPercent = clamp(cursorY / allocation.height, 0, 1);
                     selectedColor.xAxis = Math.round(cursorXPercent * 100);

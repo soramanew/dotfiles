@@ -1,13 +1,17 @@
 const { Box, EventBox, Revealer } = Widget;
-const SystemTray = await Service.import("systemtray");
+import Tray, { SystemTray } from "./tray.js";
 import { StatusIcons } from "../../.commonwidgets/statusicons.js";
-import Tray from "./tray.js";
 
 const SeparatorDot = () =>
     Revealer({
         transition: "slide_left",
-        revealChild: SystemTray.bind("items").as(items => items.length > 0),
         child: Box({ vpack: "center", className: "separator-circle" }),
+        setup: self => {
+            const update = () => (self.revealChild = SystemTray.get_items().length > 0);
+            update();
+            self.hook(SystemTray, update, "item_added");
+            self.hook(SystemTray, update, "item_removed");
+        },
     });
 
 export default () => {
