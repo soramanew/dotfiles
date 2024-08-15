@@ -1,6 +1,5 @@
-import GLib from "gi://GLib";
-const { exec, readFile, writeFile } = Utils;
 const { Box, Button } = Widget;
+const { exec, readFile, writeFile, HOME } = Utils;
 import Wallpaper from "../../../services/wallpaper.js";
 import SidebarModule from "./module.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
@@ -8,8 +7,7 @@ import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { COLOUR_MODE_FILE } from "../../../constants.js";
 import { updateColourMode } from "../../.miscutils/system.js";
 
-const confDir = `${GLib.get_home_dir()}/.config`;
-const perfConfPath = `${confDir}/hypr/hyprland/perf.conf`;
+const perfConfPath = `${HOME}/.config/hypr/hyprland/perf.conf`;
 
 const ToggleButton = ({ icon, onClicked, enabled = false, ...rest }) =>
     Button({

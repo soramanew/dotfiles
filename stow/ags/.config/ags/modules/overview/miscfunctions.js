@@ -1,5 +1,3 @@
-import Gio from "gi://Gio";
-import GLib from "gi://GLib";
 const { execAsync } = Utils;
 const Applications = await Service.import("applications");
 import Todo from "../../services/todo.js";
@@ -8,8 +6,6 @@ import { darkMode } from "../../variables.js";
 
 // Use a regular expression to match a trailing odd number of backslashes
 export const hasUnterminatedBackslash = inputString => /\\+$/.test(inputString);
-
-export const expandTilde = path => (path.startsWith("~") ? GLib.get_home_dir() + path.slice(1) : path);
 
 export const actions = {
     colour: {
@@ -56,74 +52,17 @@ export const actions = {
 };
 export const actionsList = Object.keys(actions);
 
-export function launchCustomCommand(command) {
+export const launchCustomCommand = command => {
     const args = command.toLowerCase().split(" ");
     const cmd = args[0].slice(1);
     if (actions.hasOwnProperty(cmd)) actions[cmd].go(args.slice(1));
-}
+};
 
-export function execAndClose(command, terminal = false, then = () => {}) {
+export const execAndClose = (command, terminal = false, then = () => {}) => {
     App.closeWindow("overview");
     if (terminal) {
         execAsync(["foot", "fish", "-C", command]).then(then).catch(print);
     } else execAsync(command).then(then).catch(print);
-}
-
-function getFileIcon(fileInfo) {
-    let icon = fileInfo.get_icon();
-    return icon ? icon.get_names()[0] : "text-x-generic"; // Default icon for files
-}
-
-export function ls({ path = "~", silent = false }) {
-    let contents = [];
-    try {
-        let expandedPath = expandTilde(path);
-        if (expandedPath.endsWith("/")) expandedPath = expandedPath.slice(0, -1);
-        let folder = Gio.File.new_for_path(expandedPath);
-
-        let enumerator = folder.enumerate_children("standard::*", Gio.FileQueryInfoFlags.NONE, null);
-        let fileInfo;
-        while ((fileInfo = enumerator.next_file(null)) !== null) {
-            let fileName = fileInfo.get_display_name();
-            let fileType = fileInfo.get_file_type();
-
-            let item = {
-                parentPath: expandedPath,
-                name: fileName,
-                type: fileType === Gio.FileType.DIRECTORY ? "folder" : "file",
-                icon: getFileIcon(fileInfo),
-            };
-
-            // Add file extension for files
-            if (fileType === Gio.FileType.REGULAR) {
-                let fileExtension = fileName.split(".").pop();
-                item.type = `${fileExtension}`;
-            }
-
-            contents.push(item);
-            contents.sort((a, b) => {
-                const aIsFolder = a.type.startsWith("folder");
-                const bIsFolder = b.type.startsWith("folder");
-                if (aIsFolder && !bIsFolder) {
-                    return -1;
-                } else if (!aIsFolder && bIsFolder) {
-                    return 1;
-                } else {
-                    return a.name.localeCompare(b.name); // Sort alphabetically within folders and files
-                }
-            });
-        }
-    } catch (e) {
-        if (!silent) console.log(e);
-    }
-    return contents;
-}
-
-export const openFile = path =>
-    execAndClose([
-        "bash",
-        "-c",
-        `dbus-send --session --dest=org.freedesktop.FileManager1 --type=method_call /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems array:string:"file://${path}" string:"" || xdg-open "${path}"`,
-    ]);
+};
 
 export const search = text => execAndClose(["xdg-open", `https://www.google.com/search?q=${text}`]);
