@@ -213,6 +213,11 @@ export default () => {
                     data.set_text(address, address.length);
                     button.toggleClassName("overview-tasks-window-dragging", false);
                 });
+
+                // Remove from client map when destroyed
+                button.connect("destroy", () => {
+                    if (clientMap.get(address) === button) clientMap.delete(address);
+                });
             },
         });
     };
