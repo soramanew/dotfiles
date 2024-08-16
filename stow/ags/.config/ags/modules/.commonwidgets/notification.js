@@ -87,12 +87,14 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
         setTimeout(() => {
             if (!destroying) callback();
         }, delay);
-    const destroyImmediately = () => {
+    const destroyImmediately = (closeNotif = true) => {
         if (destroying) return;
         destroying = true;
 
-        if (isPopup) notifObject.dismiss();
-        else notifObject.close();
+        if (closeNotif) {
+            if (isPopup) notifObject.dismiss();
+            else notifObject.close();
+        }
 
         wholeThing.destroy();
     };
@@ -113,15 +115,8 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
     let heldStart;
     let timeHeld = 0;
     const widget = EventBox({
-        onHover: self => {
-            self.window.set_cursor(Gdk.Cursor.new_from_name(display, "grab"));
-            if (!wholeThing.attribute.hovered) wholeThing.attribute.hovered = true;
-        },
-        onHoverLost: self => {
-            self.window.set_cursor(null);
-            if (wholeThing.attribute.hovered) wholeThing.attribute.hovered = false;
-            // if (isPopup) destroyNoSlide();
-        },
+        onHover: self => self.window.set_cursor(Gdk.Cursor.new_from_name(display, "grab")),
+        onHoverLost: self => self.window.set_cursor(null),
         onMiddleClick: destroyWithAnims,
         setup: self => {
             self.on("button-press-event", (_, event) => {
@@ -167,7 +162,6 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
             destroyWithAnims,
             dragging: false,
             held: false,
-            hovered: false,
             id: notifObject.id,
             instantReady: () => {
                 const pre = wholeThing.transitionDuration;

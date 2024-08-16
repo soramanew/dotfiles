@@ -52,19 +52,24 @@ export default props => {
                                 box.pack_end(category, false, false, 0);
                                 box.show_all();
                             }
-                            const catNotifs = categoriesOpen[notifTime].attribute.notifs.child;
-                            const matchingNotif = allNotifs.findIndex(n => n.notif.attribute.id === notif.attribute.id);
-                            if (matchingNotif !== -1 && replace) {
-                                allNotifs.splice(matchingNotif, 1);
+                            const matchingNotifIdx = allNotifs.findIndex(
+                                n => n.notif.attribute.id === notif.attribute.id
+                            );
+                            if (matchingNotifIdx !== -1 && replace) {
+                                const catNotifs =
+                                    categoriesOpen[allNotifs[matchingNotifIdx].category].attribute.notifs.child;
+                                allNotifs.splice(matchingNotifIdx, 1);
                                 const idx = catNotifs.children.findIndex(n => n.attribute.id === notif.attribute.id);
-                                catNotifs.children[idx].destroy();
+                                catNotifs.children[idx].attribute.destroyImmediately(false);
                                 notif.attribute.instantReady();
                                 catNotifs.pack_end(notif, false, false, 0);
-                                catNotifs.reorder_child(notif, idx - 1);
+                                catNotifs.reorder_child(notif, catNotifs.children.length - idx - 1);
+                                catNotifs.show_all();
                             } else {
+                                const catNotifs = categoriesOpen[notifTime].attribute.notifs.child;
                                 catNotifs.pack_end(notif, false, false, 0);
+                                catNotifs.show_all();
                             }
-                            catNotifs.show_all();
                             allNotifs.push({ notif, category: notifTime });
                         };
 
