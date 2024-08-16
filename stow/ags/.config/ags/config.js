@@ -3,7 +3,7 @@
 const { exec, execAsync, writeFileSync, ensureDirectory } = Utils;
 const Battery = await Service.import("battery");
 const Mpris = await Service.import("mpris");
-import { forMonitors, hasTouchscreen } from "./modules/.miscutils/system.js";
+import { forMonitors, hasTouchscreen, inPath } from "./modules/.miscutils/system.js";
 import { fileExists } from "./modules/.miscutils/files.js";
 import { COMPILED_STYLE_DIR, EXTENDED_BAR } from "./constants.js";
 // Widgets
@@ -111,3 +111,9 @@ App.config({
     stackTraceOnError: true,
     windows: Windows().flat(1),
 });
+
+// Kill prev instance and start safeeyes because tray indicator doesn't work if AGS starts after it
+if (inPath("safeeyes")) {
+    exec("safeeyes -q");
+    execAsync("safeeyes").catch(print);
+}
