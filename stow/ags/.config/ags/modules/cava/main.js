@@ -11,7 +11,7 @@ export default (monitor = 0) =>
         anchor: ["bottom"],
         child: Cava({ width: SCREEN_WIDTH, barHeight: SCREEN_HEIGHT * 0.3 }),
         setup: self => {
-            Utils.timeout(1, () => enableClickthrough(self.window));
+            enableClickthrough(self);
             self.hook(showMusicControls, () => (self.visible = showMusicControls.value));
         },
     });
