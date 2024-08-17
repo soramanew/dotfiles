@@ -1,13 +1,13 @@
 import Pango from "gi://Pango";
 const { Box, CenterBox, Label, Button, Revealer, Stack } = Widget;
-const { exec } = Utils;
+const { execAsync } = Utils;
 import PackageUpdates from "../../../services/packageupdates.js";
 import SidebarModule from "./module.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 
-const getDesc = pkg =>
-    exec(`pacman -Qi ${pkg}`)
+const getDesc = async pkg =>
+    (await execAsync(`pacman -Qi ${pkg}`))
         .split("\n")
         .map(line => line.replace(/[ ]*:/, ":"))
         .join("\n"); // exec(`bash -c "pacman -Qi ${pkg} | grep -Po '^Description\s*: \K.+'"`);
@@ -54,7 +54,7 @@ const Repo = (icon, name, children) => {
     return Box({ className: "sidebar-module-repo", vertical: true, children: [header, content] });
 };
 
-const Text = (text, tooltip = text) =>
+const Text = (text, tooltip = text, props = {}) =>
     Label({
         xalign: 0,
         className: "txt txt-small",
@@ -63,9 +63,13 @@ const Text = (text, tooltip = text) =>
         maxWidthChars: 1,
         label: text,
         tooltipText: tooltip,
+        ...props,
     });
 
-const Update = ({ pkg, update }) => Text(update, addVersionChangeToDesc(update, getDesc(pkg)));
+const Update = ({ pkg, update }) =>
+    Text(update, "", {
+        setup: self => getDesc(pkg).then(desc => (self.tooltipText = addVersionChangeToDesc(update, desc))),
+    });
 
 const Error = err =>
     Label({
