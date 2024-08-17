@@ -66,3 +66,10 @@
         background-color: mix(c.$primary, c.$layer1Active, 40%);
     }
 }
+
+.todoscreen-todo-edit {
+    @include rounding.verysmall;
+    border: 0.068rem solid mix(c.$primary, c.$layer0, 80%);
+    padding: 0rem 0.545rem;
+    background-color: c.$layer2;
+}

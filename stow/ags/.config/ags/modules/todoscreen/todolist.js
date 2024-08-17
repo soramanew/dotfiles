@@ -1,9 +1,57 @@
-const { Box, EventBox, Button, Label, Revealer, Entry, Scrollable } = Widget;
+const { Box, EventBox, Button, Label, Revealer, Entry, Stack } = Widget;
 import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { TabContainer } from "../.commonwidgets/tabcontainer.js";
 import Todo from "../../services/todo.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import GradientScrollable from "../.commonwidgets/gradientscrollable.js";
+
+const NonEditableContents = (task, props = {}) =>
+    Label({
+        ...props,
+        xalign: 0,
+        wrap: true,
+        className: "txt txt-small sidebar-todo-txt",
+        label: task.content,
+        selectable: true,
+    });
+
+const EditableItemContents = (task, id) => {
+    let editing = Variable(false);
+    return [
+        Stack({
+            hexpand: true,
+            transition: "slide_up_down",
+            transitionDuration: 200,
+            shown: editing.bind().as(e => (e ? "entry" : "label")),
+            children: {
+                label: NonEditableContents(task),
+                entry: Entry({
+                    className: "todoscreen-todo-edit",
+                    onAccept: ({ text }) => Todo.edit(id, text),
+                    setup: self =>
+                        self.hook(editing, () => {
+                            if (editing.value) {
+                                self.text = task.content;
+                                self.grab_focus();
+                                self.set_position(-1);
+                            }
+                        }),
+                }),
+            },
+        }),
+        Button({
+            vpack: "center",
+            className: "txt todoscreen-todo-item-action",
+            child: MaterialIcon(
+                editing.bind().as(e => (e ? "cancel" : "edit")),
+                "norm",
+                { vpack: "center" }
+            ),
+            onClicked: () => (editing.value = !editing.value),
+            setup: setupCursorHover,
+        }),
+    ];
+};
 
 const TodoListItem = (task, id, isDone) => {
     const crosser = Box({ className: "todoscreen-todo-crosser" });
@@ -13,14 +61,7 @@ const TodoListItem = (task, id, isDone) => {
             Box({
                 className: "todoscreen-todo-item spacing-h-5",
                 children: [
-                    Label({
-                        hexpand: true,
-                        xalign: 0,
-                        wrap: true,
-                        className: "txt txt-small sidebar-todo-txt",
-                        label: task.content,
-                        selectable: true,
-                    }),
+                    ...(isDone ? [NonEditableContents(task, { hexpand: true })] : EditableItemContents(task, id)),
                     Button({
                         // Check/Uncheck
                         vpack: "center",
