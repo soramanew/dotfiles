@@ -11,6 +11,6 @@ export default (monitor = 0, where = "bottom left") => {
         exclusivity: "ignore",
         visible: true,
         child: RoundedCorner(positionString, { className: "corner-black" }),
-        setup: enableClickthrough,
+        setup: self => Utils.timeout(1, () => enableClickthrough(self.window)),
     });
 };
