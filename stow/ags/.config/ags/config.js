@@ -20,6 +20,7 @@ import TodoScreen from "./modules/todoscreen/main.js";
 import AppLauncher from "./modules/applauncher/main.js";
 import GCheatsheet from "./modules/gcheatsheet/main.js";
 import Switcher from "./modules/switcher/main.js";
+import Cava from "./modules/cava/main.js";
 
 function applyStyle() {
     // SCSS dynamic variables
@@ -99,6 +100,7 @@ const Windows = () => [
     forMonitors(BarCornerTopleft),
     forMonitors(BarCornerTopright),
     forMonitors(Indicator),
+    inPath("cava") ? forMonitors(Cava) : "",
     forMonitors(id => Corner(id, "top left")),
     forMonitors(id => Corner(id, "top right")),
     forMonitors(id => Corner(id, "bottom left")),

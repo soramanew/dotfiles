@@ -137,3 +137,7 @@
     margin: -0.1rem 0rem;
     color: c.$onSecondaryContainer;
 }
+
+.cava {
+    background-image: linear-gradient(to top, c.$secondaryContainer, c.$primary, c.$primary);
+}

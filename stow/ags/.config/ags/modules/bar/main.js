@@ -59,7 +59,7 @@ const BarCorner = (monitor, where) =>
                 });
             },
         }),
-        setup: enableClickthrough,
+        setup: self => Utils.timeout(1, () => enableClickthrough(self.window)),
     });
 
 export const BarCornerTopleft = (monitor = 0) => BarCorner(monitor, "top left");
