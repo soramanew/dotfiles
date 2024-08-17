@@ -115,5 +115,5 @@ App.config({
 // Kill prev instance and start safeeyes because tray indicator doesn't work if AGS starts after it
 if (inPath("safeeyes")) {
     exec("safeeyes -q");
-    execAsync("safeeyes").catch(print);
+    Utils.timeout(500, () => execAsync("safeeyes").catch(print));
 }

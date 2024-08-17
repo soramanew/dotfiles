@@ -27,6 +27,12 @@ class TodoService extends Service {
         this.emit("updated");
     }
 
+    edit(index, value) {
+        this.#todoJson[index].content = value;
+        this._save();
+        this.emit("updated");
+    }
+
     check(index) {
         this.#todoJson[index].done = true;
         this._save();
