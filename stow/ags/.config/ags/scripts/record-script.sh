@@ -1,9 +1,5 @@
 #!/bin/bash
 
-#getaudiooutput() {
-#    pactl list sources | grep 'Name' | grep 'monitor' | cut -d ' ' -f2
-#}
-
 storage_dir=~/Videos/Recordings
 cache_dir=~/.cache/record_script
 
