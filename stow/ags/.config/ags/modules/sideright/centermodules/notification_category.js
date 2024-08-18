@@ -141,6 +141,7 @@ export default (category, categoriesOpen) => {
             held: false,
             hovered: false,
             notifs,
+            name: category,
         },
         revealChild: false,
         transition: "slide_down",

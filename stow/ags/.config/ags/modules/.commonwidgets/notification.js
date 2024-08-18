@@ -60,6 +60,8 @@ const NotificationIcon = notifObject => {
     });
 };
 
+export const notifCategories = ["Today", "Yesterday", "Last week", "A long time ago"];
+
 const getFriendlyTime = time => {
     let notifTime, timeCategory;
     const messageTime = GLib.DateTime.new_from_unix_local(time);
@@ -67,14 +69,14 @@ const getFriendlyTime = time => {
     if (messageTime.get_day_of_year() == todayDay) {
         if (messageTime.compare(GLib.DateTime.new_now_local().add_seconds(-60)) > 0) notifTime = "Now";
         else notifTime = messageTime.format("%H:%M");
-        timeCategory = "Today";
+        timeCategory = notifCategories[0];
     } else if (messageTime.get_day_of_year() == todayDay - 1) {
         notifTime = "Yesterday";
-        timeCategory = "Yesterday";
+        timeCategory = notifCategories[1];
     } else {
         notifTime = messageTime.format("%d/%m");
-        if (messageTime.get_day_of_year() >= todayDay - 7) timeCategory = "Last week";
-        else timeCategory = "A long time ago";
+        if (messageTime.get_day_of_year() >= todayDay - 7) timeCategory = notifCategories[2];
+        else timeCategory = notifCategories[3];
     }
     return { notifTime, timeCategory };
 };

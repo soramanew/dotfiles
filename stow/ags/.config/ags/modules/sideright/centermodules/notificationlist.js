@@ -5,7 +5,7 @@ const { Box, Button, Label, Revealer, Stack } = Widget;
 const Notifications = await Service.import("notifications");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
-import Notification from "../../.commonwidgets/notification.js";
+import Notification, { notifCategories } from "../../.commonwidgets/notification.js";
 import NotifCategory from "./notification_category.js";
 import GradientScrollable from "../../.commonwidgets/gradientscrollable.js";
 
@@ -50,6 +50,11 @@ export default props => {
                                 const category = NotifCategory(notifTime, categoriesOpen);
                                 categoriesOpen[notifTime] = category;
                                 box.pack_end(category, false, false, 0);
+                                box.children = box.children.sort(
+                                    (a, b) =>
+                                        notifCategories.indexOf(a.attribute.name) -
+                                        notifCategories.indexOf(b.attribute.name)
+                                );
                                 box.show_all();
                             }
                             const matchingNotifIdx = allNotifs.findIndex(
@@ -66,9 +71,11 @@ export default props => {
                                 catNotifs.reorder_child(notif, catNotifs.children.length - idx - 1);
                                 catNotifs.show_all();
                             } else {
-                                const catNotifs = categoriesOpen[notifTime].attribute.notifs.child;
+                                const catNotifsRevealer = categoriesOpen[notifTime].attribute.notifs;
+                                const catNotifs = catNotifsRevealer.child;
                                 catNotifs.pack_end(notif, false, false, 0);
                                 catNotifs.show_all();
+                                catNotifsRevealer.revealChild = true;
                             }
                             allNotifs.push({ notif, category: notifTime });
                         };
