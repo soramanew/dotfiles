@@ -21,6 +21,7 @@ const substitutions = {
     safeeyes: "io.github.slgobinath.SafeEyes",
     "yad-icon-browser": "yad",
     xterm: "uxterm",
+    "rogue legacy 2.exe": "roguelegacy2",
 };
 
 const regexSubs = [{ regex: /^steam_app_(\d+)$/, replace: "steam_icon_$1" }];
