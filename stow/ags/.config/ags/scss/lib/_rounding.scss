@@ -5,6 +5,11 @@ $medium: 1.159rem;
 $mediumlarge: 1.364rem;
 $large: 1.705rem;
 
+@mixin verysmall {
+    border-radius: $verysmall;
+    -gtk-outline-radius: $verysmall;
+}
+
 @mixin small {
     border-radius: $small;
     -gtk-outline-radius: $small;

@@ -6,10 +6,3 @@
     }
     @return $colour;
 }
-
-@function to-dark-mode($colour, $always: False) {
-    @if $always == True or c.$darkmode == False {
-        $colour: complement(invert($colour));
-    }
-    @return $colour;
-}

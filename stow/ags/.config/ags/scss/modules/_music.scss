@@ -3,7 +3,6 @@
 @use "../lib/anim";
 @use "../lib/font";
 @use "../lib/elevation";
-@use "../lib/functions" as fn;
 
 .music-bg {
     @include anim.menu-decel;
@@ -51,14 +50,14 @@
     @include anim.element-decel;
     @include font.title;
     font-size: 1.364rem;
-    color: fn.to-dark-mode(c.$onSecondaryContainer);
+    color: c.$onSecondaryContainer;
 }
 
 .music-artists {
     @include anim.element-decel;
     @include font.main;
     font-size: 0.955rem;
-    color: fn.to-dark-mode(mix(c.$onSecondaryContainer, c.$secondaryContainer, 80%));
+    color: mix(c.$onSecondaryContainer, c.$secondaryContainer, 80%);
 }
 
 .music-pill {
@@ -136,4 +135,8 @@
     font-size: 1.364rem;
     margin: -0.1rem 0rem;
     color: c.$onSecondaryContainer;
+}
+
+.cava {
+    background-image: linear-gradient(to top, c.$secondaryContainer, c.$primary, c.$primary);
 }

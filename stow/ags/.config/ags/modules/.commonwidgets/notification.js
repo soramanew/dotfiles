@@ -60,6 +60,8 @@ const NotificationIcon = notifObject => {
     });
 };
 
+export const notifCategories = ["Today", "Yesterday", "Last week", "A long time ago"];
+
 const getFriendlyTime = time => {
     let notifTime, timeCategory;
     const messageTime = GLib.DateTime.new_from_unix_local(time);
@@ -67,14 +69,14 @@ const getFriendlyTime = time => {
     if (messageTime.get_day_of_year() == todayDay) {
         if (messageTime.compare(GLib.DateTime.new_now_local().add_seconds(-60)) > 0) notifTime = "Now";
         else notifTime = messageTime.format("%H:%M");
-        timeCategory = "Today";
+        timeCategory = notifCategories[0];
     } else if (messageTime.get_day_of_year() == todayDay - 1) {
         notifTime = "Yesterday";
-        timeCategory = "Yesterday";
+        timeCategory = notifCategories[1];
     } else {
         notifTime = messageTime.format("%d/%m");
-        if (messageTime.get_day_of_year() >= todayDay - 7) timeCategory = "Last week";
-        else timeCategory = "A long time ago";
+        if (messageTime.get_day_of_year() >= todayDay - 7) timeCategory = notifCategories[2];
+        else timeCategory = notifCategories[3];
     }
     return { notifTime, timeCategory };
 };
@@ -87,12 +89,14 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
         setTimeout(() => {
             if (!destroying) callback();
         }, delay);
-    const destroyImmediately = () => {
+    const destroyImmediately = (closeNotif = true) => {
         if (destroying) return;
         destroying = true;
 
-        if (isPopup) notifObject.dismiss();
-        else notifObject.close();
+        if (closeNotif) {
+            if (isPopup) notifObject.dismiss();
+            else notifObject.close();
+        }
 
         wholeThing.destroy();
     };
@@ -113,15 +117,8 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
     let heldStart;
     let timeHeld = 0;
     const widget = EventBox({
-        onHover: self => {
-            self.window.set_cursor(Gdk.Cursor.new_from_name(display, "grab"));
-            if (!wholeThing.attribute.hovered) wholeThing.attribute.hovered = true;
-        },
-        onHoverLost: self => {
-            self.window.set_cursor(null);
-            if (wholeThing.attribute.hovered) wholeThing.attribute.hovered = false;
-            // if (isPopup) destroyNoSlide();
-        },
+        onHover: self => self.window.set_cursor(Gdk.Cursor.new_from_name(display, "grab")),
+        onHoverLost: self => self.window.set_cursor(null),
         onMiddleClick: destroyWithAnims,
         setup: self => {
             self.on("button-press-event", (_, event) => {
@@ -167,7 +164,6 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
             destroyWithAnims,
             dragging: false,
             held: false,
-            hovered: false,
             id: notifObject.id,
             instantReady: () => {
                 const pre = wholeThing.transitionDuration;

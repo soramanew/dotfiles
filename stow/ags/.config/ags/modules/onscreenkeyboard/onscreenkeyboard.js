@@ -1,6 +1,5 @@
-import GLib from "gi://GLib";
 const { Box, Button } = Widget;
-const { execAsync } = Utils;
+const { execAsync, HOME } = Utils;
 import { DEFAULT_OSK_LAYOUT, oskLayouts } from "./data_keyboardlayouts.js";
 import { hasTouchscreen } from "../.miscutils/system.js";
 
@@ -63,11 +62,9 @@ const KeyboardControls = () =>
             Button({
                 className: "osk-control-button txt-norm icon-material",
                 onClicked: () =>
-                    execAsync([
-                        "bash",
-                        "-c",
-                        `pkill fuzzel || ${GLib.get_home_dir()}/.config/fuzzel/scripts/clipboard.sh`,
-                    ]).catch(print),
+                    execAsync(["bash", "-c", `pkill fuzzel || ${HOME}/.config/fuzzel/scripts/clipboard.sh`]).catch(
+                        print
+                    ),
                 label: "assignment",
                 tooltipText: "Toggle clipboard",
             }),

@@ -1,5 +1,4 @@
-import GLib from "gi://GLib";
-const { exec, readFile } = Utils;
+const { exec, readFile, CACHE_DIR } = Utils;
 
 export const SCREEN_WIDTH = Number(
     exec(
@@ -13,11 +12,10 @@ export const SCREEN_HEIGHT = Number(
 );
 export const EXTENDED_BAR = SCREEN_WIDTH / SCREEN_HEIGHT >= 21 / 9;
 
-export const CACHE_DIR = `${GLib.get_user_cache_dir()}/ags`;
 export const COMPILED_STYLE_DIR = `${CACHE_DIR}/user/generated`;
 export const COLOUR_MODE_FILE = `${CACHE_DIR}/user/colormode.txt`;
 
-const dotsDir = exec(`realpath '${App.configDir}'`) + "/../../../..";
+const dotsDir = exec(`realpath ${exec(`realpath '${App.configDir}'`)}/../../../..`);
 export const GIT_PATHS = [
     dotsDir,
     `${dotsDir}/firefox/ShyFox`,

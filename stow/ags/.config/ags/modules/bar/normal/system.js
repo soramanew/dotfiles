@@ -1,16 +1,16 @@
 // This is for the right pills of the bar.
 import GLib from "gi://GLib";
 const { Box, Button, Label, Revealer, Overlay, Icon } = Widget;
-const { execAsync, exec, readFile, writeFile } = Utils;
+const { execAsync, readFile, writeFile, CACHE_DIR, ensureDirectory } = Utils;
 const Battery = await Service.import("battery");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
 import { WWO_CODE, WEATHER_SYMBOL } from "../../.commondata/weather.js";
 import { BarGroup } from "./main.js";
-import { BATTERY_LOW, CACHE_DIR, EXTENDED_BAR } from "../../../constants.js";
+import { BATTERY_LOW, EXTENDED_BAR } from "../../../constants.js";
 
 const WEATHER_CACHE_FOLDER = `${CACHE_DIR}/weather`;
-exec(`mkdir -p "${WEATHER_CACHE_FOLDER}"`);
+ensureDirectory(WEATHER_CACHE_FOLDER);
 
 const BarGroupSystem = child => BarGroup(child, "system");
 

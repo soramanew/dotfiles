@@ -4,6 +4,10 @@ export const iconExists = iconName => Gtk.IconTheme.get_default().has_icon(iconN
 
 const substitutions = {
     "": "image-missing",
+    // Mime types
+    "text-plain": "text-x-generic",
+    "application-x-zerosize": "text-x-generic",
+    // Applications
     "code-url-handler": "visual-studio-code",
     code: "visual-studio-code",
     "codium-url-handler": "vscodium",
@@ -15,6 +19,7 @@ const substitutions = {
     "jetbrains-pycharm-ce": "pycharm-community",
     "Spotify Free": "Spotify",
     safeeyes: "io.github.slgobinath.SafeEyes",
+    "yad-icon-browser": "yad",
 };
 
 const regexSubs = [{ regex: /^steam_app_(\d+)$/, replace: "steam_icon_$1" }];

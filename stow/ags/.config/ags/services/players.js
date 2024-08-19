@@ -1,6 +1,5 @@
-const { exec, readFile } = Utils;
+const { exec, readFile, CACHE_DIR, ensureDirectory } = Utils;
 const Mpris = await Service.import("mpris");
-import { CACHE_DIR } from "../constants.js";
 import { fileExists } from "../modules/.miscutils/files.js";
 
 class PlayersService extends Service {
@@ -8,7 +7,8 @@ class PlayersService extends Service {
         Service.register(this, {}, { "last-player": ["Ags_MprisPlayer", "r"] });
     }
 
-    #path = `${CACHE_DIR}/media/players.txt`;
+    #cacheDir = `${CACHE_DIR}/media`;
+    #path = `${this.#cacheDir}/players.txt`;
     #players = [];
 
     get last_player() {
@@ -58,8 +58,7 @@ class PlayersService extends Service {
                 this.notify("last-player");
                 this.#save();
             } else {
-                exec(`bash -c 'mkdir -p ${CACHE_DIR}/media'`);
-                exec(`touch ${this.#path}`);
+                ensureDirectory(this.#cacheDir);
                 const sortOrder = ["Playing", "Paused", "Stopped"];
                 this.#players = Mpris.players
                     .sort((a, b) => sortOrder.indexOf(a.playBackStatus) - sortOrder.indexOf(b.playBackStatus))

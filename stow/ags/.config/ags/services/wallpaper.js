@@ -1,7 +1,6 @@
 import GLib from "gi://GLib";
-const { exec, execAsync } = Utils;
+const { exec, execAsync, CACHE_DIR, ensureDirectory } = Utils;
 const Hyprland = await Service.import("hyprland");
-import { CACHE_DIR } from "../constants.js";
 
 class WallpaperService extends Service {
     static {
@@ -132,7 +131,7 @@ class WallpaperService extends Service {
 
     constructor() {
         super();
-        exec(`mkdir -p '${this.#cacheDir}'`);
+        ensureDirectory(this.#cacheDir);
         this.#stop(); // Init values
         this.enabled = exec(`cat '${this.#enabledStorage}'`) === "true";
     }

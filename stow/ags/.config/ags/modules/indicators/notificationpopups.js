@@ -30,7 +30,7 @@ export default () =>
 
                 if (box.attribute.map.has(id)) {
                     newNotif.attribute.instantReady();
-                    box.attribute.map.get(id).destroy();
+                    box.attribute.map.get(id).attribute.destroyImmediately(false);
                 }
 
                 box.attribute.map.set(id, newNotif);
@@ -41,6 +41,6 @@ export default () =>
         setup: self =>
             self
                 .hook(Notifications, (box, id) => box.attribute.notify(box, id), "notified")
-                .hook(Notifications, (box, id) => box.attribute.dismiss(box, id), "dismissed")
+                // .hook(Notifications, (box, id) => box.attribute.dismiss(box, id), "dismissed") // Prevents notif hold stop timer
                 .hook(Notifications, (box, id) => box.attribute.dismiss(box, id, true), "closed"),
     });
