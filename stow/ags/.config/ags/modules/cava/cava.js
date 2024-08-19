@@ -20,6 +20,7 @@ export default ({
                         "bash",
                         "-c",
                         `printf "[general]\n  \
+sleep_timer=30\n    \
 framerate=60\n    \
 bars = ${bars}\n  \
 [input]\n \
