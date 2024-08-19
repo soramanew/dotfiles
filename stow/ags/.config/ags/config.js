@@ -1,9 +1,9 @@
 "use strict";
 // Import
-const { exec, execAsync, writeFileSync } = Utils;
+const { exec, execAsync, writeFileSync, ensureDirectory } = Utils;
 const Battery = await Service.import("battery");
 const Mpris = await Service.import("mpris");
-import { forMonitors, hasTouchscreen } from "./modules/.miscutils/system.js";
+import { forMonitors, hasTouchscreen, inPath } from "./modules/.miscutils/system.js";
 import { fileExists } from "./modules/.miscutils/files.js";
 import { COMPILED_STYLE_DIR, EXTENDED_BAR } from "./constants.js";
 // Widgets
@@ -20,12 +20,13 @@ import TodoScreen from "./modules/todoscreen/main.js";
 import AppLauncher from "./modules/applauncher/main.js";
 import GCheatsheet from "./modules/gcheatsheet/main.js";
 import Switcher from "./modules/switcher/main.js";
+import Cava from "./modules/cava/main.js";
 
 function applyStyle() {
     // SCSS dynamic variables
     writeFileSync(`$extended-bar: ${EXTENDED_BAR};`, `${App.configDir}/scss/_vars.scss`);
     // Compile and apply SCSS
-    exec(`mkdir -p ${COMPILED_STYLE_DIR}`);
+    ensureDirectory(COMPILED_STYLE_DIR);
     exec(`sass ${App.configDir}/scss/main.scss ${COMPILED_STYLE_DIR}/style.css`);
     App.resetCss();
     App.applyCss(`${COMPILED_STYLE_DIR}/style.css`);
@@ -99,6 +100,7 @@ const Windows = () => [
     forMonitors(BarCornerTopleft),
     forMonitors(BarCornerTopright),
     forMonitors(Indicator),
+    inPath("cava") ? forMonitors(Cava) : "",
     forMonitors(id => Corner(id, "top left")),
     forMonitors(id => Corner(id, "top right")),
     forMonitors(id => Corner(id, "bottom left")),
@@ -111,3 +113,9 @@ App.config({
     stackTraceOnError: true,
     windows: Windows().flat(1),
 });
+
+// Kill prev instance and start safeeyes because tray indicator doesn't work if AGS starts after it
+if (inPath("safeeyes")) {
+    exec("safeeyes -q");
+    Utils.timeout(500, () => execAsync("safeeyes").catch(print));
+}

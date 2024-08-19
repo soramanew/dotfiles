@@ -5,7 +5,7 @@ const { Box, Button, Label, Revealer, Stack } = Widget;
 const Notifications = await Service.import("notifications");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
-import Notification from "../../.commonwidgets/notification.js";
+import Notification, { notifCategories } from "../../.commonwidgets/notification.js";
 import NotifCategory from "./notification_category.js";
 import GradientScrollable from "../../.commonwidgets/gradientscrollable.js";
 
@@ -50,21 +50,33 @@ export default props => {
                                 const category = NotifCategory(notifTime, categoriesOpen);
                                 categoriesOpen[notifTime] = category;
                                 box.pack_end(category, false, false, 0);
+                                box.children = box.children.sort(
+                                    (a, b) =>
+                                        notifCategories.indexOf(a.attribute.name) -
+                                        notifCategories.indexOf(b.attribute.name)
+                                );
                                 box.show_all();
                             }
-                            const catNotifs = categoriesOpen[notifTime].attribute.notifs.child;
-                            const matchingNotif = allNotifs.findIndex(n => n.notif.attribute.id === notif.attribute.id);
-                            if (matchingNotif !== -1 && replace) {
-                                allNotifs.splice(matchingNotif, 1);
+                            const matchingNotifIdx = allNotifs.findIndex(
+                                n => n.notif.attribute.id === notif.attribute.id
+                            );
+                            if (matchingNotifIdx !== -1 && replace) {
+                                const catNotifs =
+                                    categoriesOpen[allNotifs[matchingNotifIdx].category].attribute.notifs.child;
+                                allNotifs.splice(matchingNotifIdx, 1);
                                 const idx = catNotifs.children.findIndex(n => n.attribute.id === notif.attribute.id);
-                                catNotifs.children[idx].destroy();
+                                catNotifs.children[idx].attribute.destroyImmediately(false);
                                 notif.attribute.instantReady();
                                 catNotifs.pack_end(notif, false, false, 0);
-                                catNotifs.reorder_child(notif, idx - 1);
+                                catNotifs.reorder_child(notif, catNotifs.children.length - idx - 1);
+                                catNotifs.show_all();
                             } else {
+                                const catNotifsRevealer = categoriesOpen[notifTime].attribute.notifs;
+                                const catNotifs = catNotifsRevealer.child;
                                 catNotifs.pack_end(notif, false, false, 0);
+                                catNotifs.show_all();
+                                catNotifsRevealer.revealChild = true;
                             }
-                            catNotifs.show_all();
                             allNotifs.push({ notif, category: notifTime });
                         };
 

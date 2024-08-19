@@ -6,7 +6,6 @@ import { AnimatedCircProg } from "../.commonwidgets/cairo_circularprogress.js";
 import { showMusicControls } from "../../variables.js";
 import { hasPlasmaIntegration, inPath } from "../.miscutils/system.js";
 import { clamp } from "../.miscutils/mathfuncs.js";
-import { CACHE_DIR } from "../../constants.js";
 import Players from "../../services/players.js";
 
 function isRealPlayer(player) {
@@ -49,7 +48,9 @@ function trimTrackTitle(title) {
 }
 
 const getCoverClass = (coverPath, classes) => {
-    const id = coverPath?.split("/").at(-1);
+    if (!coverPath || !fileExists(coverPath)) return classes;
+
+    const id = coverPath.split("/").at(-1);
     // Fallback class + cover specific class
     return classes
         .split(" ")
@@ -95,14 +96,16 @@ const CoverArt = player =>
         // Fallback
         child: Label({
             className: "icon-material txt-gigantic txt-thin",
-            label: player.bind("cover-path").as(cp => (cp ? "" : "music_note")),
+            label: player.bind("cover-path").as(cp => (cp && fileExists(cp) ? "" : "music_note")),
         }),
         // CSS image
         setup: self =>
             self.hook(
                 player,
                 self => {
-                    if (player.coverPath) self.css = `background-image: url('${player.coverPath}');`;
+                    if (player.coverPath && fileExists(player.coverPath))
+                        self.css = `background-image: url('${player.coverPath}');`;
+                    else self.css = "";
                 },
                 "notify::cover-path"
             ),
@@ -214,7 +217,10 @@ const Background = player =>
             self.hook(
                 player,
                 self => {
-                    if (!player.coverPath || !fileExists(player.coverPath)) return;
+                    if (!player.coverPath || !fileExists(player.coverPath)) {
+                        self.css = "";
+                        return;
+                    }
 
                     // Blurred and darkened cover as background if imagemagick is installed
                     if (inPath("magick")) {

@@ -19,12 +19,12 @@ for profile_path in $profile_paths
     set -l pp_stripped (basename $profile_path)
     output "Installing ShyFox to $pp_stripped..."
 
-    if [ -e "$profile_path/chrome" ]
+    if [ -L "$profile_path/chrome" ]
         output "Existing $pp_stripped/chrome found. Deleting..."
         rm -r $profile_path/chrome
     end
 
-    if [ -e "$profile_path/user.js" ]
+    if [ -L "$profile_path/user.js" ]
         output "Existing $pp_stripped/user.js found. Deleting..."
         rm $profile_path/user.js
     end

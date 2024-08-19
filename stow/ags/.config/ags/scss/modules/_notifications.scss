@@ -1,5 +1,6 @@
 @use "../lib/colour" as c;
 @use "../lib/rounding";
+@use "../lib/anim";
 @use "../lib/functions" as fn;
 
 @mixin -notif-rounding {
@@ -8,12 +9,14 @@
 
 @mixin -notif {
     @include -notif-rounding;
+    @include anim.element-decel;
     padding: rounding.$small;
     padding-right: rounding.$small + 0.545rem;
 }
 
 .notif-category {
     @include -notif-rounding;
+    @include anim.element-decel;
     border: 0.034rem solid c.$outlineVariant;
     background-color: c.$layer2;
     color: c.$onLayer2;
@@ -26,7 +29,8 @@
 }
 
 .notif-cat-expand-btn {
-    @include -notif-rounding;
+    @include rounding.full;
+    @include anim.element-decel;
     min-width: 2rem;
     min-height: 2rem;
 
@@ -151,22 +155,24 @@
 }
 
 .notif-expand-btn {
-    @include -notif-rounding;
+    @include rounding.full;
+    @include anim.element-decel;
     min-width: 1.841rem;
     min-height: 1.841rem;
 
     &:hover,
     &:focus {
-        background: c.$layer2Hover;
+        background: #fff2;
     }
 
     &:active {
-        background: c.$layer2Active;
+        background: #fff3;
     }
 }
 
 .notif-listaction-btn {
     @include -notif-rounding;
+    @include anim.element-decel;
     padding: 0.341rem 0.682rem;
 
     &:hover,
@@ -191,12 +197,6 @@
     &:active {
         background-color: mix(c.$secondaryContainer, c.$onSecondaryContainer, 75%);
     }
-}
-
-.osd-notif {
-    @include -notif-rounding;
-    background-color: c.$layer0;
-    min-width: 30.682rem;
 }
 
 .notif-circprog-low {
@@ -226,6 +226,7 @@
 
 .notif-action {
     @include rounding.small;
+    @include anim.element-decel;
 }
 
 .notif-action-low {
@@ -234,7 +235,7 @@
 
     &:focus,
     &:hover {
-        border: 0.04rem solid c.$outlineVariant;
+        border: 0.04rem solid mix(c.$outline, c.$surfaceContainerHigh, 40%);
     }
 
     &:active {
@@ -248,7 +249,7 @@
 
     &:focus,
     &:hover {
-        border: 0.04rem solid c.$outlineVariant;
+        border: 0.04rem solid mix(c.$outline, c.$surfaceContainerHigh, 40%);
     }
 
     &:active {

@@ -1,8 +1,18 @@
 import { SearchItemIcon, SearchItemMaterial } from "./searchitem.js";
-import { execAndClose, launchCustomCommand, openFile, search } from "./miscfunctions.js";
+import { execAndClose, launchCustomCommand, search } from "./miscfunctions.js";
+import { openFile } from "../.miscutils/files.js";
+import { substitute } from "../.miscutils/icons.js";
 
 export const DirectoryButton = ({ parentPath, name, icon }) =>
-    SearchItemIcon({ name, iconName: icon, actionName: "Open", onActivate: () => openFile(parentPath + "/" + name) });
+    SearchItemIcon({
+        name,
+        iconName: substitute(icon),
+        actionName: "Open",
+        onActivate: () => {
+            App.closeWindow("overview");
+            openFile(parentPath + "/" + name);
+        },
+    });
 
 export const DesktopEntryButton = ({ name, iconName, launch }) =>
     SearchItemIcon({

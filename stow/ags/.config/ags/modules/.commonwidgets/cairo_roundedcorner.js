@@ -12,9 +12,6 @@ export const RoundedCorner = (place, props) =>
                 widget.connect("draw", (widget, cr) => {
                     const c = widget.get_style_context().get_property("background-color", Gtk.StateFlags.NORMAL);
                     const r = widget.get_style_context().get_property("border-radius", Gtk.StateFlags.NORMAL);
-                    // const borderColour = widget.get_style_context().get_property('color', Gtk.StateFlags.NORMAL);
-                    // const borderWidth = widget.get_style_context().get_border(Gtk.StateFlags.NORMAL).left; // ur going to write border-width: something anyway
-                    widget.set_size_request(r, r);
 
                     switch (place) {
                         case "topleft":
@@ -41,9 +38,6 @@ export const RoundedCorner = (place, props) =>
                     cr.closePath();
                     cr.setSourceRGBA(c.red, c.green, c.blue, c.alpha);
                     cr.fill();
-                    // cr.setLineWidth(borderWidth);
-                    // cr.setSourceRGBA(borderColour.red, borderColour.green, borderColour.blue, borderColour.alpha);
-                    // cr.stroke();
                 });
             }),
     });

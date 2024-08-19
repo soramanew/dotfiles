@@ -4,6 +4,6 @@ import OnScreenKeyboard from "./onscreenkeyboard.js";
 export default () =>
     PopupWindow({
         anchor: ["bottom"],
-        name: `osk`,
+        name: "osk",
         child: OnScreenKeyboard(),
     });

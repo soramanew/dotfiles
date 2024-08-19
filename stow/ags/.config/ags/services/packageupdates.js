@@ -1,5 +1,5 @@
-const { exec, execAsync, readFile, writeFile } = Utils;
-import { CACHE_DIR, GIT_PATHS } from "../constants.js";
+const { exec, execAsync, readFile, writeFile, CACHE_DIR, ensureDirectory } = Utils;
+import { GIT_PATHS } from "../constants.js";
 import { expandTilde } from "../modules/.miscutils/files.js";
 
 class PkgUpdatesService extends Service {
@@ -126,8 +126,7 @@ class PkgUpdatesService extends Service {
         try {
             this.#updateFromCache();
         } catch {
-            exec(`bash -c 'mkdir -p ${this.#cacheFolder}'`);
-            exec(`touch ${this.#cachePath}`);
+            ensureDirectory(this.#cacheFolder);
             writeFile(JSON.stringify(this.#updates), this.#cachePath)
                 .then(() => this.#updateFromCache())
                 .catch(print);

@@ -2,7 +2,7 @@ import Gdk from "gi://Gdk";
 const { Box, Label, Revealer, Entry } = Widget;
 const { exec } = Utils;
 const Applications = await Service.import("applications");
-import { hasUnterminatedBackslash, launchCustomCommand, ls, actions, actionsList } from "./miscfunctions.js";
+import { hasUnterminatedBackslash, launchCustomCommand, actions, actionsList } from "./miscfunctions.js";
 import {
     CalculationResultButton,
     CustomCommandButton,
@@ -18,6 +18,7 @@ import mathexprs from "./mathexprs.js";
 import { SCREEN_HEIGHT, SEARCH_MAX_RESULTS as MAX_RESULTS } from "../../constants.js";
 import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
 import GradientScrollable from "../.commonwidgets/gradientscrollable.js";
+import { ls } from "../.miscutils/files.js";
 
 const MAX_HEIGHT = SCREEN_HEIGHT * 0.7;
 

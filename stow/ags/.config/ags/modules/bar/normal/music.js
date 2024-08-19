@@ -251,7 +251,7 @@ export default () => {
             systemResources,
             EventBox({
                 child: BarGroupMusic(musicStuff),
-                onPrimaryClick: () => (showMusicControls.value = !showMusicControls.value),
+                onPrimaryClick: () => (showMusicControls.value = Mpris.getPlayer() ? !showMusicControls.value : false),
                 onSecondaryClick: () => execAsync("playerctl play-pause").catch(print),
                 onMiddleClick: () =>
                     execAsync([

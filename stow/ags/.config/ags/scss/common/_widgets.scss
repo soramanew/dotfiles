@@ -24,7 +24,7 @@
 menu {
     @include -appear;
     @include rounding.small;
-    border: 1px solid mix(c.$surfaceContainer, c.$onBackground, 80%); // I hate this
+    border: 1px solid mix(c.$surfaceContainer, c.$onBackground, 80%);
     padding: 0.681rem;
     background: opacify(c.$surfaceContainer, 1);
     color: c.$onSurface;
@@ -53,6 +53,10 @@ menu > menuitem {
     &:active {
         background-color: c.$layer2Active;
     }
+}
+
+menu > menuitem:disabled {
+    color: c.$subtext;
 }
 
 radio {

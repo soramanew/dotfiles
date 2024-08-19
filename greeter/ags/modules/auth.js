@@ -65,7 +65,6 @@ export default () => {
         });
     };
 
-    // TODO: fix stack not allowing mouse focus
     const password = Entry({
         className: "password",
         xalign: 0.5,
@@ -102,6 +101,7 @@ export default () => {
     });
 
     return Overlay({
+        attribute: password,
         passThrough: true,
         child: Box({ expand: true }),
         overlays: [
