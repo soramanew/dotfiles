@@ -9,6 +9,7 @@ blueman
 bluez-utils
 btop
 cava
+clamav
 cliphist
 cowfortune
 cpupower
@@ -29,6 +30,7 @@ fish
 foot
 fuzzel-git
 fwupd
+gamemode
 gammastep
 gimp
 git
@@ -106,7 +108,6 @@ steam
 stow
 swappy
 sway-audio-idle-inhibit-git
-synology-drive
 tenacity
 thunar
 thunar-archive-plugin
@@ -131,6 +132,7 @@ waterfox-bin
 webp-pixbuf-loader
 wev
 wf-recorder
+wine
 wireplumber
 wlogout
 wlr-randr
