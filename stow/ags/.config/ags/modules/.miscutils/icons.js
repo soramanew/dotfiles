@@ -20,6 +20,7 @@ const substitutions = {
     "Spotify Free": "Spotify",
     safeeyes: "io.github.slgobinath.SafeEyes",
     "yad-icon-browser": "yad",
+    xterm: "uxterm",
 };
 
 const regexSubs = [{ regex: /^steam_app_(\d+)$/, replace: "steam_icon_$1" }];
