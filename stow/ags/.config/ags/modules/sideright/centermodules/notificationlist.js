@@ -41,14 +41,10 @@ export default props => {
                 .hook(
                     Notifications,
                     (box, id) => {
-                        const addNotif = (notif, replace = true) => {
-                            notif = Notification({ notifObject: notif, isPopup: false });
-                            if (!notif) return;
-
-                            const notifTime = notif.attribute.timeCategory;
-                            if (!categoriesOpen.hasOwnProperty(notifTime)) {
-                                const category = NotifCategory(notifTime, categoriesOpen);
-                                categoriesOpen[notifTime] = category;
+                        const getCategory = notifCat => {
+                            if (!categoriesOpen.hasOwnProperty(notifCat)) {
+                                const category = NotifCategory(notifCat, categoriesOpen);
+                                categoriesOpen[notifCat] = category;
                                 box.pack_end(category, false, false, 0);
                                 box.children = box.children.sort(
                                     (a, b) =>
@@ -57,6 +53,15 @@ export default props => {
                                 );
                                 box.show_all();
                             }
+                            return categoriesOpen[notifCat];
+                        };
+                        const addNotif = (notif, replace = true) => {
+                            notif = Notification({ notifObject: notif, isPopup: false, getCategory });
+                            if (!notif) return;
+
+                            const notifTime = notif.attribute.timeCategory;
+                            getCategory(notifTime);
+
                             const matchingNotifIdx = allNotifs.findIndex(
                                 n => n.notif.attribute.id === notif.attribute.id
                             );
@@ -67,13 +72,13 @@ export default props => {
                                 const idx = catNotifs.children.findIndex(n => n.attribute.id === notif.attribute.id);
                                 catNotifs.children[idx].attribute.destroyImmediately(false);
                                 notif.attribute.instantReady();
-                                catNotifs.pack_end(notif, false, false, 0);
+                                catNotifs.packEndSig(notif, false, false, 0);
                                 catNotifs.reorder_child(notif, catNotifs.children.length - idx - 1);
                                 catNotifs.show_all();
                             } else {
                                 const catNotifsRevealer = categoriesOpen[notifTime].attribute.notifs;
                                 const catNotifs = catNotifsRevealer.child;
-                                catNotifs.pack_end(notif, false, false, 0);
+                                catNotifs.packEndSig(notif, false, false, 0);
                                 catNotifs.show_all();
                                 catNotifsRevealer.revealChild = true;
                             }
