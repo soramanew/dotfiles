@@ -3,7 +3,7 @@ const { execAsync } = Utils;
 const Mpris = await Service.import("mpris");
 import { fileExists } from "../.miscutils/files.js";
 import { AnimatedCircProg } from "../.commonwidgets/cairo_circularprogress.js";
-import { showMusicControls } from "../../variables.js";
+import { musicControlsMode } from "../../variables.js";
 import { hasPlasmaIntegration, inPath } from "../.miscutils/system.js";
 import { clamp } from "../.miscutils/mathfuncs.js";
 import Players from "../../services/players.js";
@@ -320,7 +320,7 @@ export default () =>
     Revealer({
         transition: "slide_down",
         transitionDuration: 200,
-        revealChild: showMusicControls.bind(),
+        revealChild: musicControlsMode.bind().as(m => m === 1),
         child: Box({
             children: Mpris.bind("players").as(players => players.filter(isRealPlayer).map(MusicControlsWidget)),
         }),

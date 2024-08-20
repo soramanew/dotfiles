@@ -3,7 +3,7 @@ const { exec, execAsync } = Utils;
 const Mpris = await Service.import("mpris");
 import { AnimatedCircProg } from "../../.commonwidgets/cairo_circularprogress.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
-import { showMusicControls } from "../../../variables.js";
+import { musicControlsMode } from "../../../variables.js";
 import { BarGroup } from "./main.js";
 import { EXTENDED_BAR } from "../../../constants.js";
 import Players from "../../../services/players.js";
@@ -251,7 +251,6 @@ export default () => {
             systemResources,
             EventBox({
                 child: BarGroupMusic(musicStuff),
-                onPrimaryClick: () => (showMusicControls.value = Mpris.getPlayer() ? !showMusicControls.value : false),
                 onSecondaryClick: () => execAsync("playerctl play-pause").catch(print),
                 onMiddleClick: () =>
                     execAsync([
@@ -263,6 +262,12 @@ export default () => {
                     self.on("button-press-event", (_, event) => {
                         // Side button
                         if (event.get_button()[1] === 8) execAsync("playerctl previous").catch(print);
+
+                        // Primary click
+                        if (event.get_button()[1] === 1 && Mpris.getPlayer()) {
+                            const val = event.get_event_type() === 5 ? 2 : 1; // 2nd mode on double click
+                            musicControlsMode.value = musicControlsMode.value === 0 ? val : 0;
+                        }
                     }),
             }),
         ],
