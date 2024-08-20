@@ -1,11 +1,6 @@
 #!/bin/bash
 
-if [ $? -eq 0 ]
-then
-    sed '1,/^### DATA ###$/d' $0 | fuzzel --no-fuzzy --dmenu | cut -d ' ' -f 1 | tr -d '\n' | wl-copy
-else
-    sed '1,/^### DATA ###$/d' $0 | fuzzel --no-fuzzy --dmenu | cut -d ' ' -f 1 | tr -d '\n' | wl-copy
-fi
+sed '1,/^### DATA ###$/d' $0 | fuzzel --dmenu | cut -d ' ' -f 1 | tr -d '\n' | wl-copy
 exit
 
 ### DATA ###
