@@ -165,7 +165,6 @@ export default ({ notifObject, isPopup = false, getCategory = null, ...rest }) =
             dragging: false,
             held: false,
             id: notifObject.id,
-            time: notifObject.time,
             instantReady: () => {
                 const pre = wholeThing.transitionDuration;
                 wholeThing.transitionDuration = 0;
