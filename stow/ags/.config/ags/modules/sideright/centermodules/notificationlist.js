@@ -85,7 +85,7 @@ export default props => {
                             allNotifs.push({ notif, category: notifTime });
                         };
 
-                        if (allNotifs.length == 0) {
+                        if (allNotifs.length === 0) {
                             // On init there's no notif, or 1st notif
                             Notifications.notifications.forEach(n => addNotif(n, false));
                             return;
