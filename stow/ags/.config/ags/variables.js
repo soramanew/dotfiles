@@ -15,8 +15,8 @@ const showIndicatorsFn = (indicator, timeout = 1000) => {
 };
 
 // Global vars for external control (through keybinds)
-export const showMusicControls = Variable(false);
-globalThis.openMusicControls = showMusicControls;
+export const musicControlsMode = Variable(0); // 0 -> show none ; 1 -> show osd + cava ; 2 -> only show cava
+globalThis.musicControlsMode = musicControlsMode;
 export const showColorScheme = Variable(false);
 const showColourSchemeFn = showIndicatorsFn(showColorScheme, 3000);
 showColorScheme.connect("changed", () => {
