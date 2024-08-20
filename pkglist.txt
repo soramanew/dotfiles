@@ -1,6 +1,7 @@
 adw-gtk-theme-git
 anyrun-git
 asdf-vm
+atlauncher
 aylurs-gtk-shell-git
 base
 base-devel
