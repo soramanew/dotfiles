@@ -81,7 +81,7 @@ const getFriendlyTime = time => {
     return { notifTime, timeCategory };
 };
 
-export default ({ notifObject, isPopup = false, ...rest }) => {
+export default ({ notifObject, isPopup = false, getCategory = null, ...rest }) => {
     if (!notifObject) return;
     const popupTimeout = notifObject.timeout || (notifObject.urgency == "critical" ? 8000 : 3000);
     let destroying = false;
@@ -165,6 +165,7 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
             dragging: false,
             held: false,
             id: notifObject.id,
+            time: notifObject.time,
             instantReady: () => {
                 const pre = wholeThing.transitionDuration;
                 wholeThing.transitionDuration = 0;
@@ -283,8 +284,16 @@ export default ({ notifObject, isPopup = false, ...rest }) => {
         label: notifTime,
         tooltipText: notifObject.appName ? `Sender: ${notifObject.appName}` : "",
     });
-    if (notifTime === "Now")
-        safeTimeout(60000, () => (notifTimeLabel.label = getFriendlyTime(notifObject.time).notifTime));
+    if (!isPopup)
+        wholeThing.poll(60000, () => {
+            const { notifTime, timeCategory } = getFriendlyTime(notifObject.time);
+            notifTimeLabel.label = notifTime;
+            if (wholeThing.attribute.timeCategory !== timeCategory) {
+                wholeThing.attribute.timeCategory = timeCategory;
+                wholeThing.parent.remove(wholeThing);
+                getCategory(timeCategory).attribute.notifs.child.packEndSig(wholeThing, false, false, 0);
+            }
+        });
     const notifAppName =
         notifObject.appName && notifObject.appName.length < 10
             ? Label({
