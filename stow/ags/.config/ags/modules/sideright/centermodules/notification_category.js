@@ -4,6 +4,7 @@ const { Box, EventBox, Button, Label, Revealer } = Widget;
 const Notifications = await Service.import("notifications");
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
+import { SignalBox } from "../../.commonwidgets/signalbox.js";
 
 export default (category, categoriesOpen) => {
     let destroying = false;
@@ -12,6 +13,9 @@ export default (category, categoriesOpen) => {
             if (!destroying) callback();
         }, delay);
     const destroy = () => {
+        // Delete ref to this
+        delete categoriesOpen[category];
+
         // Close animation (slide up)
         wholeThing.revealChild = false;
         Utils.timeout(120, () => wholeThing.destroy());
@@ -37,6 +41,9 @@ export default (category, categoriesOpen) => {
     const destroyWithAnims = () => {
         if (destroying) return;
 
+        // Delete ref to this
+        delete categoriesOpen[category];
+
         widget.sensitive = false;
         categoryBox.setCss(middleClickClose);
 
@@ -51,7 +58,7 @@ export default (category, categoriesOpen) => {
         revealChild: true,
         transition: "slide_down",
         transitionDuration: 200,
-        child: Box({
+        child: SignalBox({
             vertical: true,
             className: "spacing-v-5-revealer",
         }),
@@ -86,13 +93,12 @@ export default (category, categoriesOpen) => {
                 // when compared to borderless "Clear" button on the right)
                 label: category,
                 setup: self => {
-                    const callback = delay =>
-                        safeTimeout(delay, () => (self.label = `${category} - ${notifs.child.children.length}`));
-                    self.hook(Notifications, () => callback(10), "notified").hook(
-                        Notifications,
-                        () => callback(250),
-                        "closed"
-                    );
+                    const update = () => (self.label = `${category} - ${notifs.child.children.length}`);
+                    notifs.child.sigHandler.connect("child-added", update);
+                    notifs.child.sigHandler.connect("child-removed", () => {
+                        if (notifs.child.children.length > 0) update();
+                        else destroyWithAnims();
+                    });
                 },
             }),
             Button({
@@ -150,15 +156,6 @@ export default (category, categoriesOpen) => {
             // Box to make sure css-based spacing works
             vertical: true,
         }),
-        setup: self =>
-            self.hook(
-                Notifications,
-                () =>
-                    safeTimeout(250, () => {
-                        if (notifs.child.children.length === 0) destroyWithAnims();
-                    }),
-                "closed"
-            ),
     });
     const display = Gdk.Display.get_default();
 
