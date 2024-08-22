@@ -25,7 +25,7 @@ const substitutions = {
 
 const regexSubs = [
     { regex: /^steam_app_(\d+)$/, replace: "steam_icon_$1" },
-    { regex: /Minecraft\* [0-9\.]+/, replace: "minecraft" },
+    { regex: /^Minecraft\* [0-9\.]+$/, replace: "minecraft" },
 ];
 
 export const substitute = str => {
