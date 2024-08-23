@@ -17,6 +17,8 @@ cpupower
 dart-sass
 ddcutil
 dmidecode
+docker
+docker-compose
 dosfstools
 evtest
 expac
@@ -81,6 +83,7 @@ nwg-look
 pacman-contrib
 pavucontrol
 pinta
+piper
 pipes.js-git
 pipewire
 pipewire-alsa
@@ -110,6 +113,7 @@ stow
 swappy
 sway-audio-idle-inhibit-git
 tenacity
+tesseract
 thunar
 thunar-archive-plugin
 thunar-media-tags-plugin
