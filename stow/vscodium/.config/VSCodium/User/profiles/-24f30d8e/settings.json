@@ -3,13 +3,9 @@
     "editor.multiCursorModifier": "ctrlCmd",
     "editor.cursorSmoothCaretAnimation": "on",
     "editor.fontLigatures": true,
-    "prettier.tabWidth": 4,
     "editor.minimap.autohide": true,
     "security.workspace.trust.startupPrompt": "always",
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
-    "prettier.printWidth": 120,
-    "prettier.arrowParens": "avoid",
     "window.autoDetectColorScheme": true,
     "workbench.preferredDarkColorTheme": "GitHub Dark",
     "workbench.preferredLightColorTheme": "GitHub Light",
@@ -19,6 +15,11 @@
     "javascript.preferences.importModuleSpecifierEnding": "js",
     "typescript.preferences.importModuleSpecifierEnding": "js",
     "diffEditor.hideUnchangedRegions.enabled": true,
+    "cSpell.language": "en,en-AU",
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "always"
+    },
     "workbench.list.smoothScrolling": true,
     "editor.smoothScrolling": true,
     "terminal.integrated.smoothScrolling": true
