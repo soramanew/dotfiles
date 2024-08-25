@@ -13,7 +13,6 @@ const substitutions = {
     "codium-url-handler": "vscodium",
     codium: "vscodium",
     "GitHub Desktop": "github-desktop",
-    "Minecraft* 1.20.1": "minecraft",
     "gnome-tweaks": "org.gnome.tweaks",
     "pavucontrol-qt": "pavucontrol",
     "jetbrains-pycharm-ce": "pycharm-community",
@@ -24,7 +23,10 @@ const substitutions = {
     "com-atlauncher-App": "atlauncher",
 };
 
-const regexSubs = [{ regex: /^steam_app_(\d+)$/, replace: "steam_icon_$1" }];
+const regexSubs = [
+    { regex: /^steam_app_(\d+)$/, replace: "steam_icon_$1" },
+    { regex: /^Minecraft\* [0-9\.]+$/, replace: "minecraft" },
+];
 
 export const substitute = str => {
     // Normal subs
