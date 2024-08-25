@@ -24,6 +24,7 @@ evtest
 expac
 fastfetch
 featherpad
+feh
 feishin-bin
 ffmpegthumbnailer
 figlet
@@ -95,6 +96,7 @@ plymouth
 polkit-gnome
 python-materialyoucolor-git
 python-psutil
+python-pytesseract
 python-pywal
 python-pywayland
 python-setproctitle
