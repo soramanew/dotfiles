@@ -96,7 +96,6 @@ plymouth
 polkit-gnome
 python-materialyoucolor-git
 python-psutil
-python-pytesseract
 python-pywal
 python-pywayland
 python-setproctitle
@@ -144,6 +143,7 @@ wireplumber
 wlogout
 wlr-randr
 wlrctl
+wmctrl
 xdg-desktop-portal-hyprland-git
 xdg-user-dirs-gtk
 yad
