@@ -19,6 +19,7 @@ evtest
 expac
 fastfetch
 featherpad
+feh
 feishin-bin
 ffmpegthumbnailer
 figlet
@@ -106,6 +107,7 @@ starship
 stow
 swappy
 sway-audio-idle-inhibit-git
+tesseract
 thunar
 thunar-archive-plugin
 thunar-media-tags-plugin
@@ -132,6 +134,7 @@ wireplumber
 wlogout
 wlr-randr
 wlrctl
+wmctrl
 xdg-desktop-portal-hyprland-git
 xdg-user-dirs-gtk
 yad
