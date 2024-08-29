@@ -15,7 +15,7 @@ function guessMessageType(summary) {
     if (str.includes("battery") || str.startsWith("power")) return "power";
     if (str.includes("screenshot")) return "screenshot_monitor";
     if (str.includes("welcome")) return "waving_hand";
-    if (str.includes("time")) return "scheduleb";
+    if (str.includes("time")) return "schedule";
     if (str.includes("installed")) return "download";
     if (str.includes("update")) return "update";
     if (str.startsWith("file")) return "folder_copy";
