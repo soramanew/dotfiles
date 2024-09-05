@@ -2,6 +2,7 @@ adw-gtk-theme-git
 anyrun-git
 asdf-vm
 atlauncher
+avidemux-qt
 aylurs-gtk-shell-git
 base
 base-devel
