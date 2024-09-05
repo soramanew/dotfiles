@@ -21,6 +21,7 @@ const substitutions = {
     "yad-icon-browser": "yad",
     xterm: "uxterm",
     "com-atlauncher-App": "atlauncher",
+    avidemux3_qt5: "avidemux",
 };
 
 const regexSubs = [

@@ -301,17 +301,17 @@
 }
 
 .bar-corner-spacing {
-    min-width: rounding.$large;
-    min-height: rounding.$large;
+    min-width: rounding.$medium;
+    min-height: rounding.$medium;
 }
 
 .corner {
-    @include rounding.large;
+    @include rounding.normal;
     background-color: c.$layer0;
 }
 
 .corner-black {
-    @include rounding.large;
+    @include rounding.normal;
     background-color: black; // Hard code: fake screen corner
 }
 
