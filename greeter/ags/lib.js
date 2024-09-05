@@ -29,7 +29,7 @@ const chooseBackground = () => {
 
     // Get random
     const background = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-    Utils.writeFile(background, `${CACHE_DIR}/last-background.txt`);
+    Utils.writeFile(background, `${CACHE_DIR}/last-background.txt`).catch(print);
     return background;
 };
 
