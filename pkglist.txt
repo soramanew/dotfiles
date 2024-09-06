@@ -50,6 +50,7 @@ grimblast-git
 gtksourceview3
 gtksourceviewmm
 gvfs
+gvfs-mtp
 gvfs-smb
 hyprcursor-git
 hypridle-git
