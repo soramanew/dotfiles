@@ -90,7 +90,7 @@ else
 
     set -q region && set region -g (slurp) || set region -o (get-active-monitor)
     set -q audio && set audio --audio=(get-audio-source)
-    wf-recorder -c libx265 $compression $region $audio -f $recording_path & disown
+    wf-recorder -x yuv420p -c libx265 $compression $region $audio -f $recording_path & disown
 
     notify-send 'Recording started' 'Recording...' -a $script_name -p > $notif_id_path
 end

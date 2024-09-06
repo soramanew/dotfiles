@@ -67,11 +67,15 @@ jq
 kvantum
 kvantum-qt5
 lexend-fonts-git
+libva-mesa-driver
+libva-utils
 linux
 linux-firmware
 man-db
+mesa-vdpau
 mkinitcpio-firmware
 mpv
+mpv-mpris
 nano
 nemo
 neofetch
@@ -132,6 +136,7 @@ ttf-rubik-vf
 tumbler
 tzupdate
 usbutils
+vdpauinfo
 vesktop-bin
 vnstat
 vscodium-bin
