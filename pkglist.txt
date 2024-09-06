@@ -2,7 +2,6 @@ adw-gtk-theme-git
 anyrun-git
 asdf-vm
 atlauncher
-avidemux-qt
 aylurs-gtk-shell-git
 base
 base-devel
@@ -107,6 +106,7 @@ qt6ct
 rate-mirrors
 safeeyes
 seahorse
+shotcut
 spotify
 spotify-adblock
 starship
