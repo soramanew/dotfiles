@@ -45,13 +45,15 @@ const BATTERY_WARN_LEVELS = [20, 15, 5];
 const BATTERY_WARN_TITLES = ["Low battery", "Very low battery", "Critical Battery"];
 const BATTERY_WARN_BODIES = ["Plug in the charger", "You there?", "PLUG THE CHARGER ALREADY"];
 const batteryWarned = [false, false, false];
+let hibernating = false;
 function batteryMessage() {
     if (Battery.charging) {
         for (let i = 0; i < batteryWarned.length; i++) batteryWarned[i] = false;
         return;
     }
     const perc = Battery.percent;
-    if (perc <= BATTERY_SLEEP_LEVEL) {
+    if (!hibernating && perc <= BATTERY_SLEEP_LEVEL) {
+        hibernating = true;
         execAsync([
             "notify-send",
             "-u",
@@ -63,7 +65,11 @@ function batteryMessage() {
             "CRITICAL BATTERY",
             "Hibernating to prevent data loss...",
         ]).catch(print);
-        Utils.timeout(4000, () => execAsync("systemctl hibernate").catch(print));
+        Utils.timeout(4000, () =>
+            execAsync("systemctl hibernate")
+                .then(() => (hibernating = false))
+                .catch(print)
+        );
         return;
     }
     for (let i = BATTERY_WARN_LEVELS.length - 1; i >= 0; i--) {

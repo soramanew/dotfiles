@@ -194,7 +194,7 @@ const BarBattery = () =>
                     child: Icon({ className: "txt-smaller", icon: Battery.bind("icon_name") }),
                     setup: self =>
                         self.hook(Battery, box => {
-                            box.toggleClassName("bar-batt-low", Battery.percent <= BATTERY_LOW);
+                            box.toggleClassName("bar-batt-low", !Battery.charging && Battery.percent <= BATTERY_LOW);
                             box.toggleClassName("bar-batt-full", Battery.charged);
                         }),
                 }),
