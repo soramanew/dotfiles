@@ -1,5 +1,13 @@
 #!/bin/fish
 
+function get-audio-source
+    pactl list sources | grep 'Name' | grep 'monitor' | cut -d ' ' -f2
+end
+
+function get-active-monitor
+    hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .name'
+end
+
 set storage_dir ~/Videos/Recordings
 set cache_dir ~/.cache/record_script
 
@@ -8,6 +16,7 @@ mkdir -p $cache_dir
 
 set file_ext 'mp4'
 set recording_path "$cache_dir/recording.$file_ext"
+set notif_id_path "$cache_dir/notifid.txt"
 set script_name (basename (status filename))
 
 argparse -n $script_name -X 0 -x 's,f,S' -x 'c,C' \
@@ -25,6 +34,15 @@ if pgrep wf-recorder >/dev/null
     # Move to recordings folder
     set -l new_recording_path "$storage_dir/recording_$(date '+%Y%m%d_%H-%M-%S').$file_ext"
     mv $recording_path $new_recording_path
+
+    # Close start notification
+    if test -f $notif_id_path
+        gdbus call --session \
+            --dest org.freedesktop.Notifications \
+            --object-path /org/freedesktop/Notifications \
+            --method org.freedesktop.Notifications.CloseNotification \
+            (cat $notif_id_path)
+    end
 
     # Notification with actions
     set -l action (notify-send 'Recording stopped' "Stopped recording $new_recording_path" -a $script_name --action='watch=Watch' --action='open=Open' --action='save=Save As')
@@ -50,7 +68,7 @@ else
 
     # Region sound
     if set -q _flag_s
-        set flags -- -a
+        set audio
     end
 
     # Fullscreen
@@ -61,17 +79,18 @@ else
     # Fullscreen sound
     if set -q _flag_S
         set -e region
-        set flags -- -a
+        set audio
     end
 
     # Compression
-    if ! set -q _flag_c && which ffmpeg >/dev/null
-        set -q _flag_C && set -l compression 26 || set -l compression 28
-        set compression -- -p crf=$compression
+    if ! set -q _flag_c
+        set -q _flag_C && set compression 26 || set compression 28
+        set compression -p crf=$compression
     end
 
-    set -q region && set region -- -g (slurp)
-    wf-recorder -c libx265 $compression -f $recording_path $region $flags & disown
+    set -q region && set region -g (slurp) || set region -o (get-active-monitor)
+    set -q audio && set audio --audio=(get-audio-source)
+    wf-recorder -c libx265 $compression $region $audio -f $recording_path & disown
 
-    notify-send 'Recording started' 'Recording...' -a $script_name
+    notify-send 'Recording started' 'Recording...' -a $script_name -p > $notif_id_path
 end
