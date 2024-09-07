@@ -130,6 +130,7 @@ waterfox-bin
 webp-pixbuf-loader
 wev
 wf-recorder
+wine
 wireplumber
 wlogout
 wlr-randr
