@@ -60,6 +60,7 @@ jq
 kvantum
 kvantum-qt5
 lexend-fonts-git
+libva-utils
 linux
 linux-firmware
 man-db
@@ -123,6 +124,7 @@ ttf-rubik-vf
 tumbler
 tzupdate
 usbutils
+vdpauinfo
 vesktop-bin
 vnstat
 vscodium-bin
