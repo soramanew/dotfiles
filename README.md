@@ -34,7 +34,7 @@
 
 ![greeter](/readme/greeter.png?raw=true)
 
-### Music OSD
+### Music OSD + Notification categories
 
 ![music osd](/readme/notifs+music.png?raw=true)
 
