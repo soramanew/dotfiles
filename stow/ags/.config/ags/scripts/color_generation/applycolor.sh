@@ -10,6 +10,12 @@ if [ -f "$colourmodefile" -a "$(sed -n '2p' "$colourmodefile")" = 'transparent' 
 fi
 
 
+join-by() {
+    local IFS="$1"
+    shift
+    echo "$*"
+}
+
 transparentize() {
     if [ "$transparent" != true ]; then
         echo -n "$1"
@@ -117,12 +123,38 @@ apply_hyprland() {
     mkdir -p "$HOME"/.cache/ags/user/generated/hypr/hyprland
     cp "scripts/templates/hypr/hyprland/colours.conf" "$HOME"/.cache/ags/user/generated/hypr/hyprland/colours.conf
 
+    local colour_commands=()
+
+    process-colour-command() {
+        local colour_name="$1" hypr_keyword="$2" fstring="$3"
+
+        if [ "${colourlist[$i]}" = "$colour_name" ]; then
+            colour_commands+=("keyword $hypr_keyword $(printf "$fstring" "${colourvalues[$i]#\#}")")
+        fi
+    }
+
     # Apply colours
     for i in "${!colourlist[@]}"; do
         sed -i "s/{{ ${colourlist[$i]} }}/${colourvalues[$i]#\#}/g" "$HOME"/.cache/ags/user/generated/hypr/hyprland/colours.conf
+
+        process-colour-command '$tertiaryContainer' 'general:col.active_border' 'rgba(%sd5)'
+        process-colour-command '$outline' 'general:col.inactive_border' 'rgba(%s50)'
+        process-colour-command '$surface' 'misc:background_color' 'rgba(%sff)'
+        process-colour-command '$primary' 'windowrulev2' 'bordercolor rgba(%se2), pinned:1'
     done
 
+    # Use dynamic set to avoid hypr reload so no cursor warp
+    hyprctl --batch "$(join-by ';' "${colour_commands[@]}")"
+
+    # Copy to hypr config but no autoreload
+    local prev=$(hyprctl getoption misc:disable_autoreload -j | jq '.int')
+    hyprctl keyword misc:disable_autoreload 1
     cp "$HOME"/.cache/ags/user/generated/hypr/hyprland/colours.conf "$HOME"/.config/hypr/hyprland/colours.conf
+    sync  # Ugh cp is async
+    hyprctl keyword misc:disable_autoreload "$prev"
+
+    # Delete nested function
+    unset -f process-colour-command
 }
 
 apply_hyprlock() {

@@ -1,4 +1,3 @@
-
 precision highp float;
 varying vec2 v_texcoord;
 uniform sampler2D tex;
@@ -26,12 +25,11 @@ vec3 rgb(in vec2 tc, float freq, float amp, inout vec4 centre) {
 }
 
 void main() {
-    // vec2 px = 1.0 / textureSize(tex, 0).st;
     vec2 tc = v_texcoord;
     warpco(tc);
     tc = mix(v_texcoord, tc, sin(time * 2.0) * 0.07);
-    tc.x += rand2d(floor(tc * 50.0 + time * 2.5)) * 0.01;
-    tc.x += rand1d(floor(tc.x * 40.0)) * 0.005 * rand1d(time * 0.001);
+    tc.x += rand1d(floor(tc.x * 40.0)) * 0.008 * rand1d(time * 0.001);
+    tc.y += rand1d(floor(tc.y * 60.0)) * 0.001 * rand1d(time * 0.003);
     tc.y += sin(tc.x + time) * 0.02;
     vec4 centre;
     vec3 bent = rgb(tc, 100.0, 5.0, centre);
