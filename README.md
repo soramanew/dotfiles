@@ -28,6 +28,7 @@
 -   Network activity indicators
 -   Randomly changing wallpaper
 -   CLI control
+-   Also includes configs for a lot more things (mpv, etc)
 
 ### Greeter
 
