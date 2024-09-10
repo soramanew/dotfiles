@@ -6,7 +6,6 @@ import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 import { musicControlsMode } from "../../../variables.js";
 import { BarGroup } from "./main.js";
 import { EXTENDED_BAR } from "../../../constants.js";
-import Players from "../../../services/players.js";
 
 function trimTrackTitle(title) {
     if (!title) return "";
@@ -102,11 +101,11 @@ const TrackProgress = () =>
         vpack: "center",
         hpack: "center",
         extraSetup: self => {
-            const update = () => {
-                const player = Players.last_player;
-                if (player) self.attribute.updateProgress(self, (player.position / player.length) * 100);
-            };
-            self.hook(Mpris, update).hook(Players, update, "notify::last-player").poll(3000, update);
+            const update = () =>
+                execAsync("playerctl metadata -f '{{ position / mpris:length }}'")
+                    .then(position => self.attribute.updateProgress(self, position * 100))
+                    .catch(print);
+            self.hook(Mpris, update).poll(3000, update);
         },
     });
 
@@ -125,12 +124,12 @@ export default () => {
                         vpack: "center",
                         className: "bar-music-playstate-txt",
                         justification: "center",
-                        setup: self => {
-                            const update = () =>
-                                (self.label =
-                                    Players.last_player?.playBackStatus === "Playing" ? "pause" : "play_arrow");
-                            self.hook(Mpris, update).hook(Players, update, "notify::last-player");
-                        },
+                        setup: self =>
+                            self.hook(Mpris, () =>
+                                execAsync("playerctl status")
+                                    .then(status => (self.label = status === "Playing" ? "pause" : "play_arrow"))
+                                    .catch(print)
+                            ),
                     }),
                 }),
                 overlays: [TrackProgress()],
@@ -142,31 +141,18 @@ export default () => {
         className: "txt-smallie bar-music-txt",
         truncate: "end",
         maxWidthChars: 1,
-        setup: self => {
-            const update = () => {
-                const player = Players.last_player;
-                if (player) {
-                    const title = trimTrackTitle(player.trackTitle);
-                    // Filter to get rid of empty artist names
-                    const artists = player.trackArtists?.filter(a => a);
-                    if (artists?.length > 0) {
-                        self.label = `${title} • ${artists.join(", ")}`;
-                        const artistsNice =
-                            artists.length > 1
-                                ? `${artists.slice(0, -1).join(", ")} and ${artists.at(-1)}`
-                                : artists.join(", ");
-                        self.tooltipText = `${title} by ${artistsNice}`;
-                    } else {
-                        self.label = title;
-                        self.tooltipText = title;
-                    }
-                } else {
+        setup: self =>
+            self.hook(Mpris, async () => {
+                try {
+                    const title = trimTrackTitle(await execAsync("playerctl metadata title"));
+                    const artists = (await execAsync("playerctl metadata artist")).trim();
+                    self.label = `${title}${artists ? " • " + artists : ""}`;
+                    self.tooltipText = `${title}${artists ? " by " + artists : ""}`;
+                } catch {
                     self.label = "No media";
                     self.tooltipText = "";
                 }
-            };
-            self.hook(Mpris, update).hook(Players, update, "notify::last-player");
-        },
+            }),
     });
     const musicStuff = Box({
         className: "spacing-h-10",
