@@ -10,11 +10,10 @@ if status is-interactive
     # Commands to run in interactive sessions can go here
     set fish_greeting
 
-end
-
-starship init fish | source
-if test -f ~/.cache/ags/user/generated/terminal/sequences.txt
-    cat ~/.cache/ags/user/generated/terminal/sequences.txt
+    starship init fish | source
+    if test -f ~/.cache/ags/user/generated/terminal/sequences.txt
+        cat ~/.cache/ags/user/generated/terminal/sequences.txt
+    end
 end
 
 alias pamcan=pacman

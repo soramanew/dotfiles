@@ -119,8 +119,10 @@ export default () => {
                             return pName.includes(cName) || cName.includes(pName);
                         })?.playBackStatus === "Playing";
                 }),
+            attribute: size =>
+                (volumeIcon.css = `font-size: ${size}px; min-width: ${size * 1.2}px; min-height: ${size * 1.2}px;`),
         });
-        volumeIcon.css = `font-size: ${iconSize / 10}px;`;
+        volumeIcon.attribute(iconSize / 10);
 
         return Button({
             attribute: {
@@ -134,7 +136,7 @@ export default () => {
                 updateIconSize: self => {
                     const iconSize = Math.min(self.attribute.w, self.attribute.h) * OVERVIEW_SCALE;
                     appIcon.size = iconSize / 2.5;
-                    volumeIcon.css = `font-size: ${iconSize / 10}px;`;
+                    volumeIcon.attribute(iconSize / 10);
                 },
             },
             className: "overview-tasks-window",

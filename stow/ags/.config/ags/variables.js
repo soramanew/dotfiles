@@ -16,14 +16,15 @@ const showIndicatorsFn = (indicator, timeout = 1000) => {
 
 // Global vars for external control (through keybinds)
 export const musicControlsMode = Variable(0); // 0 -> show none ; 1 -> show osd + cava ; 2 -> only show cava
-globalThis.musicControlsMode = musicControlsMode;
+globalThis.openMusicControls = () => {
+    if (Mpris.getPlayer()) musicControlsMode.value = musicControlsMode.value === 0 ? 1 : 0;
+};
 export const showColorScheme = Variable(false);
 const showColourSchemeFn = showIndicatorsFn(showColorScheme, 3000);
 showColorScheme.connect("changed", () => {
     if (showColorScheme.value) showColourSchemeFn();
 });
 globalThis.openColourScheme = () => showColorScheme.setValue(true); // setValue to force changed signal
-globalThis.mpris = Mpris;
 
 // Mode switching
 export const currentShellMode = Variable("normal"); // normal, focus

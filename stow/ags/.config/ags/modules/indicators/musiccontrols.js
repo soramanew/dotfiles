@@ -6,7 +6,6 @@ import { AnimatedCircProg } from "../.commonwidgets/cairo_circularprogress.js";
 import { musicControlsMode } from "../../variables.js";
 import { hasPlasmaIntegration, inPath } from "../.miscutils/system.js";
 import { clamp } from "../.miscutils/mathfuncs.js";
-import Players from "../../services/players.js";
 
 function isRealPlayer(player) {
     return (
@@ -202,7 +201,12 @@ const PlayState = player => {
                     label: player.bind("play_back_status").as(status => (status == "Playing" ? "pause" : "play_arrow")),
                 }),
                 onPrimaryClickRelease: () => player.playPause(),
-                onSecondaryClickRelease: () => Players.makeCurrent(player),
+                onSecondaryClickRelease: () =>
+                    execAsync([
+                        "fish",
+                        "-c",
+                        `while test "$(playerctl metadata -f '{{ playerName }}')" != '${player.name}'; playerctld shift; end`,
+                    ]),
                 onHover: () => hoverLayer.toggleClassName("music-playstate-hover-on", true),
                 onHoverLost: () => hoverLayer.toggleClassName("music-playstate-hover-on", false),
             }),

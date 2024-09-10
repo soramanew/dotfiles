@@ -150,7 +150,7 @@ apply_hyprland() {
     local prev=$(hyprctl getoption misc:disable_autoreload -j | jq '.int')
     hyprctl keyword misc:disable_autoreload 1
     cp "$HOME"/.cache/ags/user/generated/hypr/hyprland/colours.conf "$HOME"/.config/hypr/hyprland/colours.conf
-    sync  # Ugh cp is async
+    sync "$HOME"/.config/hypr/hyprland/colours.conf  # Ugh cp is async
     hyprctl keyword misc:disable_autoreload "$prev"
 
     # Delete nested function
