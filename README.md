@@ -22,6 +22,7 @@
 -   Overview for windows and workspaces, including special workspaces
 -   Window switcher via `Alt+Tab` if you are strange like that and need it
 -   Notification categories by time
+-   Todo screen with editable todos
 -   Support for touchscreen devices (touchscreen toggle + auto rotate support)
 -   Ultrawide mode
 -   Sexy lock screen
@@ -45,6 +46,10 @@
 ### Window switcher
 
 ![window switcher](/readme/switcher.png?raw=true)
+
+### Todo screen
+
+![todo screen](/readme/todoscreen.png?raw=true)
 
 ### Lock screen
 
