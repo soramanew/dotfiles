@@ -145,8 +145,6 @@
 
 .overview-tasks-window-volume-icon {
     @include rounding.full;
-    min-width: 2.045rem;
-    min-height: 2.045rem;
     background-color: change-color(c.$layer3, $alpha: 0.9);
     color: c.$onLayer3;
     border: 0.068rem solid mix(c.$primary, c.$layer3, 50%);
