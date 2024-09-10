@@ -104,7 +104,7 @@ const TrackProgress = () =>
             const update = () =>
                 execAsync("playerctl metadata -f '{{ position / mpris:length }}'")
                     .then(position => self.attribute.updateProgress(self, position * 100))
-                    .catch(print);
+                    .catch(() => self.attribute.updateProgress(self, 0));
             self.hook(Mpris, update).poll(3000, update);
         },
     });
@@ -128,7 +128,7 @@ export default () => {
                             self.hook(Mpris, () =>
                                 execAsync("playerctl status")
                                     .then(status => (self.label = status === "Playing" ? "pause" : "play_arrow"))
-                                    .catch(print)
+                                    .catch(() => (self.label = "play_arrow"))
                             ),
                     }),
                 }),
