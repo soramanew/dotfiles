@@ -82,6 +82,16 @@ dotctl install pkglist-backup  # Pacman hooks to back up packages to /etc/pkglis
 
 On conflicts, remove files or use the `--adopt` flag to use existing files.
 
+### For Whatsapp setup
+
+I don't know how to do this programmatically, so you have to do it manually.
+
+1. Create a Firefox profile called `whatsapp`
+    - Open the profile manager (`firefox --ProfileManager`)
+    - Create the profile (name it `whatsapp` with no caps)
+2. Install the addon [Auto Fullscreen](https://addons.mozilla.org/en-US/firefox/addon/autofullscreen)
+3. Set `fullscreen-api.ignore-widgets` to true in `about:config`
+
 ## Usage
 
 ```sh

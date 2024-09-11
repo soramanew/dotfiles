@@ -128,7 +128,6 @@ vdpauinfo
 vesktop-bin
 vnstat
 vscodium-bin
-waterfox-bin
 webp-pixbuf-loader
 wev
 wf-recorder
