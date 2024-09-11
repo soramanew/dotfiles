@@ -1,10 +1,9 @@
 @use "../lib/colour" as c;
 @use "../lib/anim";
 @use "../lib/rounding";
-@use "../lib/functions" as fn;
 
 .applauncher-bg {
-    background-color: fn.to-root-transparency(c.$layer0, $always: True);
+    background-color: change-color(c.$layer0, $alpha: 0.61);
 }
 
 .applauncher-app {
@@ -12,7 +11,7 @@
     @include rounding.large;
     min-width: 14rem;
     min-height: 8.182rem;
-    background-color: c.$layer1;
+    background-color: change-color(c.$layer1, $alpha: 0.8);
     color: c.$onLayer1;
     font-size: 1rem;
     margin: 0.32rem;

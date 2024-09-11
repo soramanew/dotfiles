@@ -1,16 +1,17 @@
 @use "../lib/colour" as c;
+@use "../lib/anim";
 @use "../lib/rounding";
-@use "../lib/functions" as fn;
 
 .session-bg {
-    background-color: fn.to-root-transparency(c.$layer0, $always: True);
+    background-color: change-color(c.$layer0, $alpha: 0.61);
 }
 
 .session-button {
+    @include anim.element-decel;
     @include rounding.large;
     min-width: 8.182rem;
     min-height: 8.182rem;
-    background-color: fn.to-root-transparency(c.$layer2);
+    background-color: change-color(c.$layer2, $alpha: 0.8);
     color: c.$onLayer2;
     font-size: 3rem;
 }

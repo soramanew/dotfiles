@@ -22,6 +22,7 @@
 -   Overview for windows and workspaces, including special workspaces
 -   Window switcher via `Alt+Tab` if you are strange like that and need it
 -   Notification categories by time
+-   Todo screen with editable todos
 -   Support for touchscreen devices (touchscreen toggle + auto rotate support)
 -   Ultrawide mode
 -   Sexy lock screen
@@ -34,7 +35,7 @@
 
 ![greeter](/readme/greeter.png?raw=true)
 
-### Music OSD
+### Music OSD + Notification categories
 
 ![music osd](/readme/notifs+music.png?raw=true)
 
@@ -45,6 +46,10 @@
 ### Window switcher
 
 ![window switcher](/readme/switcher.png?raw=true)
+
+### Todo screen
+
+![todo screen](/readme/todoscreen.png?raw=true)
 
 ### Lock screen
 
@@ -76,6 +81,16 @@ dotctl install pkglist-backup  # Pacman hooks to back up packages to /etc/pkglis
 ```
 
 On conflicts, remove files or use the `--adopt` flag to use existing files.
+
+### For Whatsapp setup
+
+I don't know how to do this programmatically, so you have to do it manually.
+
+1. Create a Firefox profile called `whatsapp`
+    - Open the profile manager (`firefox --ProfileManager`)
+    - Create the profile (name it `whatsapp` with no caps)
+2. Install the addon [Auto Fullscreen](https://addons.mozilla.org/en-US/firefox/addon/autofullscreen)
+3. Set `fullscreen-api.ignore-widgets` to true in `about:config`
 
 ## Usage
 
