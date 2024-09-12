@@ -157,6 +157,16 @@ export default () => {
                             }),
                             onActivate: () => dispatch(`closewindow address:${address}`),
                         }),
+                        MenuItem({
+                            child: Label({
+                                xalign: 0,
+                                label: "Kill all windows in workspace",
+                            }),
+                            onActivate: () =>
+                                Hyprland.clients.forEach(client => {
+                                    if (client.workspace.id === id) dispatch(`closewindow address:${client.address}`);
+                                }),
+                        }),
                         ContextMenuWorkspaceArray({
                             label: "Dump windows to workspace",
                             actionFunc: dumpToWorkspace,
@@ -206,7 +216,6 @@ export default () => {
 
                 button.drag_source_set(Gdk.ModifierType.BUTTON1_MASK, TARGET, Gdk.DragAction.MOVE);
                 button.drag_source_set_icon_name(substitute(c));
-                // button.drag_source_set_icon_gicon(icon);
 
                 // On drag start, add the dragging class
                 button.connect("drag-begin", button => button.toggleClassName("overview-tasks-window-dragging", true));
@@ -368,12 +377,11 @@ export default () => {
                     .hook(
                         Hyprland,
                         (box, clientAddress) => {
-                            const client = Hyprland.getClient(clientAddress);
-                            if (!client) return;
+                            const ws = clientMap.get(clientAddress)?.attribute.ws;
+                            if (!ws) return;
 
-                            const id = client.workspace.id;
-                            box.attribute.updateWorkspace(box, id);
-                            box.get_children()[id - (getOffset() + startWorkspace)]?.unset(clientAddress);
+                            box.attribute.updateWorkspace(box, ws);
+                            box.get_children()[ws - (getOffset() + startWorkspace)]?.unset(clientAddress);
                         },
                         "client-removed"
                     )
@@ -558,11 +566,11 @@ export default () => {
                     .hook(
                         Hyprland,
                         (box, clientAddress) => {
-                            const client = Hyprland.getClient(clientAddress);
-                            if (!client) return;
+                            const ws = clientMap.get(clientAddress)?.attribute.wsName;
+                            if (!ws) return;
 
-                            box.attribute.updateWorkspace(box, client.workspace.name);
-                            box.get_children()[specialWorkspaces[row].get(client.workspace.name)]?.unset(clientAddress);
+                            box.attribute.updateWorkspace(box, ws);
+                            box.get_children()[specialWorkspaces[row].get(ws)]?.unset(clientAddress);
                         },
                         "client-removed"
                     )
