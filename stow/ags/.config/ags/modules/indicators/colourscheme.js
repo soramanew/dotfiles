@@ -7,7 +7,8 @@ import { MaterialIcon } from "../.commonwidgets/materialicon.js";
 import { updateColourMode } from "../.miscutils/system.js";
 import { COLOUR_MODE_FILE } from "../../constants.js";
 
-const ColourBox = ({ name = "Colour", ...rest }) => Box({ ...rest, homogeneous: true, child: Label(name) });
+const ColourBox = (name, colour) =>
+    Box({ className: `osd-colour osd-colour-${colour}`, homogeneous: true, child: Label(name) });
 
 const ColourSchemeSettingsRevealer = () => {
     const headerButtonIcon = MaterialIcon("expand_more", "norm");
@@ -128,24 +129,24 @@ const ColourschemeContent = () =>
                 className: "spacing-h-5",
                 hpack: "center",
                 children: [
-                    ColourBox({ name: "P", className: "osd-color osd-color-primary" }),
-                    ColourBox({ name: "S", className: "osd-color osd-color-secondary" }),
-                    ColourBox({ name: "T", className: "osd-color osd-color-tertiary" }),
-                    ColourBox({ name: "Sf", className: "osd-color osd-color-surface" }),
-                    ColourBox({ name: "Sf-i", className: "osd-color osd-color-inverseSurface" }),
-                    ColourBox({ name: "E", className: "osd-color osd-color-error" }),
+                    ColourBox("P", "primary"),
+                    ColourBox("S", "secondary"),
+                    ColourBox("T", "tertiary"),
+                    ColourBox("Sf", "surface"),
+                    ColourBox("Sf-i", "inverseSurface"),
+                    ColourBox("E", "error"),
                 ],
             }),
             Box({
                 className: "spacing-h-5",
                 hpack: "center",
                 children: [
-                    ColourBox({ name: "P-c", className: "osd-color osd-color-primaryContainer" }),
-                    ColourBox({ name: "S-c", className: "osd-color osd-color-secondaryContainer" }),
-                    ColourBox({ name: "T-c", className: "osd-color osd-color-tertiaryContainer" }),
-                    ColourBox({ name: "Sf-c", className: "osd-color osd-color-surfaceContainer" }),
-                    ColourBox({ name: "Sf-v", className: "osd-color osd-color-surfaceVariant" }),
-                    ColourBox({ name: "E-c", className: "osd-color osd-color-errorContainer" }),
+                    ColourBox("P-c", "primaryContainer"),
+                    ColourBox("S-c", "secondaryContainer"),
+                    ColourBox("T-c", "tertiaryContainer"),
+                    ColourBox("Sf-c", "surfaceContainer"),
+                    ColourBox("Sf-v", "surfaceVariant"),
+                    ColourBox("E-c", "errorContainer"),
                 ],
             }),
             ColourSchemeSettingsRevealer(),

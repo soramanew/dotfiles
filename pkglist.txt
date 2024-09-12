@@ -141,7 +141,6 @@ vesktop-bin
 vnstat
 vscodium-bin
 vulkan-radeon
-waterfox-bin
 webp-pixbuf-loader
 wev
 wf-recorder
