@@ -12,7 +12,7 @@ btop
 cava
 clamav
 cliphist
-cowfortune
+cowsay
 cpupower
 dart-sass
 ddcutil
@@ -32,6 +32,7 @@ file-roller
 firefox
 fish
 foot
+fortune-mod
 fuzzel-git
 fwupd
 gamemode
