@@ -1,4 +1,5 @@
 import Gtk from "gi://Gtk";
+const Applications = await Service.import("applications");
 
 export const iconExists = iconName => Gtk.IconTheme.get_default().has_icon(iconName);
 
@@ -14,6 +15,7 @@ const substitutions = {
     codium: "vscodium",
     "GitHub Desktop": "github-desktop",
     "gnome-tweaks": "org.gnome.tweaks",
+    "org.pulseaudio.pavucontrol": "pavucontrol",
     "pavucontrol-qt": "pavucontrol",
     "jetbrains-pycharm-ce": "pycharm-community",
     "Spotify Free": "Spotify",
@@ -39,8 +41,9 @@ export const substitute = str => {
         if (postSub !== str) return postSub;
     }
 
-    // Guess icon name: turn into kebab case
-    if (!iconExists(str)) return str.toLowerCase().replace(/\s+/g, "-");
+    // Try to find a matching .desktop file and use the specified icon
+    const apps = Applications.query(str);
+    if (apps.length > 0) return apps[0].iconName;
 
     // Not changed
     return str;
