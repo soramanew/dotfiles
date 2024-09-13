@@ -4,7 +4,7 @@ const Applications = await Service.import("applications");
 export const iconExists = iconName => Gtk.IconTheme.get_default().has_icon(iconName);
 
 const substitutions = {
-    "": "image-missing",
+    "": "image",
     // Mime types
     "text-plain": "text-x-generic",
     "application-x-zerosize": "text-x-generic",
@@ -32,6 +32,7 @@ const regexSubs = [
 ];
 
 export const substitute = str => {
+    // ------- Intentional subs --------
     // Normal subs
     if (substitutions.hasOwnProperty(str)) return substitutions[str];
 
@@ -41,10 +42,13 @@ export const substitute = str => {
         if (postSub !== str) return postSub;
     }
 
+    if (iconExists(str)) return str;
+
+    // -------- Not found subs ---------
     // Try to find a matching .desktop file and use the specified icon
     const apps = Applications.query(str);
     if (apps.length > 0) return apps[0].iconName;
 
-    // Not changed
-    return str;
+    // Icon missing
+    return "image";
 };
