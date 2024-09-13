@@ -1,6 +1,8 @@
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
+import GdkPixbuf from "gi://GdkPixbuf";
 const { Box, Label, Button, Icon, Menu, MenuItem, Revealer, EventBox, Overlay, CenterBox } = Widget;
+const { CACHE_DIR, execAsync } = Utils;
 const Hyprland = await Service.import("hyprland");
 const Mpris = await Service.import("mpris");
 import { setupCursorHoverGrab } from "../.widgetutils/cursorhover.js";
@@ -17,6 +19,9 @@ import {
 import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
 import { EXTENDED_BAR } from "../../constants.js";
 import { stripInvisUnicode } from "../.miscutils/strings.js";
+import { fileExists } from "../.miscutils/files.js";
+
+const Image = Widget.subclass(Gtk.Image);
 
 const OVERVIEW_SCALE = 0.15;
 const OVERVIEW_WS_NUM_SCALE = 0.09;
@@ -24,10 +29,13 @@ const OVERVIEW_WS_NUM_MARGIN_SCALE = 0.07;
 const TARGET = [Gtk.TargetEntry.new("text/plain", Gtk.TargetFlags.SAME_APP, 0)];
 
 const overviewTick = Variable(false);
+App.connect("window-toggled", (_, name, visible) => {
+    if (visible && name === "overview") overviewTick.setValue(!overviewTick.value);
+});
 
 const dispatchAndClose = dispatcher => {
     App.closeWindow("overview");
-    return dispatch(dispatcher);
+    return execAsync(`${App.configDir}/scripts/hyprland/ws_wrapper.sh -n ${dispatcher}`).catch(print);
 };
 const getOffset = () => Math.floor((Hyprland.active.workspace.id - 1) / WS_PER_GROUP) * WS_PER_GROUP;
 const calcCss = (x, y, w, h) => `
@@ -76,6 +84,7 @@ export default () => {
             xwayland,
         },
         screenCoords,
+        workspace,
         onClicked = () => dispatchAndClose(`focuswindow address:${address}`)
     ) => {
         title = stripInvisUnicode(title);
@@ -123,6 +132,32 @@ export default () => {
                 (volumeIcon.css = `font-size: ${size}px; min-width: ${size * 1.2}px; min-height: ${size * 1.2}px;`),
         });
         volumeIcon.attribute(iconSize / 10);
+
+        const content = Box({
+            homogeneous: true,
+            child: Box({
+                vertical: true,
+                vpack: "center",
+                className: "spacing-v-5",
+                children: [
+                    Overlay({ hpack: "center", passThrough: true, child: appIcon, overlays: [volumeIcon] }),
+                    Label({
+                        // hexpand: true,
+                        maxWidthChars: 1, // Min width when ellipsizing (truncated)
+                        truncate: "end",
+                        className: `txt readingfont ${xwayland ? "txt-italic" : ""}`,
+                        css: `
+                            font-size: ${
+                                (Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / (EXTENDED_BAR ? 14.6 : 12)
+                            }px;
+                            margin: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 20}px;
+                        `,
+                        // If the title is too short, include the class
+                        label: title.length <= 1 ? `${c}: ${title}` : title,
+                    }),
+                ],
+            }),
+        });
 
         return Button({
             attribute: {
@@ -174,36 +209,21 @@ export default () => {
                 menu.popup_at_widget(button.get_parent(), Gdk.Gravity.SOUTH, Gdk.Gravity.NORTH, null); // Show menu below the button
                 button.connect("destroy", () => menu.destroy());
             },
-            child: Box({
-                homogeneous: true,
-                child: Box({
-                    vertical: true,
-                    vpack: "center",
-                    className: "spacing-v-5",
-                    children: [
-                        Overlay({ hpack: "center", passThrough: true, child: appIcon, overlays: [volumeIcon] }),
-                        Label({
-                            // hexpand: true,
-                            maxWidthChars: 1, // Min width when ellipsizing (truncated)
-                            truncate: "end",
-                            className: `txt readingfont ${xwayland ? "txt-italic" : ""}`,
-                            css: `
-                                font-size: ${
-                                    (Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) /
-                                    (EXTENDED_BAR ? 14.6 : 12)
-                                }px;
-                                margin: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 20}px;
-                            `,
-                            // If the title is too short, include the class
-                            label: title.length <= 1 ? `${c}: ${title}` : title,
-                        }),
-                    ],
-                }),
-            }),
             tooltipText: `${c}: ${title}`,
             setup: button => {
                 setupCursorHoverGrab(button);
 
+                // No icon and title when has preview
+                button.hook(workspace.hasPreview, () => {
+                    if (workspace.hasPreview.value) button.child = Box();
+                    else {
+                        button.child = content;
+                        content.visible = true;
+                    }
+                    button.toggleClassName("overview-tasks-window-visible", !workspace.hasPreview.value);
+                });
+
+                // Drag stuff
                 button.drag_source_set(Gdk.ModifierType.BUTTON1_MASK, TARGET, Gdk.DragAction.MOVE);
                 button.drag_source_set_icon_name(substitute(c));
                 // button.drag_source_set_icon_gicon(icon);
@@ -246,39 +266,65 @@ export default () => {
                     margin: ${Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE * OVERVIEW_WS_NUM_MARGIN_SCALE}px;
                     font-size: ${SCREEN_HEIGHT * OVERVIEW_SCALE * OVERVIEW_WS_NUM_SCALE}px;
                 `,
-                setup: self =>
-                    self.hook(Hyprland.active.workspace, self => {
-                        // Update when going to new ws group
-                        const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / WS_PER_GROUP);
-                        self.label = `${currentGroup * WS_PER_GROUP + index}`;
-                    }),
+                // Update when going to new ws group
+                setup: self => self.hook(Hyprland.active.workspace, self => (self.label = `${getOffset() + index}`)),
                 ...rest,
             });
         const widget = Box({
             className: "overview-tasks-workspace",
             vpack: "center",
-            css: `
-                min-width: ${SCREEN_WIDTH * OVERVIEW_SCALE}px;
-                min-height: ${SCREEN_HEIGHT * OVERVIEW_SCALE}px;
-            `,
-            children: [
-                EventBox({
-                    hexpand: true,
-                    onPrimaryClick: () => dispatchAndClose(`workspace ${index}`),
-                    setup: eventbox => {
-                        eventbox.drag_dest_set(Gtk.DestDefaults.ALL, TARGET, Gdk.DragAction.COPY);
-                        eventbox.connect("drag-data-received", (_w, _c, _x, _y, data) => {
-                            dispatch(`movetoworkspacesilent ${index + getOffset()},address:${data.get_text()}`);
-                            overviewTick.setValue(!overviewTick.value);
-                        });
-                    },
-                    child: Overlay({
-                        child: Box(),
-                        overlays: [WorkspaceNumber({ index: index, hpack: "start", vpack: "start" }), fixed],
+            css: `min-width: ${SCREEN_WIDTH * OVERVIEW_SCALE}px; min-height: ${SCREEN_HEIGHT * OVERVIEW_SCALE}px;`,
+            child: EventBox({
+                hexpand: true,
+                onPrimaryClick: () => dispatchAndClose(`workspace ${index}`),
+                setup: eventbox => {
+                    eventbox.drag_dest_set(Gtk.DestDefaults.ALL, TARGET, Gdk.DragAction.COPY);
+                    eventbox.connect("drag-data-received", (_w, _c, _x, _y, data) => {
+                        dispatch(`movetoworkspacesilent ${index + getOffset()},address:${data.get_text()}`);
+                        overviewTick.setValue(!overviewTick.value);
+                    });
+                },
+                child: Overlay({
+                    child: Image({
+                        attribute: {},
+                        setup: self => {
+                            let prevOff, fileMon;
+                            self.hook(Hyprland.active.workspace, () => {
+                                const off = getOffset();
+                                if (prevOff !== off) {
+                                    prevOff = off;
+                                    const realWsId = off + index;
+                                    const wsPreviewImg = `${CACHE_DIR}/overview/${realWsId}.png`;
+                                    const updatePreview = () =>
+                                        // Timeout cause screenshot still writing to file or something
+                                        Utils.timeout(5, () => {
+                                            if (fileExists(wsPreviewImg)) {
+                                                widget.hasPreview.value = true;
+                                                const preview = GdkPixbuf.Pixbuf.new_from_file_at_size(
+                                                    wsPreviewImg,
+                                                    SCREEN_WIDTH * OVERVIEW_SCALE,
+                                                    SCREEN_HEIGHT * OVERVIEW_SCALE
+                                                );
+                                                self.set_from_pixbuf(preview);
+                                            } else {
+                                                widget.hasPreview.value = false;
+                                                self.clear();
+                                            }
+                                        });
+                                    updatePreview();
+
+                                    fileMon?.cancel();
+                                    fileMon = Utils.monitorFile(wsPreviewImg, updatePreview);
+                                }
+                            });
+                            self.connect("destroy", () => fileMon?.cancel());
+                        },
                     }),
+                    overlays: [fixed, WorkspaceNumber({ index: index, hpack: "start", vpack: "start" })],
                 }),
-            ],
+            }),
         });
+        widget.hasPreview = Variable(false);
         widget.clear = () => {
             const offset = getOffset();
             clientMap.forEach((client, address) => {
@@ -309,7 +355,7 @@ export default () => {
                     return;
                 }
             }
-            const newWindow = Window(clientJson, screenCoords);
+            const newWindow = Window(clientJson, screenCoords, widget);
             if (newWindow === null) return;
             fixed.attribute.put(newWindow, Math.max(0, newWindow.attribute.x), Math.max(0, newWindow.attribute.y));
             clientMap.set(clientJson.address, newWindow);
@@ -395,15 +441,13 @@ export default () => {
                             box.attribute.workspaceGroup = currentGroup;
                             overviewTick.setValue(!overviewTick.value);
                         }
-                    })
-                    .hook(App, (box, name, visible) => {
-                        // Update on open
-                        if (name == "overview" && visible) box.attribute.update(box);
                     });
             },
         });
 
-    const SpecialWorkspace = name => {
+    const SpecialWorkspace = (name, id) => {
+        const wsPreviewImg = `${CACHE_DIR}/overview/${id}.png`;
+        if (fileExists(wsPreviewImg)) execAsync(`rm ${wsPreviewImg}`).catch(print);
         const fixed = Box({
             attribute: {
                 put: (widget, x, y) => {
@@ -435,24 +479,46 @@ export default () => {
                 min-height: ${SCREEN_HEIGHT * OVERVIEW_SCALE}px;
             `,
             attribute: { name },
-            children: [
-                EventBox({
-                    hexpand: true,
-                    onPrimaryClick: () => dispatchAndClose(`togglespecialworkspace ${name.replace("special:", "")}`),
-                    setup: eventbox => {
-                        eventbox.drag_dest_set(Gtk.DestDefaults.ALL, TARGET, Gdk.DragAction.COPY);
-                        eventbox.connect("drag-data-received", (_w, _c, _x, _y, data) => {
-                            dispatch(`movetoworkspacesilent ${name},address:${data.get_text()}`);
-                            overviewTick.setValue(!overviewTick.value);
-                        });
-                    },
-                    child: Overlay({
-                        child: Box({}),
-                        overlays: [WorkspaceName({ name: name, hpack: "start", vpack: "start" }), fixed],
+            child: EventBox({
+                hexpand: true,
+                onPrimaryClick: () => dispatchAndClose(`togglespecialworkspace ${name.replace("special:", "")}`),
+                setup: eventbox => {
+                    eventbox.drag_dest_set(Gtk.DestDefaults.ALL, TARGET, Gdk.DragAction.COPY);
+                    eventbox.connect("drag-data-received", (_w, _c, _x, _y, data) => {
+                        dispatch(`movetoworkspacesilent ${name},address:${data.get_text()}`);
+                        overviewTick.setValue(!overviewTick.value);
+                    });
+                },
+                child: Overlay({
+                    child: Image({
+                        setup: self => {
+                            const updatePreview = () =>
+                                // Timeout cause screenshot still writing to file or something
+                                Utils.timeout(5, () => {
+                                    if (fileExists(wsPreviewImg)) {
+                                        widget.hasPreview.value = true;
+                                        const preview = GdkPixbuf.Pixbuf.new_from_file_at_size(
+                                            wsPreviewImg,
+                                            SCREEN_WIDTH * OVERVIEW_SCALE,
+                                            SCREEN_HEIGHT * OVERVIEW_SCALE
+                                        );
+                                        self.set_from_pixbuf(preview);
+                                    } else {
+                                        widget.hasPreview.value = false;
+                                        self.clear();
+                                    }
+                                });
+                            updatePreview();
+
+                            const fileMon = Utils.monitorFile(wsPreviewImg, updatePreview);
+                            self.connect("destroy", () => fileMon.cancel());
+                        },
                     }),
+                    overlays: [fixed, WorkspaceName({ name: name, hpack: "start", vpack: "start" })],
                 }),
-            ],
+            }),
         });
+        widget.hasPreview = Variable(false);
         widget.clear = () => {
             clientMap.forEach((client, address) => {
                 if (!client) return;
@@ -478,7 +544,7 @@ export default () => {
                     return;
                 }
             }
-            const newWindow = Window(clientJson, screenCoords, () =>
+            const newWindow = Window(clientJson, screenCoords, widget, () =>
                 dispatchAndClose(`togglespecialworkspace ${name.replace("special:", "")}`)
             );
             if (newWindow === null) return;
@@ -574,11 +640,7 @@ export default () => {
                             box.attribute.updateWorkspace(box, client.workspace.name);
                         },
                         "client-added"
-                    )
-                    .hook(App, (box, name, visible) => {
-                        // Update on open
-                        if (name == "overview" && visible) box.attribute.update(box);
-                    });
+                    );
             },
         });
 
@@ -587,18 +649,22 @@ export default () => {
             vertical: true,
             className: "overview-tasks",
             setup: self => {
-                const addWs = name => {
+                const addWs = ({ id, name } = {}) => {
                     if (name?.startsWith("special:")) {
                         if (!specialWorkspaces.length || specialWorkspaces.at(-1).size >= WS_COLS)
-                            self.add(SpecialWorkspaceRow(specialWorkspaces.length, SpecialWorkspace(name)));
+                            self.add(SpecialWorkspaceRow(specialWorkspaces.length, SpecialWorkspace(name, id)));
                         else {
                             const child = self.get_children().at(-1);
-                            child.attribute.addWorkspace(child, SpecialWorkspace(name));
+                            child.attribute.addWorkspace(child, SpecialWorkspace(name, id));
                         }
                     }
                 };
-                JSON.parse(Hyprland.message("j/workspaces")).forEach(ws => addWs(ws.name));
-                self.hook(Hyprland, (_, name) => addWs(name), "workspace-added");
+                JSON.parse(Hyprland.message("j/workspaces")).forEach(addWs);
+                self.hook(
+                    Hyprland,
+                    (_, name) => addWs(JSON.parse(Hyprland.message("j/workspaces")).find(ws => ws.name === name)),
+                    "workspace-added"
+                );
                 self.hook(
                     Hyprland,
                     (_, name) => {

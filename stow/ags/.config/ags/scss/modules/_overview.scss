@@ -108,9 +108,12 @@
 }
 
 .overview-tasks-workspace {
-    @include rounding.normal;
+    border-radius: 10px;
+    -gtk-outline-radius: 10px;
     margin: 0.341rem;
     background-color: c.$layer1;
+    background-size: contain;
+    // border: 0.068rem solid c.$surfaceContainerHigh;
 }
 
 .overview-tasks-workspace-number {
@@ -119,11 +122,9 @@
 }
 
 .overview-tasks-window {
-    @include rounding.normal;
     @include anim.menu-decel;
-    background-color: change-color(c.$layer3, $alpha: 0.8);
-    color: c.$onSurface;
-    border: 0.068rem solid c.$surfaceContainerHighest;
+    border-radius: 10px;
+    -gtk-outline-radius: 10px;
 
     &:hover,
     &:focus {
@@ -133,6 +134,12 @@
     &:active {
         background-color: transparentize(c.$secondaryContainer, 0.3);
     }
+}
+
+.overview-tasks-window-visible {
+    background-color: change-color(c.$layer3, $alpha: 0.4);
+    color: c.$onSurface;
+    border: 0.068rem solid c.$surfaceContainerHighest;
 }
 
 .overview-tasks-window-selected {
