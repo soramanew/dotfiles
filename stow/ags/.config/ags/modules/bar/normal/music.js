@@ -102,8 +102,8 @@ const TrackProgress = () =>
         hpack: "center",
         extraSetup: self => {
             const update = () =>
-                execAsync("playerctl metadata -f '{{ position / mpris:length }}'")
-                    .then(position => self.attribute.updateProgress(self, position * 100))
+                execAsync("playerctl metadata -f '{{ position * 100 / mpris:length }}'")
+                    .then(position => self.attribute.updateProgress(self, position))
                     .catch(() => self.attribute.updateProgress(self, 0));
             self.hook(Mpris, update).poll(3000, update);
         },
