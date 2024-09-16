@@ -154,7 +154,7 @@ export default () => {
                     }
                     // Window has matching sink input and is not corked, idk what corked means but it seems to represent play state?
                     // It works tho so... yes
-                    self.visible = sinkMatch != null && !sinkMatch.corked;
+                    self.visible = sinkMatch !== null && !sinkMatch.corked;
                 }),
             attribute: size =>
                 (volumeIcon.css = `font-size: ${size}px; min-width: ${size * 1.2}px; min-height: ${size * 1.2}px;`),
