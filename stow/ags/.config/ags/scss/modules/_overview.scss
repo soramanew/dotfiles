@@ -5,7 +5,7 @@
 @use "../lib/elevation";
 
 @mixin -window-base {
-    @include rounding.large;
+    @include rounding.normal;
     @include elevation.border;
     @include elevation.e2;
 }
@@ -108,7 +108,7 @@
 }
 
 .overview-tasks-workspace {
-    @include rounding.normal;
+    @include rounding.small;
     margin: 0.341rem;
     background-color: c.$layer1;
 }
@@ -119,7 +119,7 @@
 }
 
 .overview-tasks-window {
-    @include rounding.normal;
+    @include rounding.small;
     @include anim.menu-decel;
     background-color: change-color(c.$layer3, $alpha: 0.8);
     color: c.$onSurface;

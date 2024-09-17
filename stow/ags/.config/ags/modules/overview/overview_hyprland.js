@@ -193,6 +193,23 @@ export default () => {
                 }),
             ],
         });
+        const windowTitle = Revealer({
+            transition: "slide_down",
+            transitionDuration: 150,
+            child: Label({
+                maxWidthChars: 1, // Min width when ellipsizing (truncated)
+                truncate: "end",
+                className: `txt readingfont ${xwayland ? "txt-italic" : ""}`,
+                css: `
+                    font-size: ${
+                        (Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / (EXTENDED_BAR ? 14.6 : 12)
+                    }px;
+                    margin: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 20}px;
+                `,
+                // If the title is too short, include the class
+                label: title.length <= 1 ? `${c}: ${title}` : title,
+            }),
+        });
 
         return Button({
             attribute: {
@@ -208,10 +225,14 @@ export default () => {
                     appIcon.size = iconSize / 2.5;
                     audioIcon.attribute(iconSize / 10);
                 },
+                updateSize: (self, w, h) => {
+                    self.attribute.w = w;
+                    self.attribute.h = h;
+                    self.attribute.updateIconSize(self);
+                    self.css = calcCss(w, h);
+                },
             },
             className: "overview-tasks-window",
-            hpack: "start",
-            vpack: "start",
             css: calcCss(w, h),
             onClicked: onClicked,
             onMiddleClickRelease: () => dispatch(`closewindow address:${address}`),
@@ -224,20 +245,7 @@ export default () => {
                     className: "spacing-v-5",
                     children: [
                         Overlay({ hpack: "center", passThrough: true, child: appIcon, overlays: [audioIcon] }),
-                        Label({
-                            maxWidthChars: 1, // Min width when ellipsizing (truncated)
-                            truncate: "end",
-                            className: `txt readingfont ${xwayland ? "txt-italic" : ""}`,
-                            css: `
-                                font-size: ${
-                                    (Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) /
-                                    (EXTENDED_BAR ? 14.6 : 12)
-                                }px;
-                                margin: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 20}px;
-                            `,
-                            // If the title is too short, include the class
-                            label: title.length <= 1 ? `${c}: ${title}` : title,
-                        }),
+                        windowTitle,
                     ],
                 }),
             }),
@@ -263,6 +271,13 @@ export default () => {
 
                 // Attach menu so inherit styles + gets destroyed when window destroyed
                 menu.attach_to_widget(button, null);
+
+                // Hide title when window too small
+                button.connect("size-allocate", () => {
+                    windowTitle.revealChild =
+                        Math.round(button.attribute.h * OVERVIEW_SCALE) + 2 >=
+                        appIcon.get_allocated_height() + windowTitle.child.get_allocated_height();
+                });
             },
         });
     };
@@ -329,10 +344,7 @@ export default () => {
                     c.destroy();
                     clientMap.delete(clientJson.address);
                 } else if (c) {
-                    c.attribute.w = clientJson.size[0];
-                    c.attribute.h = clientJson.size[1];
-                    c.attribute.updateIconSize(c);
-                    c.css = calcCss(...clientJson.size);
+                    c.attribute.updateSize(c, ...clientJson.size);
                     fixed.move(
                         c,
                         Math.max(0, clientJson.at[0] * OVERVIEW_SCALE),
@@ -489,10 +501,7 @@ export default () => {
                     c.destroy();
                     clientMap.delete(clientJson.address);
                 } else if (c) {
-                    c.attribute.w = clientJson.size[0];
-                    c.attribute.h = clientJson.size[1];
-                    c.attribute.updateIconSize(c);
-                    c.css = calcCss(...clientJson.size);
+                    c.attribute.updateSize(c, ...clientJson.size);
                     fixed.move(
                         c,
                         Math.max(0, clientJson.at[0] * OVERVIEW_SCALE),
