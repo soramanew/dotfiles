@@ -1,6 +1,6 @@
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
-const { Box, Label, Button, Icon, Menu, MenuItem, Revealer, EventBox, Overlay, CenterBox } = Widget;
+const { Box, Label, Button, Icon, Menu, MenuItem, Revealer, EventBox, Overlay, CenterBox, Fixed } = Widget;
 const { execAsync, subprocess } = Utils;
 const Hyprland = await Service.import("hyprland");
 import { setupCursorHoverGrab } from "../.widgetutils/cursorhover.js";
@@ -42,12 +42,8 @@ const dispatchAndClose = dispatcher => {
     return dispatch(dispatcher);
 };
 const getOffset = () => Math.floor((Hyprland.active.workspace.id - 1) / WS_PER_GROUP) * WS_PER_GROUP;
-const calcCss = (x, y, w, h) => `
-    margin-left: ${Math.round(x * OVERVIEW_SCALE)}px;
-    margin-top: ${Math.round(y * OVERVIEW_SCALE)}px;
-    margin-right: -${Math.round((x + w) * OVERVIEW_SCALE)}px;
-    margin-bottom: -${Math.round((y + h) * OVERVIEW_SCALE)}px;
-`;
+const calcCss = (w, h) =>
+    `min-width: ${Math.round(w * OVERVIEW_SCALE)}px; min-height: ${Math.round(h * OVERVIEW_SCALE)}px;`;
 
 const C2C = () => Click2CloseRegion({ name: "overview" });
 
@@ -60,8 +56,8 @@ export default () => {
                 const submenu = Menu({ className: "menu" });
 
                 const startWorkspace = getOffset() + 1;
-                const endWorkspace = startWorkspace + WS_PER_GROUP - 1;
-                for (let i = startWorkspace; i <= endWorkspace; i++) {
+                const endWorkspace = startWorkspace + WS_PER_GROUP;
+                for (let i = startWorkspace; i < endWorkspace; i++) {
                     if (i === thisWorkspace) continue;
                     const button = MenuItem({ label: `Workspace ${i}` });
                     button.connect("activate", () => {
@@ -118,12 +114,13 @@ export default () => {
 
         const iconSize = Math.min(w, h) * OVERVIEW_SCALE;
         const appIcon = Icon({ icon: substitute(c), size: iconSize / 2.5 });
-        const volumeIcon = Label({
+        const audioIcon = Label({
             hpack: "end",
             vpack: "start",
-            className: "icon-material txt overview-tasks-window-volume-icon",
+            className: "icon-material txt overview-tasks-window-audio-icon",
             label: "volume_up",
-            setup: self =>
+            setup: self => {
+                let visible = false;
                 self.hook(paSinkInputs, () => {
                     let sinkMatch = null;
                     for (const sink of paSinkInputs.value) {
@@ -154,12 +151,65 @@ export default () => {
                     }
                     // Window has matching sink input and is not corked, idk what corked means but it seems to represent play state?
                     // It works tho so... yes
-                    self.visible = sinkMatch !== null && !sinkMatch.corked;
-                }),
+                    self.visible = visible = sinkMatch !== null && !sinkMatch.corked;
+                });
+
+                // So when show_all is called on ancestor it retains visible state
+                self.on("map", () => (self.visible = visible));
+            },
             attribute: size =>
-                (volumeIcon.css = `font-size: ${size}px; min-width: ${size * 1.2}px; min-height: ${size * 1.2}px;`),
+                (audioIcon.css = `font-size: ${size}px; min-width: ${size * 1.2}px; min-height: ${size * 1.2}px;`),
         });
-        volumeIcon.attribute(iconSize / 10);
+        audioIcon.attribute(iconSize / 10);
+        const menu = Menu({
+            className: "menu",
+            children: [
+                MenuItem({
+                    child: Label({
+                        xalign: 0,
+                        label: "Close (Middle-click)",
+                    }),
+                    onActivate: () => dispatch(`closewindow address:${address}`),
+                }),
+                MenuItem({
+                    child: Label({
+                        xalign: 0,
+                        label: "Kill all windows in workspace",
+                    }),
+                    onActivate: () =>
+                        Hyprland.clients.forEach(client => {
+                            if (client.workspace.id === id) dispatch(`closewindow address:${client.address}`);
+                        }),
+                }),
+                ContextMenuWorkspaceArray({
+                    label: "Dump windows to workspace",
+                    actionFunc: dumpToWorkspace,
+                    thisWorkspace: id,
+                }),
+                ContextMenuWorkspaceArray({
+                    label: "Swap windows with workspace",
+                    actionFunc: swapWorkspace,
+                    thisWorkspace: id,
+                }),
+            ],
+        });
+        const windowTitle = Revealer({
+            transition: "slide_down",
+            transitionDuration: 150,
+            child: Label({
+                maxWidthChars: 1, // Min width when ellipsizing (truncated)
+                truncate: "end",
+                className: `txt readingfont ${xwayland ? "txt-italic" : ""}`,
+                css: `
+                    font-size: ${
+                        (Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / (EXTENDED_BAR ? 14.6 : 12)
+                    }px;
+                    margin: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 20}px;
+                `,
+                // If the title is too short, include the class
+                label: title.length <= 1 ? `${c}: ${title}` : title,
+            }),
+        });
 
         return Button({
             attribute: {
@@ -173,54 +223,20 @@ export default () => {
                 updateIconSize: self => {
                     const iconSize = Math.min(self.attribute.w, self.attribute.h) * OVERVIEW_SCALE;
                     appIcon.size = iconSize / 2.5;
-                    volumeIcon.attribute(iconSize / 10);
+                    audioIcon.attribute(iconSize / 10);
+                },
+                updateSize: (self, w, h) => {
+                    self.attribute.w = w;
+                    self.attribute.h = h;
+                    self.attribute.updateIconSize(self);
+                    self.css = calcCss(w, h);
                 },
             },
             className: "overview-tasks-window",
-            hpack: "start",
-            vpack: "start",
-            css: calcCss(x, y, w, h),
+            css: calcCss(w, h),
             onClicked: onClicked,
             onMiddleClickRelease: () => dispatch(`closewindow address:${address}`),
-            onSecondaryClick: button => {
-                button.toggleClassName("overview-tasks-window-selected", true);
-                const menu = Menu({
-                    className: "menu",
-                    children: [
-                        MenuItem({
-                            child: Label({
-                                xalign: 0,
-                                label: "Close (Middle-click)",
-                            }),
-                            onActivate: () => dispatch(`closewindow address:${address}`),
-                        }),
-                        MenuItem({
-                            child: Label({
-                                xalign: 0,
-                                label: "Kill all windows in workspace",
-                            }),
-                            onActivate: () =>
-                                Hyprland.clients.forEach(client => {
-                                    if (client.workspace.id === id) dispatch(`closewindow address:${client.address}`);
-                                }),
-                        }),
-                        ContextMenuWorkspaceArray({
-                            label: "Dump windows to workspace",
-                            actionFunc: dumpToWorkspace,
-                            thisWorkspace: id,
-                        }),
-                        ContextMenuWorkspaceArray({
-                            label: "Swap windows with workspace",
-                            actionFunc: swapWorkspace,
-                            thisWorkspace: id,
-                        }),
-                    ],
-                });
-                menu.connect("deactivate", () => button.toggleClassName("overview-tasks-window-selected", false));
-                menu.connect("selection-done", () => button.toggleClassName("overview-tasks-window-selected", false));
-                menu.popup_at_widget(button.get_parent(), Gdk.Gravity.SOUTH, Gdk.Gravity.NORTH, null); // Show menu below the button
-                button.connect("destroy", () => menu.destroy());
-            },
+            onSecondaryClick: button => menu.popup_at_widget(button, Gdk.Gravity.SOUTH, Gdk.Gravity.NORTH, null),
             child: Box({
                 homogeneous: true,
                 child: Box({
@@ -228,22 +244,8 @@ export default () => {
                     vpack: "center",
                     className: "spacing-v-5",
                     children: [
-                        Overlay({ hpack: "center", passThrough: true, child: appIcon, overlays: [volumeIcon] }),
-                        Label({
-                            // hexpand: true,
-                            maxWidthChars: 1, // Min width when ellipsizing (truncated)
-                            truncate: "end",
-                            className: `txt readingfont ${xwayland ? "txt-italic" : ""}`,
-                            css: `
-                                font-size: ${
-                                    (Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) /
-                                    (EXTENDED_BAR ? 14.6 : 12)
-                                }px;
-                                margin: ${(Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE) / 20}px;
-                            `,
-                            // If the title is too short, include the class
-                            label: title.length <= 1 ? `${c}: ${title}` : title,
-                        }),
+                        Overlay({ hpack: "center", passThrough: true, child: appIcon, overlays: [audioIcon] }),
+                        windowTitle,
                     ],
                 }),
             }),
@@ -266,26 +268,26 @@ export default () => {
                 button.connect("destroy", () => {
                     if (clientMap.get(address) === button) clientMap.delete(address);
                 });
+
+                // Attach menu so inherit styles + gets destroyed when window destroyed
+                menu.attach_to_widget(button, null);
+
+                // Hide title when window too small
+                button.connect("size-allocate", () => {
+                    windowTitle.revealChild =
+                        Math.round(button.attribute.h * OVERVIEW_SCALE) + 2 >=
+                        appIcon.get_allocated_height() + windowTitle.child.get_allocated_height();
+                });
             },
         });
     };
 
     const Workspace = index => {
-        const fixed = Box({
-            attribute: {
-                put: (widget, x, y) => {
-                    if (!widget.attribute) return;
-                    widget.css = calcCss(x, y, widget.attribute.w, widget.attribute.h);
-                    fixed.pack_start(widget, false, false, 0);
-                },
-                move: (widget, x, y) => {
-                    if (!widget?.attribute) return;
-                    widget.css = calcCss(x, y, widget.attribute.w, widget.attribute.h);
-                },
-            },
-        });
-        const WorkspaceNumber = ({ index, ...rest }) =>
+        const fixed = Fixed();
+        const WorkspaceNumber = () =>
             Label({
+                hpack: "start",
+                vpack: "start",
                 className: "overview-tasks-workspace-number",
                 label: String(index),
                 css: `
@@ -298,15 +300,11 @@ export default () => {
                         const currentGroup = Math.floor((Hyprland.active.workspace.id - 1) / WS_PER_GROUP);
                         self.label = `${currentGroup * WS_PER_GROUP + index}`;
                     }),
-                ...rest,
             });
         const widget = Box({
             className: "overview-tasks-workspace",
             vpack: "center",
-            css: `
-                min-width: ${SCREEN_WIDTH * OVERVIEW_SCALE}px;
-                min-height: ${SCREEN_HEIGHT * OVERVIEW_SCALE}px;
-            `,
+            css: calcCss(SCREEN_WIDTH, SCREEN_HEIGHT),
             children: [
                 EventBox({
                     hexpand: true,
@@ -320,7 +318,7 @@ export default () => {
                     },
                     child: Overlay({
                         child: Box(),
-                        overlays: [WorkspaceNumber({ index: index, hpack: "start", vpack: "start" }), fixed],
+                        overlays: [fixed, WorkspaceNumber()],
                     }),
                 }),
             ],
@@ -335,36 +333,39 @@ export default () => {
                     client.attribute.ws == offset + index
                 ) {
                     client.destroy();
-                    client = null;
                     clientMap.delete(address);
                 }
             });
         };
         widget.set = (clientJson, screenCoords) => {
-            let c = clientMap.get(clientJson.address);
+            const c = clientMap.get(clientJson.address);
             if (c) {
                 if (c.attribute?.ws !== clientJson.workspace.id) {
                     c.destroy();
-                    c = null;
                     clientMap.delete(clientJson.address);
                 } else if (c) {
-                    c.attribute.w = clientJson.size[0];
-                    c.attribute.h = clientJson.size[1];
-                    c.attribute.updateIconSize(c);
-                    fixed.attribute.move(c, Math.max(0, clientJson.at[0]), Math.max(0, clientJson.at[1]));
+                    c.attribute.updateSize(c, ...clientJson.size);
+                    fixed.move(
+                        c,
+                        Math.max(0, clientJson.at[0] * OVERVIEW_SCALE),
+                        Math.max(0, clientJson.at[1] * OVERVIEW_SCALE)
+                    );
                     return;
                 }
             }
             const newWindow = Window(clientJson, screenCoords);
             if (newWindow === null) return;
-            fixed.attribute.put(newWindow, Math.max(0, newWindow.attribute.x), Math.max(0, newWindow.attribute.y));
+            fixed.put(
+                newWindow,
+                Math.max(0, newWindow.attribute.x * OVERVIEW_SCALE),
+                Math.max(0, newWindow.attribute.y * OVERVIEW_SCALE)
+            );
             clientMap.set(clientJson.address, newWindow);
         };
         widget.unset = clientAddress => {
-            let c = clientMap.get(clientAddress);
+            const c = clientMap.get(clientAddress);
             if (!c) return;
             c.destroy();
-            c = null;
             clientMap.delete(clientAddress);
         };
         widget.show = fixed.show_all;
@@ -449,36 +450,22 @@ export default () => {
         });
 
     const SpecialWorkspace = name => {
-        const fixed = Box({
-            attribute: {
-                put: (widget, x, y) => {
-                    if (!widget.attribute) return;
-                    widget.css = calcCss(x, y, widget.attribute.w, widget.attribute.h);
-                    fixed.pack_start(widget, false, false, 0);
-                },
-                move: (widget, x, y) => {
-                    if (!widget?.attribute) return;
-                    widget.css = calcCss(x, y, widget.attribute.w, widget.attribute.h);
-                },
-            },
-        });
-        const WorkspaceName = ({ name, ...rest }) =>
+        const fixed = Fixed();
+        const WorkspaceName = () =>
             Label({
+                hpack: "start",
+                vpack: "start",
                 className: "overview-tasks-workspace-number",
                 label: name.replace("special:", ""),
                 css: `
                     margin: ${Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) * OVERVIEW_SCALE * OVERVIEW_WS_NUM_MARGIN_SCALE}px;
                     font-size: ${SCREEN_HEIGHT * OVERVIEW_SCALE * OVERVIEW_WS_NUM_SCALE}px;
                 `,
-                ...rest,
             });
         const widget = Box({
             className: "overview-tasks-workspace",
             vpack: "center",
-            css: `
-                min-width: ${SCREEN_WIDTH * OVERVIEW_SCALE}px;
-                min-height: ${SCREEN_HEIGHT * OVERVIEW_SCALE}px;
-            `,
+            css: calcCss(SCREEN_WIDTH, SCREEN_HEIGHT),
             attribute: { name },
             children: [
                 EventBox({
@@ -493,7 +480,7 @@ export default () => {
                     },
                     child: Overlay({
                         child: Box({}),
-                        overlays: [WorkspaceName({ name: name, hpack: "start", vpack: "start" }), fixed],
+                        overlays: [fixed, WorkspaceName()],
                     }),
                 }),
             ],
@@ -503,23 +490,23 @@ export default () => {
                 if (!client) return;
                 if (client.attribute.wsName === name) {
                     client.destroy();
-                    client = null;
                     clientMap.delete(address);
                 }
             });
         };
         widget.set = (clientJson, screenCoords) => {
-            let c = clientMap.get(clientJson.address);
+            const c = clientMap.get(clientJson.address);
             if (c) {
                 if (c.attribute?.wsName !== clientJson.workspace.name) {
                     c.destroy();
-                    c = null;
                     clientMap.delete(clientJson.address);
                 } else if (c) {
-                    c.attribute.w = clientJson.size[0];
-                    c.attribute.h = clientJson.size[1];
-                    c.attribute.updateIconSize(c);
-                    fixed.attribute.move(c, Math.max(0, clientJson.at[0]), Math.max(0, clientJson.at[1]));
+                    c.attribute.updateSize(c, ...clientJson.size);
+                    fixed.move(
+                        c,
+                        Math.max(0, clientJson.at[0] * OVERVIEW_SCALE),
+                        Math.max(0, clientJson.at[1] * OVERVIEW_SCALE)
+                    );
                     return;
                 }
             }
@@ -527,14 +514,17 @@ export default () => {
                 dispatchAndClose(`togglespecialworkspace ${name.replace("special:", "")}`)
             );
             if (newWindow === null) return;
-            fixed.attribute.put(newWindow, Math.max(0, newWindow.attribute.x), Math.max(0, newWindow.attribute.y));
+            fixed.put(
+                newWindow,
+                Math.max(0, newWindow.attribute.x * OVERVIEW_SCALE),
+                Math.max(0, newWindow.attribute.y * OVERVIEW_SCALE)
+            );
             clientMap.set(clientJson.address, newWindow);
         };
         widget.unset = clientAddress => {
-            let c = clientMap.get(clientAddress);
+            const c = clientMap.get(clientAddress);
             if (!c) return;
             c.destroy();
-            c = null;
             clientMap.delete(clientAddress);
         };
         widget.isEmpty = () => {
