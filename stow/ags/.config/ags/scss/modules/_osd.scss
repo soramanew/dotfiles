@@ -71,6 +71,7 @@
 }
 
 .osd-lockindicator {
+    @include elevation.border;
     @include elevation.e2;
     border-radius: 1.023rem;
     background-color: c.$layer0;
@@ -89,6 +90,7 @@
 }
 
 .osd-colorscheme {
+    @include elevation.border;
     @include elevation.e2;
     border-radius: 1.023rem;
     background-color: c.$layer0;
@@ -101,138 +103,31 @@
     padding: 0.313rem 0.626rem;
 }
 
-.osd-color {
+.osd-colour {
     border-radius: 0.65rem;
     -gtk-outline-radius: 0.65rem;
     min-width: 2.727rem;
     min-height: 1.705rem;
     padding: 0rem 0.341rem;
     font-weight: bold;
-
-    box {
-        @include rounding.small;
-        margin: 0.409rem;
-    }
 }
 
-.osd-color-primary {
-    background-color: c.$primary;
-    color: c.$onPrimary;
+$-colours: primary c.$primary c.$onPrimary, primaryContainer c.$primaryContainer c.$onPrimaryContainer,
+    secondary c.$secondary c.$onSecondary, secondaryContainer c.$secondaryContainer c.$onSecondaryContainer,
+    tertiary c.$tertiary c.$onTertiary, tertiaryContainer c.$tertiaryContainer c.$onTertiaryContainer,
+    error c.$error c.$onError, errorContainer c.$errorContainer c.$onErrorContainer,
+    surfaceContainer c.$surfaceContainer c.$onSurface, inverseSurface c.$inverseSurface c.$inverseOnSurface,
+    surfaceVariant c.$surfaceVariant c.$onSurfaceVariant, surface c.$surface c.$onSurface;
 
-    box {
-        background-color: c.$onPrimary;
-    }
-}
-.osd-color-primaryContainer {
-    background-color: c.$primaryContainer;
-    color: c.$onPrimaryContainer;
+@each $name, $colour, $onColour in $-colours {
+    .osd-colour-#{$name} {
+        background-color: $colour;
+        color: $onColour;
 
-    box {
-        background-color: c.$onPrimaryContainer;
-    }
-}
-.osd-color-secondary {
-    background-color: c.$secondary;
-    color: c.$onSecondary;
-
-    box {
-        background-color: c.$onSecondary;
-    }
-}
-.osd-color-secondaryContainer {
-    background-color: c.$secondaryContainer;
-    color: c.$onSecondaryContainer;
-
-    box {
-        background-color: c.$onSecondaryContainer;
-    }
-}
-
-.osd-color-tertiary {
-    background-color: c.$tertiary;
-    color: c.$onTertiary;
-
-    box {
-        background-color: c.$onTertiary;
-    }
-}
-.osd-color-tertiaryContainer {
-    background-color: c.$tertiaryContainer;
-    color: c.$onTertiaryContainer;
-
-    box {
-        background-color: c.$onTertiaryContainer;
-    }
-}
-
-.osd-color-error {
-    background-color: c.$error;
-    color: c.$onError;
-
-    box {
-        background-color: c.$onError;
-    }
-}
-.osd-color-errorContainer {
-    background-color: c.$errorContainer;
-    color: c.$onErrorContainer;
-
-    box {
-        background-color: c.$onErrorContainer;
-    }
-}
-
-.osd-color-surface {
-    background-color: c.$surface;
-    color: c.$onSurface;
-    border: 0.068rem solid c.$outlineVariant;
-
-    box {
-        background-color: c.$onSurface;
-    }
-}
-
-.osd-color-surfaceContainer {
-    background-color: c.$surfaceContainer;
-    color: c.$onSurface;
-
-    box {
-        background-color: c.$onSurface;
-    }
-}
-
-.osd-color-inverseSurface {
-    background-color: c.$inverseSurface;
-    color: c.$inverseOnSurface;
-
-    box {
-        background-color: c.$onSurfaceVariant;
-    }
-}
-
-.osd-color-surfaceVariant {
-    background-color: c.$surfaceVariant;
-    color: c.$onSurfaceVariant;
-
-    box {
-        background-color: c.$onSurfaceVariant;
-    }
-}
-.osd-color-L1 {
-    background-color: c.$layer1;
-    color: c.$onLayer1;
-
-    box {
-        background-color: c.$onLayer1;
-    }
-}
-
-.osd-color-layer0 {
-    background-color: c.$layer0;
-    color: c.$onLayer0;
-
-    box {
-        background-color: c.$onLayer0;
+        // Surface colour box has border cause same as background
+        @if $name == surface {
+            border: 0.068rem solid c.$outlineVariant;
+        }
     }
 }
 

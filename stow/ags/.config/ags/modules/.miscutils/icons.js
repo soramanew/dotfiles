@@ -1,9 +1,10 @@
 import Gtk from "gi://Gtk";
+const Applications = await Service.import("applications");
 
 export const iconExists = iconName => Gtk.IconTheme.get_default().has_icon(iconName);
 
 const substitutions = {
-    "": "image-missing",
+    "": "image",
     // Mime types
     "text-plain": "text-x-generic",
     "application-x-zerosize": "text-x-generic",
@@ -14,6 +15,7 @@ const substitutions = {
     codium: "vscodium",
     "GitHub Desktop": "github-desktop",
     "gnome-tweaks": "org.gnome.tweaks",
+    "org.pulseaudio.pavucontrol": "pavucontrol",
     "pavucontrol-qt": "pavucontrol",
     "jetbrains-pycharm-ce": "pycharm-community",
     "Spotify Free": "Spotify",
@@ -30,6 +32,7 @@ const regexSubs = [
 ];
 
 export const substitute = str => {
+    // ------- Intentional subs --------
     // Normal subs
     if (substitutions.hasOwnProperty(str)) return substitutions[str];
 
@@ -39,9 +42,13 @@ export const substitute = str => {
         if (postSub !== str) return postSub;
     }
 
-    // Guess icon name: turn into kebab case
-    if (!iconExists(str)) return str.toLowerCase().replace(/\s+/g, "-");
+    if (iconExists(str)) return str;
 
-    // Not changed
-    return str;
+    // -------- Not found subs ---------
+    // Try to find a matching .desktop file and use the specified icon
+    const apps = Applications.query(str);
+    if (apps.length > 0) return apps[0].iconName;
+
+    // Icon missing
+    return "image";
 };

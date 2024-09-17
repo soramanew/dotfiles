@@ -6,11 +6,7 @@ import SidebarModule from "./module.js";
 import { setupCursorHover } from "../../.widgetutils/cursorhover.js";
 import { MaterialIcon } from "../../.commonwidgets/materialicon.js";
 
-const getDesc = async pkg =>
-    (await execAsync(`pacman -Qi ${pkg}`))
-        .split("\n")
-        .map(line => line.replace(/[ ]*:/, ":"))
-        .join("\n"); // exec(`bash -c "pacman -Qi ${pkg} | grep -Po '^Description\s*: \K.+'"`);
+const getDesc = async pkg => (await execAsync(`pacman -Qi ${pkg}`)).replace(/^([a-zA-Z \-]+?)[ ]+:/gm, "$1:"); // exec(`bash -c "pacman -Qi ${pkg} | grep -Po '^Description\s*: \K.+'"`);
 const addVersionChangeToDesc = (update, desc) =>
     desc
         .split("\n")
@@ -55,20 +51,30 @@ const Repo = (icon, name, children) => {
 };
 
 const Text = (text, tooltip = text, props = {}) =>
-    Label({
-        xalign: 0,
-        className: "txt txt-small",
-        hexpand: true,
-        truncate: "end",
-        maxWidthChars: 1,
-        label: text,
-        tooltipText: tooltip,
+    Button({
+        child: Label({
+            xalign: 0,
+            className: "txt txt-small",
+            hexpand: true,
+            truncate: "end",
+            maxWidthChars: 1,
+            label: text,
+            tooltipText: tooltip,
+        }),
         ...props,
     });
 
 const Update = ({ pkg, update }) =>
     Text(update, "", {
-        setup: self => getDesc(pkg).then(desc => (self.tooltipText = addVersionChangeToDesc(update, desc))),
+        setup: self =>
+            getDesc(pkg).then(desc => {
+                self.child.tooltipText = addVersionChangeToDesc(update, desc);
+                const url = desc
+                    .split("\n")
+                    .find(l => l.startsWith("URL: "))
+                    .replace("URL: ", "");
+                self.onMiddleClick = () => execAsync(["xdg-open", url]);
+            }),
     });
 
 const Error = err =>

@@ -1,8 +1,8 @@
 import Gdk from "gi://Gdk";
 import Gtk from "gi://Gtk";
 const { Box, Label, Button, Icon, Menu, MenuItem, Revealer, EventBox, Overlay, CenterBox } = Widget;
+const { execAsync, subprocess } = Utils;
 const Hyprland = await Service.import("hyprland");
-const Mpris = await Service.import("mpris");
 import { setupCursorHoverGrab } from "../.widgetutils/cursorhover.js";
 import { dumpToWorkspace, swapWorkspace } from "./actions.js";
 import { substitute } from "../.miscutils/icons.js";
@@ -24,6 +24,18 @@ const OVERVIEW_WS_NUM_MARGIN_SCALE = 0.07;
 const TARGET = [Gtk.TargetEntry.new("text/plain", Gtk.TargetFlags.SAME_APP, 0)];
 
 const overviewTick = Variable(false);
+
+const paSinkInputs = Variable([]);
+const updatePASinkInputs = () =>
+    execAsync("pactl -f json list sink-inputs")
+        .then(sinks => (paSinkInputs.value = JSON.parse(sinks)))
+        .catch(print);
+// Init update
+updatePASinkInputs();
+// Monitor pulseaudio events and update sinks on event
+subprocess(["pactl", "-f", "json", "subscribe"], out => {
+    if (JSON.parse(out).on === "sink-input") updatePASinkInputs();
+});
 
 const dispatchAndClose = dispatcher => {
     App.closeWindow("overview");
@@ -73,6 +85,7 @@ export default () => {
             initialClass,
             title,
             initialTitle,
+            pid,
             xwayland,
         },
         screenCoords,
@@ -111,13 +124,37 @@ export default () => {
             className: "icon-material txt overview-tasks-window-volume-icon",
             label: "volume_up",
             setup: self =>
-                self.hook(Mpris, () => {
-                    self.visible =
-                        Mpris.players.find(p => {
-                            const pName = p.name.toLowerCase();
-                            const cName = c.toLowerCase();
-                            return pName.includes(cName) || cName.includes(pName);
-                        })?.playBackStatus === "Playing";
+                self.hook(paSinkInputs, () => {
+                    let sinkMatch = null;
+                    for (const sink of paSinkInputs.value) {
+                        // Check by pid (not all sink inputs have this tho)
+                        const sPID = sink.properties["application.process.id"];
+                        // sPID is a string for some reason while pid is a number
+                        if (sPID == pid) {
+                            sinkMatch = sink;
+                            break;
+                        }
+
+                        // Check by media name vs window title
+                        const lSinkName = sink.properties["media.name"].toLowerCase();
+                        const lTitle = title.toLowerCase();
+                        if (lSinkName.includes(lTitle) || lTitle.includes(lSinkName)) {
+                            sinkMatch = sink;
+                            break;
+                        }
+
+                        // Hardcoded mpv check, mpv titles are formatted with `<track title> - mpv` so check title
+                        if (sink.properties["application.name"] === "mpv") {
+                            const strippedSinkName = lSinkName.slice(0, -6);
+                            if (strippedSinkName.includes(lTitle) || lTitle.includes(strippedSinkName)) {
+                                sinkMatch = sink;
+                                break;
+                            }
+                        }
+                    }
+                    // Window has matching sink input and is not corked, idk what corked means but it seems to represent play state?
+                    // It works tho so... yes
+                    self.visible = sinkMatch !== null && !sinkMatch.corked;
                 }),
             attribute: size =>
                 (volumeIcon.css = `font-size: ${size}px; min-width: ${size * 1.2}px; min-height: ${size * 1.2}px;`),
@@ -156,6 +193,16 @@ export default () => {
                                 label: "Close (Middle-click)",
                             }),
                             onActivate: () => dispatch(`closewindow address:${address}`),
+                        }),
+                        MenuItem({
+                            child: Label({
+                                xalign: 0,
+                                label: "Kill all windows in workspace",
+                            }),
+                            onActivate: () =>
+                                Hyprland.clients.forEach(client => {
+                                    if (client.workspace.id === id) dispatch(`closewindow address:${client.address}`);
+                                }),
                         }),
                         ContextMenuWorkspaceArray({
                             label: "Dump windows to workspace",
@@ -206,7 +253,6 @@ export default () => {
 
                 button.drag_source_set(Gdk.ModifierType.BUTTON1_MASK, TARGET, Gdk.DragAction.MOVE);
                 button.drag_source_set_icon_name(substitute(c));
-                // button.drag_source_set_icon_gicon(icon);
 
                 // On drag start, add the dragging class
                 button.connect("drag-begin", button => button.toggleClassName("overview-tasks-window-dragging", true));
@@ -368,12 +414,11 @@ export default () => {
                     .hook(
                         Hyprland,
                         (box, clientAddress) => {
-                            const client = Hyprland.getClient(clientAddress);
-                            if (!client) return;
+                            const ws = clientMap.get(clientAddress)?.attribute.ws;
+                            if (!ws) return;
 
-                            const id = client.workspace.id;
-                            box.attribute.updateWorkspace(box, id);
-                            box.get_children()[id - (getOffset() + startWorkspace)]?.unset(clientAddress);
+                            box.attribute.updateWorkspace(box, ws);
+                            box.get_children()[ws - (getOffset() + startWorkspace)]?.unset(clientAddress);
                         },
                         "client-removed"
                     )
@@ -558,11 +603,11 @@ export default () => {
                     .hook(
                         Hyprland,
                         (box, clientAddress) => {
-                            const client = Hyprland.getClient(clientAddress);
-                            if (!client) return;
+                            const ws = clientMap.get(clientAddress)?.attribute.wsName;
+                            if (!ws) return;
 
-                            box.attribute.updateWorkspace(box, client.workspace.name);
-                            box.get_children()[specialWorkspaces[row].get(client.workspace.name)]?.unset(clientAddress);
+                            box.attribute.updateWorkspace(box, ws);
+                            box.get_children()[specialWorkspaces[row].get(ws)]?.unset(clientAddress);
                         },
                         "client-removed"
                     )

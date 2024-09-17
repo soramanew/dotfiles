@@ -86,7 +86,7 @@ const BarNetworkRes = (name, icon, command, textClassName = "txt-onSurfaceVarian
                             output /= 1024;
                             unit = "kiB";
                         }
-                        if (unit !== "B") output = output.toFixed(2);
+                        output = +output.toFixed(2);
                         resourceLabel.label = `${output}${unit}/s`;
                         self.tooltipText = `${name}: ${output}${unit}/s`;
                     })
@@ -102,8 +102,8 @@ const TrackProgress = () =>
         hpack: "center",
         extraSetup: self => {
             const update = () =>
-                execAsync("playerctl metadata -f '{{ position / mpris:length }}'")
-                    .then(position => self.attribute.updateProgress(self, position * 100))
+                execAsync("playerctl metadata -f '{{ position * 100 / mpris:length }}'")
+                    .then(position => self.attribute.updateProgress(self, position))
                     .catch(() => self.attribute.updateProgress(self, 0));
             self.hook(Mpris, update).poll(3000, update);
         },
