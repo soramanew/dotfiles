@@ -16,7 +16,7 @@ export default ({ child, layer = 0, hscroll = "never", vscroll = "automatic", se
                     const height = self.get_allocated_height();
                     const gradHeight = height * 0.1;
                     const atTop = pos <= 0;
-                    const atBottom = child.get_preferred_height()[0] - pos - height <= 0;
+                    const atBottom = child.get_allocated_height() - pos - height <= 0;
                     top.css = `min-height: ${atTop ? 0 : gradHeight}px;`;
                     bottom.css = `min-height: ${atBottom ? 0 : gradHeight}px;`;
                 };
