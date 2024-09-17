@@ -11,7 +11,7 @@ brightnessctl
 btop
 cava
 cliphist
-cowfortune
+cowsay
 cpupower
 dart-sass
 dmidecode
@@ -27,6 +27,7 @@ file-roller
 firefox
 fish
 foot
+fortune-mod
 fuzzel-git
 fwupd
 gammastep
