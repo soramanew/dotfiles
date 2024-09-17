@@ -135,15 +135,11 @@
     }
 }
 
-.overview-tasks-window-selected {
-    background-color: transparentize(c.$secondaryContainer, 0.3);
-}
-
 .overview-tasks-window-dragging {
     opacity: 0.2;
 }
 
-.overview-tasks-window-volume-icon {
+.overview-tasks-window-audio-icon {
     @include rounding.full;
     background-color: change-color(c.$layer3, $alpha: 0.9);
     color: c.$onLayer3;

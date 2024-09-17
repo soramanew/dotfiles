@@ -114,10 +114,10 @@ export default () => {
 
         const iconSize = Math.min(w, h) * OVERVIEW_SCALE;
         const appIcon = Icon({ icon: substitute(c), size: iconSize / 2.5 });
-        const volumeIcon = Label({
+        const audioIcon = Label({
             hpack: "end",
             vpack: "start",
-            className: "icon-material txt overview-tasks-window-volume-icon",
+            className: "icon-material txt overview-tasks-window-audio-icon",
             label: "volume_up",
             setup: self => {
                 let visible = false;
@@ -158,9 +158,41 @@ export default () => {
                 self.on("map", () => (self.visible = visible));
             },
             attribute: size =>
-                (volumeIcon.css = `font-size: ${size}px; min-width: ${size * 1.2}px; min-height: ${size * 1.2}px;`),
+                (audioIcon.css = `font-size: ${size}px; min-width: ${size * 1.2}px; min-height: ${size * 1.2}px;`),
         });
-        volumeIcon.attribute(iconSize / 10);
+        audioIcon.attribute(iconSize / 10);
+        const menu = Menu({
+            className: "menu",
+            children: [
+                MenuItem({
+                    child: Label({
+                        xalign: 0,
+                        label: "Close (Middle-click)",
+                    }),
+                    onActivate: () => dispatch(`closewindow address:${address}`),
+                }),
+                MenuItem({
+                    child: Label({
+                        xalign: 0,
+                        label: "Kill all windows in workspace",
+                    }),
+                    onActivate: () =>
+                        Hyprland.clients.forEach(client => {
+                            if (client.workspace.id === id) dispatch(`closewindow address:${client.address}`);
+                        }),
+                }),
+                ContextMenuWorkspaceArray({
+                    label: "Dump windows to workspace",
+                    actionFunc: dumpToWorkspace,
+                    thisWorkspace: id,
+                }),
+                ContextMenuWorkspaceArray({
+                    label: "Swap windows with workspace",
+                    actionFunc: swapWorkspace,
+                    thisWorkspace: id,
+                }),
+            ],
+        });
 
         return Button({
             attribute: {
@@ -174,7 +206,7 @@ export default () => {
                 updateIconSize: self => {
                     const iconSize = Math.min(self.attribute.w, self.attribute.h) * OVERVIEW_SCALE;
                     appIcon.size = iconSize / 2.5;
-                    volumeIcon.attribute(iconSize / 10);
+                    audioIcon.attribute(iconSize / 10);
                 },
             },
             className: "overview-tasks-window",
@@ -183,45 +215,7 @@ export default () => {
             css: calcCss(w, h),
             onClicked: onClicked,
             onMiddleClickRelease: () => dispatch(`closewindow address:${address}`),
-            onSecondaryClick: button => {
-                button.toggleClassName("overview-tasks-window-selected", true);
-                const menu = Menu({
-                    className: "menu",
-                    children: [
-                        MenuItem({
-                            child: Label({
-                                xalign: 0,
-                                label: "Close (Middle-click)",
-                            }),
-                            onActivate: () => dispatch(`closewindow address:${address}`),
-                        }),
-                        MenuItem({
-                            child: Label({
-                                xalign: 0,
-                                label: "Kill all windows in workspace",
-                            }),
-                            onActivate: () =>
-                                Hyprland.clients.forEach(client => {
-                                    if (client.workspace.id === id) dispatch(`closewindow address:${client.address}`);
-                                }),
-                        }),
-                        ContextMenuWorkspaceArray({
-                            label: "Dump windows to workspace",
-                            actionFunc: dumpToWorkspace,
-                            thisWorkspace: id,
-                        }),
-                        ContextMenuWorkspaceArray({
-                            label: "Swap windows with workspace",
-                            actionFunc: swapWorkspace,
-                            thisWorkspace: id,
-                        }),
-                    ],
-                });
-                menu.connect("deactivate", () => button.toggleClassName("overview-tasks-window-selected", false));
-                menu.connect("selection-done", () => button.toggleClassName("overview-tasks-window-selected", false));
-                menu.popup_at_widget(button.get_parent(), Gdk.Gravity.SOUTH, Gdk.Gravity.NORTH, null); // Show menu below the button
-                button.connect("destroy", () => menu.destroy());
-            },
+            onSecondaryClick: button => menu.popup_at_widget(button, Gdk.Gravity.SOUTH, Gdk.Gravity.NORTH, null),
             child: Box({
                 homogeneous: true,
                 child: Box({
@@ -229,9 +223,8 @@ export default () => {
                     vpack: "center",
                     className: "spacing-v-5",
                     children: [
-                        Overlay({ hpack: "center", passThrough: true, child: appIcon, overlays: [volumeIcon] }),
+                        Overlay({ hpack: "center", passThrough: true, child: appIcon, overlays: [audioIcon] }),
                         Label({
-                            // hexpand: true,
                             maxWidthChars: 1, // Min width when ellipsizing (truncated)
                             truncate: "end",
                             className: `txt readingfont ${xwayland ? "txt-italic" : ""}`,
@@ -267,6 +260,9 @@ export default () => {
                 button.connect("destroy", () => {
                     if (clientMap.get(address) === button) clientMap.delete(address);
                 });
+
+                // Attach menu so inherit styles + gets destroyed when window destroyed
+                menu.attach_to_widget(button, null);
             },
         });
     };
