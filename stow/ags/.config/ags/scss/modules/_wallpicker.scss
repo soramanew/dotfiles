@@ -1,0 +1,71 @@
+@use "../lib/colour" as c;
+@use "../lib/rounding";
+@use "../lib/anim";
+@use "../lib/elevation";
+
+.wallpicker-bg {
+    @include rounding.large;
+    @include elevation.border;
+    @include elevation.e2;
+
+    margin-bottom: 0.682rem;
+    background-color: c.$layer0;
+    padding: 1.364rem;
+    min-width: 100rem;
+    min-height: 50rem;
+}
+
+.wallpicker-close-button {
+    @include anim.element-decel;
+    @include rounding.full;
+
+    min-width: 2.386rem;
+    min-height: 2.386rem;
+
+    &:hover,
+    &:focus {
+        background-color: c.$layer0Hover;
+    }
+
+    &:active {
+        background-color: c.$layer0Active;
+    }
+}
+
+.wallpicker-wallpaper {
+    @include anim.element-decel;
+    @include rounding.normal;
+
+    padding: 0.682rem 1.023rem;
+
+    &:hover,
+    &:focus {
+        background-color: c.$layer0Hover;
+    }
+
+    &:active {
+        background-color: c.$layer0Active;
+    }
+}
+
+.wallpicker-wallpaper-active {
+    background-color: c.$secondaryContainer;
+    color: c.$onSecondaryContainer;
+
+    &:hover,
+    &:focus {
+        background-color: mix(c.$onSecondary, c.$secondaryContainer);
+    }
+
+    &:active {
+        background-color: c.$onSecondary;
+    }
+}
+
+.wallpicker-wallpaper-preview {
+    @include rounding.small;
+
+    background-position: center;
+    background-size: cover;
+    margin-bottom: 0.682rem;
+}

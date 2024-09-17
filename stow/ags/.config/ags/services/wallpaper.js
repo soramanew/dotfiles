@@ -1,5 +1,6 @@
 import GLib from "gi://GLib";
-const { exec, execAsync, CACHE_DIR, ensureDirectory } = Utils;
+import { fileExists } from "../modules/.miscutils/files.js";
+const { exec, execAsync, CACHE_DIR, ensureDirectory, monitorFile } = Utils;
 const Hyprland = await Service.import("hyprland");
 
 class WallpaperService extends Service {
@@ -12,6 +13,7 @@ class WallpaperService extends Service {
                 "next-exec": ["string", "r"],
                 "time-until-exec": ["string", "r"],
                 paused: ["boolean", "rw"],
+                "current-wallpaper": ["string", "rw"],
             }
         );
     }
@@ -29,6 +31,7 @@ class WallpaperService extends Service {
     #paused;
     #secsToNextExec;
     #fullscreenCheckInterval;
+    #currentWall;
 
     get enabled() {
         return this.#enabled;
@@ -57,6 +60,15 @@ class WallpaperService extends Service {
     set paused(value) {
         if (value) this.#pause();
         else this.#resume();
+    }
+
+    get current_wallpaper() {
+        return this.#currentWall;
+    }
+
+    set current_wallpaper(value) {
+        if (fileExists(value)) this.setTo(value);
+        else console.warn(`[WARNING] WallpaperService#current_wallpaper(set): ${value} is not a file.`);
     }
 
     #go(delay = this.#timeoutLength) {
@@ -129,11 +141,26 @@ class WallpaperService extends Service {
         if (this.#enabled) this.#go();
     }
 
+    setTo(file) {
+        execAsync(`dotctl wallpaper change -f ${file}`).catch(print);
+        if (this.#enabled) this.#go();
+    }
+
     constructor() {
         super();
         ensureDirectory(this.#cacheDir);
         this.#stop(); // Init values
         this.enabled = exec(`cat '${this.#enabledStorage}'`) === "true";
+
+        const updateCurrent = () =>
+            execAsync(`realpath ${CACHE_DIR}/user/wallpaper/currentwall`)
+                .then(out => {
+                    this.#currentWall = out;
+                    this.notify("current-wallpaper");
+                })
+                .catch(print);
+        updateCurrent();
+        monitorFile(`${CACHE_DIR}/user/wallpaper/currentwall`, updateCurrent);
     }
 
     // overwriting connectWidget method, lets you

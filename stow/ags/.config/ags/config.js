@@ -21,6 +21,7 @@ import AppLauncher from "./modules/applauncher/main.js";
 import GCheatsheet from "./modules/gcheatsheet/main.js";
 import Switcher from "./modules/switcher/main.js";
 import Cava from "./modules/cava/main.js";
+import WallpaperPicker from "./modules/wallpaperpicker/main.js";
 
 function applyStyle() {
     // SCSS dynamic variables
@@ -98,6 +99,7 @@ const Windows = () => [
     Cheatsheet(),
     hasTouchscreen ? [AppLauncher(), GCheatsheet()] : [],
     TodoScreen(),
+    WallpaperPicker(),
     SideLeft(),
     SideRight(),
     Osk(),

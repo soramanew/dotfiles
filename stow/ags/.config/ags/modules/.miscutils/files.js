@@ -9,7 +9,7 @@ export const getFileIcon = fileInfo => {
     return icon ? icon.get_names()[0] : "text-x-generic"; // Default icon for files
 };
 
-export function ls({ path = "~", silent = false }) {
+export function ls({ path = "~", silent = false } = {}) {
     let contents = [];
     try {
         let expandedPath = expandTilde(path);
@@ -24,6 +24,7 @@ export function ls({ path = "~", silent = false }) {
 
             let item = {
                 parentPath: expandedPath,
+                path: `${expandedPath}/${fileName}`,
                 name: fileName,
                 type: fileType === Gio.FileType.DIRECTORY ? "folder" : "file",
                 icon: getFileIcon(fileInfo),
