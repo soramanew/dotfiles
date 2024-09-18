@@ -70,10 +70,13 @@ export default props => {
                                     categoriesOpen[allNotifs[matchingNotifIdx].category].attribute.notifs.child;
                                 allNotifs.splice(matchingNotifIdx, 1);
                                 const idx = catNotifs.children.findIndex(n => n.attribute.id === notif.attribute.id);
-                                catNotifs.children[idx].attribute.destroyImmediately(false);
-                                notif.attribute.instantReady();
-                                catNotifs.packEndSig(notif, false, false, 0);
-                                catNotifs.reorder_child(notif, catNotifs.children.length - idx - 1);
+                                if (idx < 0) catNotifs.packEndSig(notif, false, false, 0);
+                                else {
+                                    catNotifs.children[idx].attribute.destroyImmediately(false);
+                                    notif.attribute.instantReady();
+                                    catNotifs.packEndSig(notif, false, false, 0);
+                                    catNotifs.reorder_child(notif, catNotifs.children.length - idx - 1);
+                                }
                                 catNotifs.show_all();
                             } else {
                                 const catNotifsRevealer = categoriesOpen[notifTime].attribute.notifs;

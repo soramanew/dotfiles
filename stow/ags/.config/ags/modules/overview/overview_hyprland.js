@@ -196,6 +196,7 @@ export default () => {
         const windowTitle = Revealer({
             transition: "slide_down",
             transitionDuration: 150,
+            revealChild: true,
             child: Label({
                 maxWidthChars: 1, // Min width when ellipsizing (truncated)
                 truncate: "end",
