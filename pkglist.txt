@@ -32,6 +32,7 @@ fuzzel-git
 fwupd
 gammastep
 git
+git-lfs
 github-cli
 github-desktop-bin
 glm
