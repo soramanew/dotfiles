@@ -39,9 +39,16 @@ const Wallpaper = ({ path, name }) =>
 export default () =>
     GradientScrollable({
         child: FlowBox({
-            setup: self =>
-                ls({ path: `~/Pictures/Wallpapers` })
-                    .map(Wallpaper)
-                    .forEach(w => self.add(w)),
+            setup: self => {
+                const id = App.connect("window-toggled", (_, name, visible) => {
+                    if (visible && name === "wallpicker") {
+                        ls({ path: `~/Pictures/Wallpapers` })
+                            .map(Wallpaper)
+                            .forEach(w => self.add(w));
+                        self.show_all();
+                        App.disconnect(id);
+                    }
+                });
+            },
         }),
     });
