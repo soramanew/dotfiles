@@ -19,16 +19,16 @@
 -   Greeter via AGS + Greetd
 -   Fancy music osd
 -   Package update indicator and view
--   Overview for windows and workspaces, including special workspaces
+-   Overview for windows and workspaces, including special workspaces and audio playing indicators
 -   Window switcher via `Alt+Tab` if you are strange like that and need it
 -   Notification categories by time
 -   Todo screen with editable todos
 -   Support for touchscreen devices (touchscreen toggle + auto rotate support)
--   Ultrawide mode
+-   Ultrawide mode (network and GPU usage indicators, bar weather)
 -   Sexy lock screen
--   Network activity indicators
 -   Randomly changing wallpaper
 -   CLI control
+-   Wallpaper picker
 -   Also includes configs for a lot more things (firefox, mpv, etc)
 
 ### Greeter
@@ -50,6 +50,10 @@
 ### Todo screen
 
 ![todo screen](/readme/todoscreen.png?raw=true)
+
+### Wallpaper picker
+
+![wallpaper picker](/readme/wallpicker.png?raw=true)
 
 ### Lock screen
 
@@ -114,6 +118,6 @@ sudo cp <FILE> /etc/greetd/ags/backgrounds/
 
 ## Credits
 
--   [end-4](https://github.com/end-4) 🙏 this was originally forked from his [config](https://github.com/end-4/dots-hyprland)
-    and is basically just an extension
+-   [end-4](https://github.com/end-4) 🙏 all the AGS stuff was originally forked from his
+    [config](https://github.com/end-4/dots-hyprland) and is basically just an extension
 -   [kotontrion](https://github.com/kotontrion/dotfiles) for the cava widget (music visualiser)
