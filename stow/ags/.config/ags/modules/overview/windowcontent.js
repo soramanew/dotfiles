@@ -50,7 +50,7 @@ const evalMath = text => {
         for (let i = 0; i < times; i++) {
             expr = expr.derivative(respectTo);
         }
-        return expr.toString();
+        return expr.toLatex();
     }
     if (expr.includes("=")) {
         const exprs = expr.split("=");

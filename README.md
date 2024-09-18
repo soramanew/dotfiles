@@ -71,6 +71,7 @@ cat dotfiles/pkglist.txt | yay -S --needed -  # Or other AUR helper
 git clone --recurse-submodules https://github.com/soramanew/dotfiles.git
 cd dotfiles/stow
 stow -t ~ */  # Optionally, stow individual folders for individual configs (not guaranteed to work cause interdependent stuff)
+dotctl install microtex
 
 # Optionals
 dotctl install greeter  # Frontend for greetd

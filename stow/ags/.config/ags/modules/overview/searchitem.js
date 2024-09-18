@@ -96,12 +96,14 @@ export const SearchItemMaterial = ({
                         label: name,
                         truncate: "end",
                     }),
-                    Label({
-                        hpack: "start",
-                        className: "overview-search-results-txt txt-norm",
-                        label: content,
-                        truncate: "end",
-                    }),
+                    typeof content === "string"
+                        ? Label({
+                              hpack: "start",
+                              className: "overview-search-results-txt txt-norm",
+                              label: content,
+                              truncate: "end",
+                          })
+                        : content,
                 ],
             }),
         ],
