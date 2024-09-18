@@ -176,10 +176,12 @@ export default () => {
                         xalign: 0,
                         label: "Kill all windows in workspace",
                     }),
-                    onActivate: () =>
-                        Hyprland.clients.forEach(client => {
-                            if (client.workspace.id === id) dispatch(`closewindow address:${client.address}`);
-                        }),
+                    onActivate: () => {
+                        const cmds = [];
+                        for (const client of Hyprland.clients)
+                            if (client.workspace.id === id) cmds.push(`dispatch closewindow address:${client.address}`);
+                        Hyprland.messageAsync(`[[BATCH]]${cmds.join(";")}`).catch(print);
+                    },
                 }),
                 ContextMenuWorkspaceArray({
                     label: "Dump windows to workspace",
