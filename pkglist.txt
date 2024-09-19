@@ -39,6 +39,7 @@ gamemode
 gammastep
 gimp
 git
+git-lfs
 github-cli
 github-desktop-bin
 glm
