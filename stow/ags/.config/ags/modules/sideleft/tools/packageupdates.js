@@ -119,7 +119,7 @@ export default () =>
             const numUpdates = updates.reduce((acc, repo) => acc + repo.updates.length, 0) + git.length;
             const status = [];
             if (numUpdates > 0) status.push(`${numUpdates} available`);
-            if (errors.length > 0) status.push(`${errors.length} errors`);
+            if (errors.length > 0) status.push(`${errors.length} error${errors.length > 1 ? "s" : ""}`);
             let label =
                 numUpdates + errors.length > 0
                     ? `Package updates - ${status.join(", ")}`
