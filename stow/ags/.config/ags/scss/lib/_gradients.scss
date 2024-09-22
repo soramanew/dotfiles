@@ -8,7 +8,7 @@ $-dirs: top bottom;
         .gradient-#{nth($-dirs, $dir)}-layer#{$layer} {
             @include anim.element-decel;
             // No gradients when transparent cause they don't look right
-            @if c.$transparent == False {
+            @if not c.$transparent {
                 background: linear-gradient(
                     to nth($-dirs, 3 - $dir),
                     nth($-layers, $layer + 1),

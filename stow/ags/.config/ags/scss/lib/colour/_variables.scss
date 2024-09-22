@@ -5,7 +5,7 @@ $rootTransparency: 0.1; // Transparency = 1 - opacity
 $transparency: 0.3;
 
 // Transparent versions
-@if $transparent == True {
+@if $transparent {
     $background: transparentize($background, $rootTransparency) !global;
     $surface: transparentize($surface, $transparency) !global;
     $surfaceDim: transparentize($surfaceDim, $transparency) !global;

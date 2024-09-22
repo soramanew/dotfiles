@@ -11,16 +11,16 @@ from materialyoucolor.utils.color_utils import (rgba_from_argb, argb_from_rgb, a
 from materialyoucolor.utils.math_utils import (sanitize_degrees_double, difference_degrees, rotation_direction)
 from materialyoucolor.scheme.scheme_rainbow import SchemeRainbow as Scheme
 
-parser = argparse.ArgumentParser(description='Colour generation script')
-parser.add_argument('--path', type=str, default=None, help='generate colourscheme from image')
+parser = argparse.ArgumentParser(description="Colour generation script")
+parser.add_argument("--path", type=str, default=None, help="Generate colour scheme from image")
 args = parser.parse_args()
 
 rgba_to_hex = lambda rgba: "#{:02X}{:02X}{:02X}".format(rgba[0], rgba[1], rgba[2])
 
-def calculate_optimal_size (width: int, height: int, bitmap_size: int) -> (int, int):
-    image_area = width * height;
+def calculate_optimal_size(width: int, height: int, bitmap_size: int) -> tuple[int, int]:
+    image_area = width * height
     bitmap_area = bitmap_size ** 2
-    scale = math.sqrt(bitmap_area/image_area) if image_area > bitmap_area else 1
+    scale = math.sqrt(bitmap_area / image_area) if image_area > bitmap_area else 1
     new_width = round(width * scale)
     new_height = round(height * scale)
     if new_width == 0:
@@ -44,7 +44,7 @@ if args.path is not None:
     colors = QuantizeCelebi(list(image.getdata()), 128)
     argb = Score.score(colors)[0]
     hct = Hct.from_int(argb)
-    if(hct.tone > 60):
+    if hct.tone > 60:
         darkmode = False
 
 # Generate
@@ -58,6 +58,18 @@ for color in vars(MaterialDynamicColors).keys():
         rgba = color_name.get_hct(scheme).to_rgba()
         material_colors[color] = rgba_to_hex(rgba)
 
-print(f"$darkmode: {darkmode};")
+# Extended material
+if darkmode:
+    material_colors["success"] = "#B5CCBA"
+    material_colors["onSuccess"] = "#213528"
+    material_colors["successContainer"] = "#374B3E"
+    material_colors["onSuccessContainer"] = "#D1E9D6"
+else:
+    material_colors["success"] = "#4F6354"
+    material_colors["onSuccess"] = "#FFFFFF"
+    material_colors["successContainer"] = "#D1E8D5"
+    material_colors["onSuccessContainer"] = "#0C1F13"
+
+print(f"$darkmode: {str(darkmode).lower()};")
 for color, code in material_colors.items():
     print(f"${color}: {code};")

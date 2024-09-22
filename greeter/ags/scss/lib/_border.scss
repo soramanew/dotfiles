@@ -6,11 +6,7 @@
 }
 
 @mixin primary($width: 1px) {
-    $colour: c.$onPrimary;
-    @if c.$darkmode == False {
-        $colour: c.$primary;
-    }
-    border: $width solid mix($colour, c.$outline, 50%);
+    border: $width solid mix(if(c.$darkmode, c.$onPrimary, c.$primary), c.$outline, 50%);
 }
 
 @mixin error {

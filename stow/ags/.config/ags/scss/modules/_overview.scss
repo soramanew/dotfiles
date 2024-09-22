@@ -121,7 +121,7 @@
 .overview-tasks-window {
     @include rounding.small;
     @include anim.menu-decel;
-    background-color: change-color(c.$layer3, $alpha: 0.8);
+    background-color: transparentize(c.$layer3, 0.2);
     color: c.$onSurface;
     border: 0.068rem solid c.$surfaceContainerHighest;
 

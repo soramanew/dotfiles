@@ -61,6 +61,15 @@
 
 ## Requirements
 
+-   `git-lfs` - for cloning
+    > [!TIP]
+    > You don't have to download the lfs objects, they are just wallpapers and readme images.
+    > You can skip them with
+    >
+    > ```sh
+    > GIT_LFS_SKIP_SMUDGE=1 git clone --recurse-submodules https://github.com/soramanew/dotfiles.git
+    > ```
+
 Just install the metapackages for end-4's dots for now, they should cover everything. I'll probably make some for my own later.
 Or you can just install from the pkglist.txt file, which is guaranteed to cover everything but also has a lot of unnecessary packages.
 
@@ -75,6 +84,9 @@ cat dotfiles/pkglist.txt | yay -S --needed -  # Or other AUR helper
 git clone --recurse-submodules https://github.com/soramanew/dotfiles.git
 cd dotfiles/stow
 stow -t ~ */  # Optionally, stow individual folders for individual configs (not guaranteed to work cause interdependent stuff)
+systemctl --user enable ydotool.service --now  # For alternate paste
+dotctl wallpaper change  # Generate colours and stuff, optionally specify a path to a wallpaper (-f /path/to/wallpaper)
+# Then restart or copy ~/.config/hypr/hyprland/perf.template to ~/.config/hypr/hyprland/perf.conf
 
 # Optionals
 dotctl install greeter  # Frontend for greetd
@@ -100,8 +112,7 @@ I don't know how to do this programmatically, so you have to do it manually.
 
 ```sh
 # Update
-git pull --recurse-submodules
-dotctl stow -R
+dotctl update dotfiles
 
 # Updating dependencies
 dotctl update ( cursors | icons | submodules )
@@ -121,3 +132,7 @@ sudo cp <FILE> /etc/greetd/ags/backgrounds/
 -   [end-4](https://github.com/end-4) 🙏 all the AGS stuff was originally forked from his
     [config](https://github.com/end-4/dots-hyprland) and is basically just an extension
 -   [kotontrion](https://github.com/kotontrion/dotfiles) for the cava widget (music visualiser)
+
+## Stargazers
+
+[![Stargazers over time](https://starchart.cc/soramanew/dotfiles.svg?variant=adaptive)](https://starchart.cc/soramanew/dotfiles)
