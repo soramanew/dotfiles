@@ -84,6 +84,7 @@ cat dotfiles/pkglist.txt | yay -S --needed -  # Or other AUR helper
 git clone --recurse-submodules https://github.com/soramanew/dotfiles.git
 cd dotfiles/stow
 stow -t ~ */  # Optionally, stow individual folders for individual configs (not guaranteed to work cause interdependent stuff)
+systemctl --user enable ydotool.service --now  # For alternate paste
 # Then run `dotctl wallpaper change` and restart or copy ~/.config/hypr/hyprland/perf.template to ~/.config/hypr/hyprland/perf.conf
 
 # Optionals
