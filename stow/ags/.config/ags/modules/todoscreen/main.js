@@ -3,7 +3,7 @@ import { TodoWidget } from "./todolist.js";
 import { setupCursorHover } from "../.widgetutils/cursorhover.js";
 import PopupWindow from "../.widgethacks/popupwindow.js";
 import { Click2CloseRegion } from "../.commonwidgets/click2closeregion.js";
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from "../../constants.js";
+import { EXTENDED_BAR, SCREEN_HEIGHT, SCREEN_WIDTH } from "../../constants.js";
 
 const Header = () =>
     CenterBox({
@@ -43,7 +43,9 @@ export default () =>
                 centerWidget: Box({
                     vertical: true,
                     className: "todoscreen-bg spacing-v-15",
-                    css: `min-width: ${SCREEN_WIDTH * 0.68}px; min-height: ${SCREEN_HEIGHT * 0.75}px;`,
+                    css: `min-width: ${SCREEN_WIDTH * (EXTENDED_BAR ? 0.68 : 0.75)}px; min-height: ${
+                        SCREEN_HEIGHT * 0.75
+                    }px;`,
                     setup: self => {
                         self.pack_start(Header(), false, false, 0);
                         self.pack_start(TodoWidget(), true, true, 0);
