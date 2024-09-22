@@ -132,3 +132,7 @@ sudo cp <FILE> /etc/greetd/ags/backgrounds/
 -   [end-4](https://github.com/end-4) 🙏 all the AGS stuff was originally forked from his
     [config](https://github.com/end-4/dots-hyprland) and is basically just an extension
 -   [kotontrion](https://github.com/kotontrion/dotfiles) for the cava widget (music visualiser)
+
+## Stargazers
+
+[![Stargazers over time](https://starchart.cc/soramanew/dotfiles.svg?variant=adaptive)](https://starchart.cc/soramanew/dotfiles)
