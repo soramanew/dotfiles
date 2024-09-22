@@ -112,8 +112,7 @@ I don't know how to do this programmatically, so you have to do it manually.
 
 ```sh
 # Update
-git pull --recurse-submodules
-dotctl stow -R
+dotctl update dotfiles
 
 # Updating dependencies
 dotctl update ( cursors | icons | submodules )
