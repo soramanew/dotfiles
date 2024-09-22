@@ -87,11 +87,7 @@
     min-width: 30.682rem;
     border: 0.034rem solid c.$outlineVariant;
     color: c.$onLayer2;
-    background-color: c.$layer2;
-
-    @if c.$transparent == True {
-        background-color: c.$layer0;
-    }
+    background-color: if(c.$transparent, c.$layer0, c.$layer2);
 }
 
 .popup-notif-critical {

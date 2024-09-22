@@ -1,12 +1,6 @@
 @forward "material";
 @use "material" as *;
 
-// Extended material
-$success: #b5ccba;
-$onSuccess: #213528;
-$successContainer: #374b3e;
-$onSuccessContainer: #d1e9d6;
-
 /// Colour mappings for more chaotic, dynamic colors like the average rice ///
 $layer0: $background;
 $onLayer0: $onBackground;

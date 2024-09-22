@@ -1,7 +1,7 @@
 @use "colour" as c;
 
-@function to-root-transparency($colour, $always: False) {
-    @if $always == True or c.$transparent == True {
+@function to-root-transparency($colour, $always: false) {
+    @if $always or c.$transparent {
         $colour: change-color($colour, $alpha: 1 - c.$rootTransparency);
     }
     @return $colour;
