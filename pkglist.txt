@@ -64,6 +64,7 @@ hyprpicker-git
 hyprutils-git
 hyprwayland-scanner-git
 imagemagick
+imv
 intel-ucode
 jq
 kvantum
@@ -113,6 +114,7 @@ qt6ct
 rate-mirrors
 safeeyes
 seahorse
+selectdefaultapplication-git
 shotcut
 spotify
 spotify-adblock
