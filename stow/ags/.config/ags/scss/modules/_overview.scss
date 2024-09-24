@@ -4,10 +4,14 @@
 @use "../lib/font";
 @use "../lib/elevation";
 
-@mixin -window-base {
-    @include rounding.normal;
+@mixin -window-base($less-rounding: false) {
     @include elevation.border;
     @include elevation.e2;
+    @if $less-rounding {
+        @include rounding.normal;
+    } @else {
+        @include rounding.large;
+    }
 }
 
 .overview-top-space {
@@ -101,7 +105,7 @@
 }
 
 .overview-tasks {
-    @include -window-base;
+    @include -window-base(true);
     padding: 0.341rem;
     background-color: c.$background;
     color: c.$onBackground;
