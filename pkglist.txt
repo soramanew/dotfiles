@@ -37,7 +37,7 @@ fuzzel-git
 fwupd
 gamemode
 gammastep
-gimp
+gimp-devel
 git
 git-lfs
 github-cli
