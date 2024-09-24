@@ -71,7 +71,9 @@
 > GIT_LFS_SKIP_SMUDGE=1 git clone --recurse-submodules https://github.com/soramanew/dotfiles.git
 > ```
 >
-> `git-lfs` is still required though (just for cloning/pulling).
+> or by deleting the `.gitattributes` file.
+>
+> `git-lfs` is required if using the env var.
 
 Just install the metapackages for end-4's dots for now, they should cover everything. I'll probably make some for my own later.
 Or you can just install from the pkglist.txt file, which is guaranteed to cover everything but also has a lot of unnecessary packages.
