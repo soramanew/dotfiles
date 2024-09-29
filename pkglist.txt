@@ -81,7 +81,6 @@ mpv
 mpv-mpris
 nano
 nemo
-neofetch
 networkmanager
 noto-fonts
 noto-fonts-cjk
