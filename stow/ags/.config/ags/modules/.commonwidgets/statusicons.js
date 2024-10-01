@@ -85,28 +85,33 @@ const PkgUpdateIndicator = () =>
     });
 
 const NotificationIndicator = () => {
-    const unreadCount = Variable(0);
+    const unreads = new Map();
+    const unreadTick = Variable();
     App.connect("window-toggled", (_, window, visible) => {
-        if (visible && window === "sideright") unreadCount.value = 0;
+        if (visible && window === "sideright") {
+            unreads.clear();
+            unreadTick.setValue(true);
+        }
     });
     Notifications.connect("notified", (_, id) => {
-        if (Notifications.getNotification(id) && !App.getWindow("sideright").visible) unreadCount.value++;
-    });
-    let lastClosedId; // This is to prevent from deducting if same id because two signals are sent when closed idk why
-    Notifications.connect("closed", (_, id) => {
-        if (id !== lastClosedId && unreadCount.value > 0) {
-            unreadCount.value--;
-            lastClosedId = id;
+        const notif = Notifications.getNotification(id);
+        if (notif && !App.getWindow("sideright").visible) {
+            unreads.set(id, notif);
+            unreadTick.setValue(true);
         }
+    });
+    Notifications.connect("closed", (_, id) => {
+        unreads.delete(id);
+        unreadTick.setValue(true);
     });
     return Revealer({
         transition: "slide_left",
         transitionDuration: 150,
-        revealChild: Utils.merge([Notifications.bind("dnd"), unreadCount.bind()], (dnd, unread) => dnd || unread > 0),
-        tooltipText: Utils.merge([Notifications.bind("dnd"), unreadCount.bind()], (dnd, unread) => {
+        revealChild: Utils.merge([Notifications.bind("dnd"), unreadTick.bind()], dnd => dnd || unreads.size > 0),
+        tooltipText: Utils.merge([Notifications.bind("dnd"), unreadTick.bind()], dnd => {
             const tooltip = [];
             if (dnd) tooltip.push("Do not disturb enabled");
-            if (unread > 0) tooltip.push(`${unread} unread notification${unread > 1 ? "s" : ""}`);
+            if (unreads.size > 0) tooltip.push(`${unreads.size} unread notification${unreads.size > 1 ? "s" : ""}`);
             return tooltip.join(" | ");
         }),
         child: Box({
@@ -118,10 +123,10 @@ const NotificationIndicator = () => {
                 Revealer({
                     transition: "slide_left",
                     transitionDuration: 120,
-                    revealChild: unreadCount.bind().as(unread => unread > 0),
+                    revealChild: unreadTick.bind().as(() => unreads.size > 0),
                     child: Label({
                         className: "txt-small titlefont",
-                        label: unreadCount.bind().as(String),
+                        label: unreadTick.bind().as(() => String(unreads.size)),
                     }),
                 }),
             ],
