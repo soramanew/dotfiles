@@ -13,8 +13,8 @@
     padding: 1.364rem;
 }
 
-.cheatsheet-title {
-    color: c.$cheatsheetTitle;
+.cheatsheet-keybinds {
+    padding: 0 0.816rem;
 }
 
 .cheatsheet-key {
@@ -40,14 +40,6 @@
     padding: 0.136rem 0.205rem;
     margin: 0.17rem;
     color: c.$onLayer0;
-}
-
-@for $i from 1 through 8 {
-    .cheatsheet-color-#{$i} {
-        color: nth(c.$cheatsheetColors, $i);
-        border-color: nth(c.$cheatsheetColors, $i);
-        box-shadow: 0rem 0.136rem 0rem nth(c.$cheatsheetColors, $i);
-    }
 }
 
 .cheatsheet-closebtn {
