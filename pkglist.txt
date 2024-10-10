@@ -118,6 +118,7 @@ safeeyes
 seahorse
 selectdefaultapplication-git
 shotcut
+socat
 spotify
 spotify-adblock
 starship

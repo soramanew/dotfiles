@@ -1,4 +1,3 @@
-import GLib from "gi://GLib";
 const { Button, Stack } = Widget;
 const { execAsync, exec, HOME } = Utils;
 const Hyprland = await Service.import("hyprland");
