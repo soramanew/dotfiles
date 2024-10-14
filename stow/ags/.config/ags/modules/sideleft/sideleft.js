@@ -8,6 +8,7 @@ import ColourPicker from "./tools/colorpicker.js";
 import PerfToggles from "./tools/perftoggles.js";
 import PackageUpdates from "./tools/packageupdates.js";
 import Timer from "./tools/timer.js";
+import WindowsDashboard from "./tools/windowsdashboard.js";
 import GradientScrollable from "../.commonwidgets/gradientscrollable.js";
 
 export default () => {
@@ -56,7 +57,14 @@ export default () => {
                         child: Box({
                             vertical: true,
                             className: "spacing-v-10",
-                            children: [QuickScripts(), PerfToggles(), ColourPicker(), PackageUpdates(), Timer()],
+                            children: [
+                                QuickScripts(),
+                                WindowsDashboard(),
+                                PerfToggles(),
+                                ColourPicker(),
+                                PackageUpdates(),
+                                Timer(),
+                            ],
                         }),
                     }),
                 ],
